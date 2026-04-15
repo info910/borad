@@ -5,262 +5,285 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>مجالي — لوحة إدارة المتجر</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --brand-primary: #c8a45c;
     --brand-gold: #d4af6e;
-    --brand-dark: #1a1a2e;
     --brand-deeper: #12121f;
     --brand-surface: #1e1e34;
     --brand-surface2: #252542;
     --brand-border: rgba(200,164,92,0.12);
-    --brand-glow: rgba(200,164,92,0.06);
     --text-primary: #f0ece4;
     --text-secondary: #9a9ab0;
     --text-muted: #6b6b82;
     --store-color: #4a9eff;
     --content-color: #c084fc;
     --marketing-color: #34d399;
-    --todo-color: #f87171;
-    --doing-color: #fbbf24;
-    --done-color: #4ade80;
   }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
+  * { margin:0; padding:0; box-sizing:border-box; }
   body {
-    font-family: 'Cairo', 'Tajawal', sans-serif;
-    background: var(--brand-deeper);
-    color: var(--text-primary);
-    min-height: 100vh;
-    direction: rtl;
-    overflow-x: hidden;
+    font-family:'Cairo',sans-serif; background:var(--brand-deeper);
+    color:var(--text-primary); min-height:100vh; direction:rtl; overflow-x:hidden;
   }
-
-  /* Subtle background pattern */
   body::before {
-    content: '';
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background:
-      radial-gradient(ellipse at 20% 0%, rgba(200,164,92,0.04) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 100%, rgba(200,164,92,0.03) 0%, transparent 60%);
-    pointer-events: none; z-index: 0;
+    content:''; position:fixed; inset:0;
+    background: radial-gradient(ellipse at 20% 0%,rgba(200,164,92,0.04)0%,transparent 60%),
+                radial-gradient(ellipse at 80% 100%,rgba(200,164,92,0.03)0%,transparent 60%);
+    pointer-events:none;
   }
+  .app { position:relative; z-index:1; max-width:1300px; margin:0 auto; padding:20px 16px; }
 
-  .app { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 20px 16px; }
+  /* LOGIN */
+  .login-screen {
+    position:fixed; inset:0; background:var(--brand-deeper);
+    display:flex; align-items:center; justify-content:center; z-index:1000; flex-direction:column;
+  }
+  .login-screen::before {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse at 50% 30%,rgba(200,164,92,0.06)0%,transparent 60%);
+    pointer-events:none;
+  }
+  .login-box { position:relative; z-index:1; text-align:center; max-width:520px; width:90%; padding:40px; }
+  .login-logo {
+    width:80px; height:80px; margin:0 auto 20px;
+    background:linear-gradient(135deg,var(--brand-primary),var(--brand-gold));
+    border-radius:20px; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 40px rgba(200,164,92,0.3);
+  }
+  .login-logo svg { width:50px; height:50px; }
+  .login-box h1 { font-size:36px; font-weight:900; color:var(--brand-primary); margin-bottom:6px; }
+  .login-box p { font-size:18px; color:var(--text-secondary); margin-bottom:40px; font-weight:600; }
+  .login-cards { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+  .login-card {
+    flex:1; min-width:145px; max-width:165px; padding:28px 16px; border-radius:18px;
+    background:var(--brand-surface); border:2px solid var(--brand-border);
+    cursor:pointer; transition:all 0.3s; text-align:center;
+  }
+  .login-card:hover { transform:translateY(-4px); }
+  .login-card .lc-icon { font-size:40px; margin-bottom:12px; }
+  .login-card .lc-name { font-size:17px; font-weight:900; margin-bottom:5px; }
+  .login-card .lc-role { font-size:13px; color:var(--text-secondary); font-weight:600; }
+  .login-card.store .lc-name { color:var(--store-color); }
+  .login-card.content .lc-name { color:var(--content-color); }
+  .login-card.marketing .lc-name { color:var(--marketing-color); }
+  .login-card.store:hover { border-color:var(--store-color); box-shadow:0 8px 30px rgba(74,158,255,0.15); }
+  .login-card.content:hover { border-color:var(--content-color); box-shadow:0 8px 30px rgba(192,132,252,0.15); }
+  .login-card.marketing:hover { border-color:var(--marketing-color); box-shadow:0 8px 30px rgba(52,211,153,0.15); }
 
-  /* ===== HEADER ===== */
+  /* HEADER */
   .header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 24px; margin-bottom: 20px;
-    background: var(--brand-surface);
-    border: 1px solid var(--brand-border);
-    border-radius: 16px;
-    position: relative; overflow: hidden;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 24px; margin-bottom:20px; background:var(--brand-surface);
+    border:1px solid var(--brand-border); border-radius:16px;
+    position:relative; overflow:hidden; flex-wrap:wrap; gap:12px;
   }
   .header::after {
-    content: ''; position: absolute; bottom: 0; right: 0; left: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--brand-primary), transparent);
+    content:''; position:absolute; bottom:0; right:0; left:0; height:2px;
+    background:linear-gradient(90deg,transparent,var(--brand-primary),transparent);
   }
-
-  .brand { display: flex; align-items: center; gap: 14px; }
-
-  /* Majali Knot SVG Logo */
+  .brand { display:flex; align-items:center; gap:14px; }
   .logo-wrap {
-    width: 56px; height: 56px;
-    background: linear-gradient(135deg, var(--brand-primary), var(--brand-gold));
-    border-radius: 12px; display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 20px rgba(200,164,92,0.25);
+    width:50px; height:50px;
+    background:linear-gradient(135deg,var(--brand-primary),var(--brand-gold));
+    border-radius:12px; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 20px rgba(200,164,92,0.25);
   }
-  .logo-wrap svg { width: 30px; height: 30px; }
-
-  .brand-text h1 {
-    font-size: 28px; font-weight: 900; color: var(--text-primary);
-    letter-spacing: -0.3px;
+  .logo-wrap svg { width:32px; height:32px; }
+  .brand-text h1 { font-size:24px; font-weight:900; }
+  .brand-text h1 em { color:var(--brand-primary); font-style:normal; }
+  .brand-text p { font-size:14px; color:var(--text-secondary); font-weight:600; }
+  .header-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .user-badge {
+    display:flex; align-items:center; gap:8px;
+    padding:8px 16px; border-radius:10px; font-size:15px; font-weight:700;
   }
-  .brand-text h1 span { color: var(--brand-primary); }
-  .brand-text p { font-size: 15px; color: var(--text-secondary); font-weight: 500; margin-top: 2px; }
-
-  .header-actions { display: flex; align-items: center; gap: 10px; }
-  .reset-btn {
-    padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(255,255,255,0.04); color: var(--text-secondary);
-    font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
-    transition: all 0.2s;
+  .ub-dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+  .hdr-btn {
+    padding:8px 18px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.04); color:var(--text-secondary);
+    font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s;
   }
-  .reset-btn:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #f87171; }
+  .hdr-btn:hover { background:rgba(255,255,255,0.08); }
+  .hdr-btn.danger:hover { background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.3); color:#f87171; }
 
-  /* ===== WEEK PROGRESS ===== */
+  /* WEEK BAR */
   .week-bar {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 20px; margin-bottom: 16px;
-    background: var(--brand-surface); border: 1px solid var(--brand-border);
-    border-radius: 12px;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    padding:14px 22px; margin-bottom:16px; background:var(--brand-surface);
+    border:1px solid var(--brand-border); border-radius:12px;
   }
-  .week-bar .wb-label { font-size: 16px; color: var(--text-secondary); font-weight: 600; white-space: nowrap; }
-  .wb-track { flex: 1; height: 10px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; }
-  .wb-fill { height: 100%; border-radius: 99px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
-  .wb-pct { font-size: 18px; font-weight: 800; min-width: 40px; text-align: left; }
-  .wb-count { font-size: 14px; color: var(--text-muted); font-weight: 500; }
+  .wb-label { font-size:16px; color:var(--text-secondary); font-weight:700; white-space:nowrap; }
+  .wb-track { flex:1; min-width:100px; height:10px; background:rgba(255,255,255,0.06); border-radius:99px; overflow:hidden; }
+  .wb-fill { height:100%; border-radius:99px; transition:width 0.5s cubic-bezier(0.4,0,0.2,1); }
+  .wb-pct { font-size:20px; font-weight:900; min-width:48px; text-align:left; }
+  .wb-count { font-size:14px; color:var(--text-muted); font-weight:600; }
 
-  /* ===== DAY TABS ===== */
-  .day-tabs {
-    display: grid; grid-template-columns: repeat(6, 1fr);
-    gap: 6px; margin-bottom: 16px;
-  }
+  /* DAY TABS */
+  .day-tabs { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-bottom:16px; }
   .day-tab {
-    padding: 14px 6px; border-radius: 12px;
-    border: 1.5px solid transparent;
-    background: var(--brand-surface); color: var(--text-muted);
-    cursor: pointer; transition: all 0.25s; text-align: center;
-    font-family: inherit; position: relative; overflow: hidden;
+    padding:14px 4px; border-radius:12px; border:2px solid transparent;
+    background:var(--brand-surface); color:var(--text-muted);
+    cursor:pointer; transition:all 0.25s; text-align:center; font-family:inherit;
+    position:relative; overflow:hidden;
   }
-  .day-tab:hover { background: var(--brand-surface2); color: var(--text-secondary); }
+  .day-tab:hover { background:var(--brand-surface2); color:var(--text-secondary); }
   .day-tab.active {
-    border-color: var(--brand-primary);
-    background: linear-gradient(135deg, var(--brand-surface2), var(--brand-surface));
-    color: var(--text-primary);
-    box-shadow: 0 0 20px rgba(200,164,92,0.08);
+    border-color:var(--brand-primary);
+    background:linear-gradient(135deg,var(--brand-surface2),var(--brand-surface));
+    color:var(--text-primary); box-shadow:0 0 20px rgba(200,164,92,0.08);
   }
-  .day-tab.active::after {
-    content: ''; position: absolute; bottom: 0; right: 0; left: 0; height: 2px;
-    background: var(--brand-primary);
-  }
-  .day-tab .dt-name { font-size: 16px; font-weight: 700; }
-  .day-tab .dt-theme { font-size: 11px; margin-top: 2px; opacity: 0.7; font-weight: 500; }
-  .day-tab .dt-icon { font-size: 20px; margin-top: 3px; }
-  .day-tab .dt-prog { font-size: 13px; margin-top: 3px; color: var(--done-color); font-weight: 700; }
+  .day-tab.active::after { content:''; position:absolute; bottom:0; right:0; left:0; height:2px; background:var(--brand-primary); }
+  .dt-name { font-size:16px; font-weight:800; }
+  .dt-theme { font-size:12px; margin-top:2px; opacity:0.7; font-weight:600; }
+  .dt-icon { font-size:20px; margin-top:4px; }
+  .dt-prog { font-size:13px; margin-top:3px; color:#4ade80; font-weight:800; }
 
-  /* ===== THEME BANNER ===== */
+  /* THEME BANNER */
   .theme-banner {
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
-    padding: 14px 20px; margin-bottom: 16px;
-    background: var(--brand-surface); border: 1px solid var(--brand-border);
-    border-radius: 12px;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    padding:16px 22px; margin-bottom:16px; background:var(--brand-surface);
+    border:1px solid var(--brand-border); border-radius:12px;
   }
-  .tb-right { display: flex; align-items: center; gap: 10px; }
-  .tb-icon { font-size: 32px; }
-  .tb-title { font-size: 20px; font-weight: 800; }
-  .tb-count { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
-  .tb-left { display: flex; align-items: center; gap: 10px; }
-  .tb-track { width: 120px; height: 9px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; }
-  .tb-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease; }
-  .tb-pct { font-size: 17px; font-weight: 800; }
+  .tb-right { display:flex; align-items:center; gap:12px; }
+  .tb-icon { font-size:32px; }
+  .tb-title { font-size:22px; font-weight:900; }
+  .tb-count { font-size:15px; color:var(--text-secondary); font-weight:600; }
+  .tb-left { display:flex; align-items:center; gap:10px; }
+  .tb-track { width:120px; height:9px; background:rgba(255,255,255,0.08); border-radius:99px; overflow:hidden; }
+  .tb-fill { height:100%; border-radius:99px; transition:width 0.4s ease; }
+  .tb-pct { font-size:18px; font-weight:900; }
 
-  /* ===== FILTERS ===== */
-  .filters { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  /* FILTERS */
+  .filters { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
   .filter-btn {
-    padding: 9px 20px; border-radius: 99px; border: 1.5px solid rgba(255,255,255,0.06);
-    font-size: 15px; font-weight: 700; cursor: pointer;
-    font-family: inherit; transition: all 0.2s; letter-spacing: -0.2px;
+    padding:9px 20px; border-radius:99px; border:2px solid rgba(255,255,255,0.06);
+    font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.2s;
   }
-  .filter-btn:hover { transform: translateY(-1px); }
+  .filter-btn:hover { transform:translateY(-1px); }
 
-  /* ===== KANBAN ===== */
-  .kanban { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  /* KANBAN */
+  .kanban { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
   .kanban-col {
-    background: var(--brand-surface); border: 1px solid var(--brand-border);
-    border-radius: 14px; padding: 12px; min-height: 180px;
+    background:var(--brand-surface); border:1px solid var(--brand-border);
+    border-radius:14px; padding:14px; min-height:200px;
+    animation:fadeUp 0.4s ease backwards;
   }
+  .kanban-col:nth-child(1){animation-delay:.05s}
+  .kanban-col:nth-child(2){animation-delay:.1s}
+  .kanban-col:nth-child(3){animation-delay:.15s}
   .col-head {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 10px; padding-bottom: 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05);
   }
-  .col-head .ch-left { display: flex; align-items: center; gap: 6px; }
-  .col-head .ch-icon { font-size: 18px; }
-  .col-head .ch-name { font-weight: 700; font-size: 16px; }
-  .col-head .ch-badge {
-    padding: 3px 11px; border-radius: 99px; font-size: 14px; font-weight: 800;
-  }
+  .ch-left { display:flex; align-items:center; gap:8px; }
+  .ch-icon { font-size:18px; }
+  .ch-name { font-weight:800; font-size:17px; }
+  .ch-badge { padding:3px 11px; border-radius:99px; font-size:14px; font-weight:800; }
 
   .task-card {
-    border-radius: 10px; padding: 12px 14px; margin-bottom: 8px;
-    cursor: pointer; transition: all 0.2s;
-    border: 1px solid rgba(255,255,255,0.04);
-    position: relative;
+    border-radius:10px; padding:12px 14px; margin-bottom:8px;
+    cursor:pointer; transition:all 0.2s; border:1px solid rgba(255,255,255,0.04);
   }
-  .task-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-  .task-card.status-done { opacity: 0.55; }
-  .task-card.status-done .tc-text { text-decoration: line-through; color: var(--text-muted); }
-
-  .tc-text { font-size: 15px; line-height: 1.8; margin-bottom: 6px; font-weight: 500; }
+  .task-card:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(0,0,0,0.25); }
+  .task-card.status-done { opacity:0.5; }
+  .task-card.status-done .tc-text { text-decoration:line-through; color:var(--text-muted); }
+  .tc-text { font-size:15px; line-height:1.9; margin-bottom:8px; font-weight:600; }
   .tc-label {
-    display: inline-flex; align-items: center; gap: 3px;
-    font-size: 13px; padding: 3px 10px; border-radius: 99px; font-weight: 700;
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:13px; padding:3px 10px; border-radius:99px; font-weight:700;
   }
+  .empty-state { text-align:center; color:var(--text-muted); font-size:15px; padding:24px 0; font-weight:600; }
 
-  .empty-state { text-align: center; color: var(--text-muted); font-size: 14px; padding: 20px 0; font-weight: 500; }
-
-  /* ===== KPIs ===== */
+  /* KPIs */
   .kpis {
-    margin-top: 18px; padding: 16px 20px;
-    background: var(--brand-surface); border: 1px solid var(--brand-border);
-    border-radius: 14px;
+    margin-top:18px; padding:18px 22px; background:var(--brand-surface);
+    border:1px solid var(--brand-border); border-radius:14px;
   }
-  .kpis h3 { font-size: 18px; font-weight: 800; margin-bottom: 12px; }
-  .kpis-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .kpi-card { border-radius: 10px; padding: 12px; }
-  .kpi-title { font-weight: 800; font-size: 15px; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
-  .kpi-item { font-size: 14px; color: var(--text-secondary); padding: 4px 0; font-weight: 500; }
-  .kpi-item + .kpi-item { border-top: 1px solid rgba(255,255,255,0.03); }
+  .kpis h3 { font-size:19px; font-weight:900; margin-bottom:14px; }
+  .kpis-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .kpi-card { border-radius:12px; padding:14px; }
+  .kpi-title { font-weight:900; font-size:15px; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .kpi-item { font-size:14px; color:var(--text-secondary); padding:4px 0; font-weight:600; }
+  .kpi-item+.kpi-item { border-top:1px solid rgba(255,255,255,0.03); }
 
-  /* ===== FOOTER ===== */
   .footer {
-    margin-top: 18px; text-align: center; font-size: 14px; color: var(--text-muted);
-    padding: 12px; font-weight: 500;
+    margin-top:18px; text-align:center; font-size:14px; color:var(--text-muted);
+    padding:14px; font-weight:600;
   }
-  .footer .brand-mark { color: var(--brand-primary); font-weight: 800; }
+  .footer .brand-mark { color:var(--brand-primary); font-weight:900; }
 
-  /* ===== ANIMATIONS ===== */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .kanban-col { animation: fadeUp 0.4s ease backwards; }
-  .kanban-col:nth-child(1) { animation-delay: 0.05s; }
-  .kanban-col:nth-child(2) { animation-delay: 0.1s; }
-  .kanban-col:nth-child(3) { animation-delay: 0.15s; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
-  /* ===== RESPONSIVE ===== */
-  @media (max-width: 768px) {
-    .header { flex-direction: column; gap: 12px; text-align: center; }
-    .brand { justify-content: center; }
-    .kanban { grid-template-columns: 1fr; }
-    .kpis-grid { grid-template-columns: 1fr; }
-    .day-tabs { grid-template-columns: repeat(3, 1fr); }
-    .brand-text h1 { font-size: 22px; }
+  @media(max-width:768px){
+    .header{flex-direction:column;text-align:center}
+    .brand{justify-content:center}
+    .kanban{grid-template-columns:1fr}
+    .kpis-grid{grid-template-columns:1fr}
+    .day-tabs{grid-template-columns:repeat(3,1fr)}
+    .brand-text h1{font-size:20px}
+    .login-cards{flex-direction:column;align-items:center}
+    .login-card{max-width:220px;width:100%}
   }
 </style>
 </head>
 <body>
 
-<div class="app">
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 15 C30 15,15 30,15 45 C15 60,30 70,40 65 C50 60,45 45,35 45 C25 45,25 55,35 58" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
+        <path d="M50 15 C70 15,85 30,85 45 C85 60,70 70,60 65 C50 60,55 45,65 45 C75 45,75 55,65 58" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
+        <path d="M40 65 C45 75,50 85,50 85" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
+        <path d="M60 65 C55 75,50 85,50 85" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1>مجالي</h1>
+    <p>اختر حسابك للدخول إلى لوحة الإدارة</p>
+    <div class="login-cards">
+      <div class="login-card store" onclick="login('store')">
+        <div class="lc-icon">🏪</div>
+        <div class="lc-name">الشريك الأول</div>
+        <div class="lc-role">مدير المتجر والمنتجات</div>
+      </div>
+      <div class="login-card content" onclick="login('content')">
+        <div class="lc-icon">🎨</div>
+        <div class="lc-name">الشريك الثاني</div>
+        <div class="lc-role">مسؤول المحتوى والتصميم</div>
+      </div>
+      <div class="login-card marketing" onclick="login('marketing')">
+        <div class="lc-icon">📢</div>
+        <div class="lc-name">الشريك الثالث</div>
+        <div class="lc-role">مسؤول التسويق والعملاء</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <!-- HEADER -->
+<div class="app" id="mainApp" style="display:none">
   <div class="header">
     <div class="brand">
       <div class="logo-wrap">
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <!-- Majali Knot Symbol -->
-          <path d="M50 15 C30 15, 15 30, 15 45 C15 60, 30 70, 40 65 C50 60, 45 45, 35 45 C25 45, 25 55, 35 58" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
-          <path d="M50 15 C70 15, 85 30, 85 45 C85 60, 70 70, 60 65 C50 60, 55 45, 65 45 C75 45, 75 55, 65 58" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
-          <path d="M40 65 C45 75, 50 85, 50 85" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
-          <path d="M60 65 C55 75, 50 85, 50 85" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
+          <path d="M50 15 C30 15,15 30,15 45 C15 60,30 70,40 65 C50 60,45 45,35 45 C25 45,25 55,35 58" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
+          <path d="M50 15 C70 15,85 30,85 45 C85 60,70 70,60 65 C50 60,55 45,65 45 C75 45,75 55,65 58" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
+          <path d="M40 65 C45 75,50 85,50 85" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
+          <path d="M60 65 C55 75,50 85,50 85" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
         </svg>
       </div>
       <div class="brand-text">
-        <h1><span>مجالي</span> — لوحة إدارة المتجر</h1>
+        <h1><em>مجالي</em> — لوحة إدارة المتجر</h1>
         <p>السبت → الخميس • إدارة يومية لثلاثة شركاء</p>
       </div>
     </div>
     <div class="header-actions">
-      <button class="reset-btn" onclick="resetAll()">🔄 إعادة تعيين</button>
+      <div class="user-badge" id="userBadge"></div>
+      <button class="hdr-btn" onclick="switchUser()">🔄 تبديل</button>
+      <button class="hdr-btn danger" onclick="resetAll()">🗑️ تصفير</button>
     </div>
   </div>
 
-  <!-- WEEK PROGRESS -->
   <div class="week-bar">
     <span class="wb-label">📊 تقدم الأسبوع</span>
     <div class="wb-track"><div class="wb-fill" id="weekFill"></div></div>
@@ -268,38 +291,30 @@
     <span class="wb-count" id="weekCount"></span>
   </div>
 
-  <!-- DAY TABS -->
   <div class="day-tabs" id="dayTabs"></div>
-
-  <!-- THEME BANNER -->
   <div class="theme-banner" id="themeBanner"></div>
-
-  <!-- FILTERS -->
   <div class="filters" id="filters"></div>
-
-  <!-- KANBAN -->
   <div class="kanban" id="kanban"></div>
 
-  <!-- KPIs -->
   <div class="kpis">
     <h3>🎯 الأهداف الأسبوعية (6 أيام)</h3>
     <div class="kpis-grid">
-      <div class="kpi-card" style="background:rgba(74,158,255,0.06); border:1px solid rgba(74,158,255,0.12);">
-        <div class="kpi-title" style="color:var(--store-color);">🏪 مدير المتجر</div>
+      <div class="kpi-card" style="background:rgba(74,158,255,0.06);border:1px solid rgba(74,158,255,0.12)">
+        <div class="kpi-title" style="color:var(--store-color)">🏪 مدير المتجر</div>
         <div class="kpi-item">◾ 18-25 منتج جديد</div>
         <div class="kpi-item">◾ تحسين 10 صفحات منتجات</div>
         <div class="kpi-item">◾ مراجعة أسعار المنافسين</div>
         <div class="kpi-item">◾ تحديث وترتيب التصنيفات</div>
       </div>
-      <div class="kpi-card" style="background:rgba(192,132,252,0.06); border:1px solid rgba(192,132,252,0.12);">
-        <div class="kpi-title" style="color:var(--content-color);">🎨 مسؤول المحتوى</div>
+      <div class="kpi-card" style="background:rgba(192,132,252,0.06);border:1px solid rgba(192,132,252,0.12)">
+        <div class="kpi-title" style="color:var(--content-color)">🎨 مسؤول المحتوى</div>
         <div class="kpi-item">◾ 12-15 صورة / تصميم</div>
         <div class="kpi-item">◾ 6 فيديوهات قصيرة</div>
         <div class="kpi-item">◾ 3 بانرات عروض</div>
         <div class="kpi-item">◾ تجهيز محتوى احتياطي</div>
       </div>
-      <div class="kpi-card" style="background:rgba(52,211,153,0.06); border:1px solid rgba(52,211,153,0.12);">
-        <div class="kpi-title" style="color:var(--marketing-color);">📢 مسؤول التسويق</div>
+      <div class="kpi-card" style="background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.12)">
+        <div class="kpi-title" style="color:var(--marketing-color)">📢 مسؤول التسويق</div>
         <div class="kpi-item">◾ 6 بوستات (بوست/يوم عمل)</div>
         <div class="kpi-item">◾ حملة إعلانية واحدة</div>
         <div class="kpi-item">◾ تقرير أداء أسبوعي</div>
@@ -307,217 +322,186 @@
       </div>
     </div>
   </div>
-
-  <!-- FOOTER -->
-  <div class="footer">
-    <span class="brand-mark">مجالي</span> — لوحة إدارة داخلية &nbsp;•&nbsp; جميع الحقوق محفوظة © 2026
-  </div>
-
+  <div class="footer"><span class="brand-mark">مجالي</span> — لوحة إدارة داخلية • جميع الحقوق محفوظة © 2026</div>
 </div>
 
 <script>
-const TEAM = {
-  store:     { name: "مدير المتجر",    color: "#4a9eff", icon: "🏪" },
-  content:   { name: "مسؤول المحتوى",  color: "#c084fc", icon: "🎨" },
-  marketing: { name: "مسؤول التسويق",  color: "#34d399", icon: "📢" },
+const TEAM={
+  store:{name:"مدير المتجر",title:"الشريك الأول",color:"#4a9eff",icon:"🏪"},
+  content:{name:"مسؤول المحتوى",title:"الشريك الثاني",color:"#c084fc",icon:"🎨"},
+  marketing:{name:"مسؤول التسويق",title:"الشريك الثالث",color:"#34d399",icon:"📢"},
 };
-
-const DAYS = {
-  saturday: {
-    label: "السبت", theme: "التخطيط والتجهيز", themeIcon: "📋",
-    tasks: [
-      { id:1, text:"اجتماع أسبوعي — مراجعة أهداف الأسبوع الماضي", owner:"all" },
-      { id:2, text:"تحديد أهداف الأسبوع الجديد بأرقام واضحة", owner:"all" },
-      { id:3, text:"إعداد قائمة المنتجات المطلوب إضافتها هذا الأسبوع", owner:"store" },
-      { id:4, text:"تجهيز جدول المحتوى الأسبوعي", owner:"content" },
-      { id:5, text:"تحليل أداء الأسبوع الماضي (إعلانات + سوشال)", owner:"marketing" },
-      { id:6, text:"تخطيط الحملات الإعلانية للأسبوع", owner:"marketing" },
-    ],
-  },
-  sunday: {
-    label: "الأحد", theme: "الإنتاج ①", themeIcon: "⚡",
-    tasks: [
-      { id:7, text:"إضافة 4-5 منتجات جديدة على المتجر", owner:"store" },
-      { id:8, text:"كتابة أوصاف تسويقية للمنتجات الجديدة", owner:"store" },
-      { id:9, text:"تصوير منتجات أو تجهيز صور احترافية (4-5)", owner:"content" },
-      { id:10, text:"تصميم 2 بوست سوشال ميديا", owner:"content" },
-      { id:11, text:"نشر المحتوى اليومي على جميع المنصات", owner:"marketing" },
-      { id:12, text:"الرد على رسائل واستفسارات العملاء", owner:"marketing" },
-    ],
-  },
-  monday: {
-    label: "الاثنين", theme: "الإنتاج ②", themeIcon: "⚡",
-    tasks: [
-      { id:13, text:"إضافة 4-5 منتجات جديدة على المتجر", owner:"store" },
-      { id:14, text:"مراجعة أسعار المنتجات ومقارنتها بالمنافسين", owner:"store" },
-      { id:15, text:"تصوير منتجات أو تجهيز صور (4-5)", owner:"content" },
-      { id:16, text:"تصميم بانر عرض أو إعلان", owner:"content" },
-      { id:17, text:"نشر المحتوى اليومي + متابعة التعليقات", owner:"marketing" },
-      { id:18, text:"إطلاق أو متابعة الحملة الإعلانية الأسبوعية", owner:"marketing" },
-    ],
-  },
-  tuesday: {
-    label: "الثلاثاء", theme: "الإنتاج ③", themeIcon: "⚡",
-    tasks: [
-      { id:19, text:"إضافة 3-4 منتجات جديدة على المتجر", owner:"store" },
-      { id:20, text:"تحديث معلومات المنتجات (مقاسات، ألوان، توفر)", owner:"store" },
-      { id:21, text:"تصوير منتجات أو تجهيز صور (3-4)", owner:"content" },
-      { id:22, text:"تصميم 2 بوست + ستوري أو ريلز", owner:"content" },
-      { id:23, text:"نشر المحتوى اليومي + الرد على العملاء", owner:"marketing" },
-      { id:24, text:"متابعة أداء الإعلانات وتعديلها إذا لزم", owner:"marketing" },
-    ],
-  },
-  wednesday: {
-    label: "الأربعاء", theme: "التحسين والمراجعة", themeIcon: "🔧",
-    tasks: [
-      { id:25, text:"مراجعة صفحات المنتجات وتحسين الأوصاف", owner:"store" },
-      { id:26, text:"ترتيب التصنيفات وتحسين تجربة التصفح", owner:"store" },
-      { id:27, text:"تحسين الصور القديمة أو إعادة تصميمها", owner:"content" },
-      { id:28, text:"تجهيز محتوى احتياطي للأسبوع الجاي", owner:"content" },
-      { id:29, text:"تحليل أداء الإعلانات والمحتوى", owner:"marketing" },
-      { id:30, text:"نشر المحتوى اليومي + الرد على العملاء", owner:"marketing" },
-    ],
-  },
-  thursday: {
-    label: "الخميس", theme: "الإبداع والتقييم", themeIcon: "💡",
-    tasks: [
-      { id:31, text:"دراسة المنافسين — منتجات عندهم وما عندنا", owner:"store" },
-      { id:32, text:"إعداد قائمة منتجات مقترحة للأسبوع الجاي", owner:"store" },
-      { id:33, text:"تجربة أفكار محتوى جديدة (ريلز، تيك توك)", owner:"content" },
-      { id:34, text:"تصميم محتوى إبداعي مختلف عن المعتاد", owner:"content" },
-      { id:35, text:"تجربة إعلان أو جمهور جديد", owner:"marketing" },
-      { id:36, text:"كتابة تقرير الأسبوع + أفكار الأسبوع الجاي", owner:"marketing" },
-      { id:37, text:"اجتماع نهاية الأسبوع — ملخص وتقييم", owner:"all" },
-    ],
-  },
+const DAYS={
+  saturday:{label:"السبت",theme:"التخطيط والتجهيز",themeIcon:"📋",tasks:[
+    {id:1,text:"اجتماع أسبوعي — مراجعة أهداف الأسبوع الماضي",owner:"all"},
+    {id:2,text:"تحديد أهداف الأسبوع الجديد بأرقام واضحة",owner:"all"},
+    {id:3,text:"إعداد قائمة المنتجات المطلوب إضافتها هذا الأسبوع",owner:"store"},
+    {id:4,text:"تجهيز جدول المحتوى الأسبوعي",owner:"content"},
+    {id:5,text:"تحليل أداء الأسبوع الماضي (إعلانات + سوشال)",owner:"marketing"},
+    {id:6,text:"تخطيط الحملات الإعلانية للأسبوع",owner:"marketing"},
+  ]},
+  sunday:{label:"الأحد",theme:"الإنتاج ①",themeIcon:"⚡",tasks:[
+    {id:7,text:"إضافة 4-5 منتجات جديدة على المتجر",owner:"store"},
+    {id:8,text:"كتابة أوصاف تسويقية للمنتجات الجديدة",owner:"store"},
+    {id:9,text:"تصوير منتجات أو تجهيز صور احترافية (4-5)",owner:"content"},
+    {id:10,text:"تصميم 2 بوست سوشال ميديا",owner:"content"},
+    {id:11,text:"نشر المحتوى اليومي على جميع المنصات",owner:"marketing"},
+    {id:12,text:"الرد على رسائل واستفسارات العملاء",owner:"marketing"},
+  ]},
+  monday:{label:"الاثنين",theme:"الإنتاج ②",themeIcon:"⚡",tasks:[
+    {id:13,text:"إضافة 4-5 منتجات جديدة على المتجر",owner:"store"},
+    {id:14,text:"مراجعة أسعار المنتجات ومقارنتها بالمنافسين",owner:"store"},
+    {id:15,text:"تصوير منتجات أو تجهيز صور (4-5)",owner:"content"},
+    {id:16,text:"تصميم بانر عرض أو إعلان",owner:"content"},
+    {id:17,text:"نشر المحتوى اليومي + متابعة التعليقات",owner:"marketing"},
+    {id:18,text:"إطلاق أو متابعة الحملة الإعلانية الأسبوعية",owner:"marketing"},
+  ]},
+  tuesday:{label:"الثلاثاء",theme:"الإنتاج ③",themeIcon:"⚡",tasks:[
+    {id:19,text:"إضافة 3-4 منتجات جديدة على المتجر",owner:"store"},
+    {id:20,text:"تحديث معلومات المنتجات (مقاسات، ألوان، توفر)",owner:"store"},
+    {id:21,text:"تصوير منتجات أو تجهيز صور (3-4)",owner:"content"},
+    {id:22,text:"تصميم 2 بوست + ستوري أو ريلز",owner:"content"},
+    {id:23,text:"نشر المحتوى اليومي + الرد على العملاء",owner:"marketing"},
+    {id:24,text:"متابعة أداء الإعلانات وتعديلها إذا لزم",owner:"marketing"},
+  ]},
+  wednesday:{label:"الأربعاء",theme:"التحسين والمراجعة",themeIcon:"🔧",tasks:[
+    {id:25,text:"مراجعة صفحات المنتجات وتحسين الأوصاف",owner:"store"},
+    {id:26,text:"ترتيب التصنيفات وتحسين تجربة التصفح",owner:"store"},
+    {id:27,text:"تحسين الصور القديمة أو إعادة تصميمها",owner:"content"},
+    {id:28,text:"تجهيز محتوى احتياطي للأسبوع الجاي",owner:"content"},
+    {id:29,text:"تحليل أداء الإعلانات والمحتوى",owner:"marketing"},
+    {id:30,text:"نشر المحتوى اليومي + الرد على العملاء",owner:"marketing"},
+  ]},
+  thursday:{label:"الخميس",theme:"الإبداع والتقييم",themeIcon:"💡",tasks:[
+    {id:31,text:"دراسة المنافسين — منتجات عندهم وما عندنا",owner:"store"},
+    {id:32,text:"إعداد قائمة منتجات مقترحة للأسبوع الجاي",owner:"store"},
+    {id:33,text:"تجربة أفكار محتوى جديدة (ريلز، تيك توك)",owner:"content"},
+    {id:34,text:"تصميم محتوى إبداعي مختلف عن المعتاد",owner:"content"},
+    {id:35,text:"تجربة إعلان أو جمهور جديد",owner:"marketing"},
+    {id:36,text:"كتابة تقرير الأسبوع + أفكار الأسبوع الجاي",owner:"marketing"},
+    {id:37,text:"اجتماع نهاية الأسبوع — ملخص وتقييم",owner:"all"},
+  ]},
 };
-
-const STATUSES = [
-  { key:"todo",  label:"المطلوب",       icon:"📌", color:"#f87171" },
-  { key:"doing", label:"قيد التنفيذ",   icon:"🔄", color:"#fbbf24" },
-  { key:"done",  label:"مكتمل",         icon:"✅", color:"#4ade80" },
+const STATUSES=[
+  {key:"todo",label:"المطلوب",icon:"📌",color:"#f87171"},
+  {key:"doing",label:"قيد التنفيذ",icon:"🔄",color:"#fbbf24"},
+  {key:"done",label:"مكتمل",icon:"✅",color:"#4ade80"},
 ];
 
-let activeDay = "saturday";
-let activeFilter = "all";
-let taskStatuses = {};
+let currentUser=null, activeDay="saturday", activeFilter="all", taskStatuses={};
+const dMap={6:"saturday",0:"sunday",1:"monday",2:"tuesday",3:"wednesday",4:"thursday"};
+const tKey=dMap[new Date().getDay()];
+if(tKey&&DAYS[tKey]) activeDay=tKey;
 
-// Auto-detect today
-const dayMap = { 6:"saturday", 0:"sunday", 1:"monday", 2:"tuesday", 3:"wednesday", 4:"thursday" };
-const todayKey = dayMap[new Date().getDay()];
-if (todayKey && DAYS[todayKey]) activeDay = todayKey;
+function sKey(u){return"majali_v3_"+u}
+function loadUser(u){try{const s=localStorage.getItem(sKey(u));taskStatuses=s?JSON.parse(s):{}}catch(e){taskStatuses={}}}
+function save(){if(!currentUser)return;try{localStorage.setItem(sKey(currentUser),JSON.stringify(taskStatuses))}catch(e){}}
 
-try {
-  const saved = localStorage.getItem("majali_board_v2");
-  if (saved) taskStatuses = JSON.parse(saved);
-} catch(e) {}
-
-function save() {
-  try { localStorage.setItem("majali_board_v2", JSON.stringify(taskStatuses)); } catch(e) {}
+function login(u){
+  currentUser=u;
+  try{localStorage.setItem("majali_v3_current",u)}catch(e){}
+  loadUser(u);
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("mainApp").style.display="block";
+  render();
+}
+function switchUser(){
+  currentUser=null;
+  try{localStorage.removeItem("majali_v3_current")}catch(e){}
+  document.getElementById("mainApp").style.display="none";
+  document.getElementById("loginScreen").style.display="flex";
 }
 
-function getStatus(id) { return taskStatuses[id] || "todo"; }
-
-function cycleStatus(id) {
-  const c = getStatus(id);
-  taskStatuses[id] = c === "todo" ? "doing" : c === "doing" ? "done" : "todo";
-  save(); render();
+function getStatus(id){return taskStatuses[id]||"todo"}
+function cycleStatus(id){
+  const c=getStatus(id);
+  taskStatuses[id]=c==="todo"?"doing":c==="doing"?"done":"todo";
+  save();render();
+}
+function setDay(d){activeDay=d;render()}
+function setFilter(f){activeFilter=f;render()}
+function resetAll(){
+  if(confirm("هل أنت متأكد؟ سيتم إعادة جميع مهامك لوضعها الأصلي")){taskStatuses={};save();render()}
 }
 
-function setDay(d) { activeDay = d; render(); }
-function setFilter(f) { activeFilter = f; render(); }
+function render(){
+  if(!currentUser)return;
+  const user=TEAM[currentUser], day=DAYS[activeDay];
 
-function resetAll() {
-  if (confirm("هل أنت متأكد؟ سيتم إعادة جميع المهام لوضعها الأصلي")) {
-    taskStatuses = {}; save(); render();
-  }
-}
+  // Badge
+  const badge=document.getElementById("userBadge");
+  badge.innerHTML=`<span class="ub-dot" style="background:${user.color}"></span><span style="color:${user.color}">${user.icon} ${user.title} — ${user.name}</span>`;
+  badge.style.background=user.color+"12";
+  badge.style.border="1px solid "+user.color+"33";
 
-function render() {
-  const day = DAYS[activeDay];
-  const allTasks = Object.values(DAYS).flatMap(d => d.tasks);
-  const allDone = allTasks.filter(t => getStatus(t.id) === "done").length;
-  const wPct = Math.round((allDone / allTasks.length) * 100);
+  // Week
+  const all=Object.values(DAYS).flatMap(d=>d.tasks);
+  const aD=all.filter(t=>getStatus(t.id)==="done").length;
+  const wP=Math.round((aD/all.length)*100);
+  const wF=document.getElementById("weekFill");
+  wF.style.width=wP+"%";
+  wF.style.background=wP===100?"linear-gradient(90deg,#4ade80,#34d399)":"linear-gradient(90deg,var(--brand-primary),var(--brand-gold))";
+  document.getElementById("weekPct").textContent=wP+"%";
+  document.getElementById("weekPct").style.color=wP===100?"#4ade80":"var(--brand-primary)";
+  document.getElementById("weekCount").textContent=aD+"/"+all.length+" مهمة";
 
-  // Week bar
-  const wFill = document.getElementById("weekFill");
-  wFill.style.width = wPct + "%";
-  wFill.style.background = wPct === 100
-    ? "linear-gradient(90deg, #4ade80, #34d399)"
-    : "linear-gradient(90deg, var(--brand-primary), var(--brand-gold))";
-  document.getElementById("weekPct").textContent = wPct + "%";
-  document.getElementById("weekPct").style.color = wPct === 100 ? "#4ade80" : "var(--brand-primary)";
-  document.getElementById("weekCount").textContent = `${allDone}/${allTasks.length} مهمة`;
-
-  // Day tabs
-  let tabs = "";
-  Object.entries(DAYS).forEach(([k, d]) => {
-    const active = activeDay === k;
-    const dd = d.tasks.filter(t => getStatus(t.id) === "done").length;
-    tabs += `<button class="day-tab ${active ? 'active' : ''}" onclick="setDay('${k}')">
-      <div class="dt-name">${d.label}</div>
-      <div class="dt-theme">${d.theme}</div>
+  // Tabs
+  let tabs="";
+  Object.entries(DAYS).forEach(([k,d])=>{
+    const a=activeDay===k, dd=d.tasks.filter(t=>getStatus(t.id)==="done").length;
+    tabs+=`<button class="day-tab ${a?'active':''}" onclick="setDay('${k}')">
+      <div class="dt-name">${d.label}</div><div class="dt-theme">${d.theme}</div>
       <div class="dt-icon">${d.themeIcon}</div>
-      ${dd > 0 ? `<div class="dt-prog">${dd}/${d.tasks.length}</div>` : ''}
+      ${dd>0?`<div class="dt-prog">${dd}/${d.tasks.length}</div>`:''}
     </button>`;
   });
-  document.getElementById("dayTabs").innerHTML = tabs;
+  document.getElementById("dayTabs").innerHTML=tabs;
 
-  // Theme banner
-  const total = day.tasks.length;
-  const done = day.tasks.filter(t => getStatus(t.id) === "done").length;
-  const pct = Math.round((done / total) * 100);
-  document.getElementById("themeBanner").innerHTML = `
-    <div class="tb-right">
-      <span class="tb-icon">${day.themeIcon}</span>
-      <div>
-        <div class="tb-title">${day.label} — ${day.theme}</div>
-        <div class="tb-count">${total} مهام • ${done} مكتملة</div>
-      </div>
-    </div>
+  // Banner
+  const total=day.tasks.length, done=day.tasks.filter(t=>getStatus(t.id)==="done").length;
+  const pct=Math.round((done/total)*100);
+  document.getElementById("themeBanner").innerHTML=`
+    <div class="tb-right"><span class="tb-icon">${day.themeIcon}</span><div>
+      <div class="tb-title">${day.label} — ${day.theme}</div>
+      <div class="tb-count">${total} مهام • ${done} مكتملة</div>
+    </div></div>
     <div class="tb-left">
       <div class="tb-track"><div class="tb-fill" style="width:${pct}%;background:${pct===100?'linear-gradient(90deg,#4ade80,#34d399)':'linear-gradient(90deg,var(--brand-primary),var(--brand-gold))'}"></div></div>
       <span class="tb-pct" style="color:${pct===100?'#4ade80':'var(--brand-primary)'}">${pct}%</span>
     </div>`;
 
   // Filters
-  let fHTML = `<button class="filter-btn" style="background:${activeFilter==='all'?'rgba(200,164,92,0.15)':'rgba(255,255,255,0.04)'};color:${activeFilter==='all'?'var(--brand-primary)':'var(--text-muted)'};border-color:${activeFilter==='all'?'rgba(200,164,92,0.3)':'rgba(255,255,255,0.06)'}" onclick="setFilter('all')">👥 الكل</button>`;
-  Object.entries(TEAM).forEach(([k, m]) => {
-    fHTML += `<button class="filter-btn" style="background:${activeFilter===k?m.color+'22':'rgba(255,255,255,0.04)'};color:${activeFilter===k?m.color:'var(--text-muted)'};border-color:${activeFilter===k?m.color+'44':'rgba(255,255,255,0.06)'}" onclick="setFilter('${k}')">${m.icon} ${m.name}</button>`;
+  let fH=`<button class="filter-btn" style="background:${activeFilter==='all'?'rgba(200,164,92,0.15)':'rgba(255,255,255,0.04)'};color:${activeFilter==='all'?'var(--brand-primary)':'var(--text-muted)'};border-color:${activeFilter==='all'?'rgba(200,164,92,0.3)':'rgba(255,255,255,0.06)'}" onclick="setFilter('all')">👥 الكل</button>`;
+  Object.entries(TEAM).forEach(([k,m])=>{
+    fH+=`<button class="filter-btn" style="background:${activeFilter===k?m.color+'22':'rgba(255,255,255,0.04)'};color:${activeFilter===k?m.color:'var(--text-muted)'};border-color:${activeFilter===k?m.color+'44':'rgba(255,255,255,0.06)'}" onclick="setFilter('${k}')">${m.icon} ${m.name}</button>`;
   });
-  document.getElementById("filters").innerHTML = fHTML;
+  document.getElementById("filters").innerHTML=fH;
 
   // Kanban
-  const filtered = day.tasks.filter(t => activeFilter === "all" || t.owner === activeFilter || t.owner === "all");
-  let kHTML = "";
-  STATUSES.forEach(col => {
-    const tasks = filtered.filter(t => getStatus(t.id) === col.key);
-    let cards = "";
-    if (!tasks.length) {
-      cards = `<div class="empty-state">لا توجد مهام</div>`;
-    } else {
-      tasks.forEach(t => {
-        const s = getStatus(t.id);
-        const m = t.owner === "all" ? null : TEAM[t.owner];
-        const lbl = t.owner === "all"
-          ? `<span class="tc-label" style="background:rgba(200,164,92,0.1);color:var(--brand-primary)">👥 اجتماع مشترك</span>`
-          : `<span class="tc-label" style="background:${m.color}15;color:${m.color}">${m.icon} ${m.name}</span>`;
-        cards += `<div class="task-card status-${s}" style="background:${s==='done'?'rgba(74,222,128,0.04)':'rgba(255,255,255,0.03)'};border-color:${s==='done'?'rgba(74,222,128,0.1)':'rgba(255,255,255,0.04)'}" onclick="cycleStatus(${t.id})">
-          <div class="tc-text">${t.text}</div>${lbl}
-        </div>`;
-      });
-    }
-    kHTML += `<div class="kanban-col">
-      <div class="col-head">
-        <div class="ch-left"><span class="ch-icon">${col.icon}</span><span class="ch-name">${col.label}</span></div>
-        <span class="ch-badge" style="background:${col.color}18;color:${col.color}">${tasks.length}</span>
-      </div>${cards}
-    </div>`;
+  const filtered=day.tasks.filter(t=>activeFilter==="all"||t.owner===activeFilter||t.owner==="all");
+  let kH="";
+  STATUSES.forEach(col=>{
+    const tasks=filtered.filter(t=>getStatus(t.id)===col.key);
+    let cards="";
+    if(!tasks.length){cards=`<div class="empty-state">لا توجد مهام</div>`}
+    else{tasks.forEach(t=>{
+      const s=getStatus(t.id), m=t.owner==="all"?null:TEAM[t.owner];
+      const lbl=t.owner==="all"
+        ?`<span class="tc-label" style="background:rgba(200,164,92,0.1);color:var(--brand-primary)">👥 اجتماع مشترك</span>`
+        :`<span class="tc-label" style="background:${m.color}15;color:${m.color}">${m.icon} ${m.name}</span>`;
+      cards+=`<div class="task-card status-${s}" style="background:${s==='done'?'rgba(74,222,128,0.04)':'rgba(255,255,255,0.03)'};border-color:${s==='done'?'rgba(74,222,128,0.1)':'rgba(255,255,255,0.04)'}" onclick="cycleStatus(${t.id})">
+        <div class="tc-text">${t.text}</div>${lbl}</div>`;
+    })}
+    kH+=`<div class="kanban-col"><div class="col-head">
+      <div class="ch-left"><span class="ch-icon">${col.icon}</span><span class="ch-name">${col.label}</span></div>
+      <span class="ch-badge" style="background:${col.color}18;color:${col.color}">${tasks.length}</span>
+    </div>${cards}</div>`;
   });
-  document.getElementById("kanban").innerHTML = kHTML;
+  document.getElementById("kanban").innerHTML=kH;
 }
 
-render();
+// Auto-login
+try{const su=localStorage.getItem("majali_v3_current");if(su&&TEAM[su])login(su)}catch(e){}
 </script>
 </body>
 </html>
