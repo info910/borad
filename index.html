@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة إدارة المتجر — ثلاثة شركاء</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(160deg, #0c1222 0%, #162032 40%, #0c1222 100%);
+    min-height: 100vh;
+    color: #e2e8f0;
+    padding: 16px;
+    direction: rtl;
+  }
+
+  .header { text-align: center; margin-bottom: 18px; }
+  .header h1 {
+    font-size: 22px; font-weight: 800;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #34d399);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header p { color: #64748b; font-size: 11px; margin-top: 4px; }
+
+  .week-progress {
+    background: rgba(255,255,255,0.04); border-radius: 10px;
+    padding: 9px 14px; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .week-progress span.label { font-size: 11px; color: #94a3b8; white-space: nowrap; }
+  .progress-track {
+    flex: 1; height: 6px; background: rgba(255,255,255,0.08);
+    border-radius: 99px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 99px; transition: width 0.4s ease;
+  }
+  .week-progress .pct { font-size: 12px; font-weight: 700; color: #a78bfa; min-width: 32px; text-align: left; }
+
+  .day-tabs {
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    gap: 4px; margin-bottom: 12px;
+  }
+  .day-tab {
+    padding: 8px 2px; border-radius: 10px; border: 2px solid transparent;
+    background: rgba(255,255,255,0.04); color: #94a3b8;
+    cursor: pointer; transition: all 0.2s; text-align: center;
+    font-family: inherit;
+  }
+  .day-tab.active {
+    border-color: #60a5fa;
+    background: linear-gradient(135deg, #1e3a5f, #1e293b);
+    color: #fff;
+  }
+  .day-tab .day-name { font-size: 11px; font-weight: 700; }
+  .day-tab .day-icon { font-size: 13px; margin-top: 1px; }
+  .day-tab .day-progress { font-size: 9px; margin-top: 1px; color: #34d399; font-weight: 700; }
+
+  .theme-banner {
+    background: rgba(255,255,255,0.05); border-radius: 11px;
+    padding: 9px 14px; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .theme-banner .right { display: flex; align-items: center; gap: 7px; }
+  .theme-banner .icon { font-size: 20px; }
+  .theme-banner .title { font-weight: 700; font-size: 14px; }
+  .theme-banner .count { font-size: 10px; color: #94a3b8; }
+  .theme-banner .left { display: flex; align-items: center; gap: 7px; }
+  .mini-track { width: 90px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 99px; overflow: hidden; }
+  .mini-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease; }
+
+  .filters { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 5px 11px; border-radius: 99px; border: none;
+    font-size: 11px; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: all 0.2s;
+  }
+
+  .kanban { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .kanban-col {
+    background: rgba(255,255,255,0.035); border-radius: 11px;
+    padding: 9px; min-height: 160px;
+  }
+  .col-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 9px; padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .col-header .col-title { display: flex; align-items: center; gap: 4px; }
+  .col-header .col-icon { font-size: 13px; }
+  .col-header .col-name { font-weight: 700; font-size: 12px; }
+  .col-header .col-count {
+    padding: 1px 7px; border-radius: 99px; font-size: 10px; font-weight: 700;
+  }
+
+  .task-card {
+    border-radius: 8px; padding: 8px 9px; cursor: pointer;
+    transition: all 0.2s; margin-bottom: 5px;
+  }
+  .task-card:hover { transform: translateY(-1px); }
+  .task-card .task-text { font-size: 11px; line-height: 1.7; margin-bottom: 4px; }
+  .task-card.done .task-text { text-decoration: line-through; color: #94a3b8; }
+  .task-card .task-label {
+    font-size: 9px; padding: 1px 6px; border-radius: 99px; font-weight: 600;
+    display: inline-block;
+  }
+
+  .empty-col { text-align: center; color: #475569; font-size: 10px; padding: 14px 0; }
+
+  .kpis {
+    margin-top: 14px; background: rgba(255,255,255,0.04);
+    border-radius: 11px; padding: 12px;
+  }
+  .kpis h3 { font-size: 13px; font-weight: 700; margin-bottom: 9px; }
+  .kpis-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .kpi-card { border-radius: 8px; padding: 9px; }
+  .kpi-card .kpi-title { font-weight: 700; font-size: 11px; margin-bottom: 6px; }
+  .kpi-card .kpi-item {
+    font-size: 10px; color: #cbd5e1; padding: 2px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .kpi-card .kpi-item:last-child { border-bottom: none; }
+
+  .footer { margin-top: 12px; text-align: center; font-size: 10px; color: #475569; }
+
+  @media (max-width: 700px) {
+    .kanban { grid-template-columns: 1fr; }
+    .kpis-grid { grid-template-columns: 1fr; }
+    .day-tabs { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>لوحة إدارة المتجر — ثلاثة شركاء</h1>
+  <p>السبت → الخميس • اضغط على المهمة لتغيير حالتها</p>
+</div>
+
+<div class="week-progress">
+  <span class="label">📊 تقدم الأسبوع</span>
+  <div class="progress-track">
+    <div class="progress-fill" id="weekFill" style="width:0%; background: linear-gradient(90deg, #8b5cf6, #a78bfa);"></div>
+  </div>
+  <span class="pct" id="weekPct">0%</span>
+</div>
+
+<div class="day-tabs" id="dayTabs"></div>
+
+<div class="theme-banner" id="themeBanner"></div>
+
+<div class="filters" id="filters"></div>
+
+<div class="kanban" id="kanban"></div>
+
+<div class="kpis">
+  <h3>🎯 الأهداف الأسبوعية (6 أيام)</h3>
+  <div class="kpis-grid">
+    <div class="kpi-card" style="background:#2563eb11; border:1px solid #2563eb22;">
+      <div class="kpi-title" style="color:#2563eb;">🏪 مدير المتجر</div>
+      <div class="kpi-item">◾ 18-25 منتج جديد</div>
+      <div class="kpi-item">◾ تحسين 10 صفحات</div>
+      <div class="kpi-item">◾ مراجعة المنافسين</div>
+      <div class="kpi-item">◾ تحديث التصنيفات</div>
+    </div>
+    <div class="kpi-card" style="background:#9333ea11; border:1px solid #9333ea22;">
+      <div class="kpi-title" style="color:#9333ea;">🎨 مسؤول المحتوى</div>
+      <div class="kpi-item">◾ 12-15 صورة / تصميم</div>
+      <div class="kpi-item">◾ 6 فيديوهات قصيرة</div>
+      <div class="kpi-item">◾ 3 بانرات عروض</div>
+      <div class="kpi-item">◾ محتوى احتياطي</div>
+    </div>
+    <div class="kpi-card" style="background:#16a34a11; border:1px solid #16a34a22;">
+      <div class="kpi-title" style="color:#16a34a;">📢 مسؤول التسويق</div>
+      <div class="kpi-item">◾ 6 بوستات يومية</div>
+      <div class="kpi-item">◾ حملة إعلانية</div>
+      <div class="kpi-item">◾ تقرير أسبوعي</div>
+      <div class="kpi-item">◾ رد يومي على العملاء</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">💡 انقلوا هذا النموذج إلى Trello أو Notion — لوحة واحدة بثلاث أعمدة: المطلوب → قيد التنفيذ → مكتمل</div>
+
+<script>
+const TEAM = {
+  store: { name: "مدير المتجر", color: "#2563eb", icon: "🏪" },
+  content: { name: "مسؤول المحتوى", color: "#9333ea", icon: "🎨" },
+  marketing: { name: "مسؤول التسويق", color: "#16a34a", icon: "📢" },
+};
+
+const DAYS = {
+  saturday: {
+    label: "السبت", theme: "يوم التخطيط والتجهيز", themeIcon: "📋",
+    tasks: [
+      { id: 1, text: "اجتماع أسبوعي — مراجعة أهداف الأسبوع الماضي", owner: "all" },
+      { id: 2, text: "تحديد أهداف الأسبوع الجديد (أرقام واضحة)", owner: "all" },
+      { id: 3, text: "إعداد قائمة المنتجات المطلوب إضافتها هذا الأسبوع", owner: "store" },
+      { id: 4, text: "تجهيز جدول المحتوى الأسبوعي (أي منتج يتصوّر أي يوم)", owner: "content" },
+      { id: 5, text: "تحليل أداء الأسبوع الماضي (إعلانات + سوشال)", owner: "marketing" },
+      { id: 6, text: "تخطيط الحملات الإعلانية للأسبوع", owner: "marketing" },
+    ],
+  },
+  sunday: {
+    label: "الأحد", theme: "يوم الإنتاج ①", themeIcon: "⚡",
+    tasks: [
+      { id: 7, text: "إضافة 4-5 منتجات جديدة على المتجر", owner: "store" },
+      { id: 8, text: "كتابة أوصاف تسويقية للمنتجات الجديدة", owner: "store" },
+      { id: 9, text: "تصوير منتجات أو تجهيز صور احترافية (4-5 منتجات)", owner: "content" },
+      { id: 10, text: "تصميم 2 بوست سوشال ميديا", owner: "content" },
+      { id: 11, text: "نشر المحتوى اليومي على جميع المنصات", owner: "marketing" },
+      { id: 12, text: "الرد على رسائل واستفسارات العملاء", owner: "marketing" },
+    ],
+  },
+  monday: {
+    label: "الاثنين", theme: "يوم الإنتاج ②", themeIcon: "⚡",
+    tasks: [
+      { id: 13, text: "إضافة 4-5 منتجات جديدة على المتجر", owner: "store" },
+      { id: 14, text: "مراجعة أسعار المنتجات ومقارنتها بالمنافسين", owner: "store" },
+      { id: 15, text: "تصوير منتجات أو تجهيز صور (4-5 منتجات)", owner: "content" },
+      { id: 16, text: "تصميم بانر عرض أو إعلان", owner: "content" },
+      { id: 17, text: "نشر المحتوى اليومي + متابعة التعليقات", owner: "marketing" },
+      { id: 18, text: "إطلاق أو متابعة الحملة الإعلانية الأسبوعية", owner: "marketing" },
+    ],
+  },
+  tuesday: {
+    label: "الثلاثاء", theme: "يوم الإنتاج ③", themeIcon: "⚡",
+    tasks: [
+      { id: 19, text: "إضافة 3-4 منتجات جديدة على المتجر", owner: "store" },
+      { id: 20, text: "تحديث معلومات المنتجات (مقاسات، ألوان، توفر)", owner: "store" },
+      { id: 21, text: "تصوير منتجات أو تجهيز صور (3-4 منتجات)", owner: "content" },
+      { id: 22, text: "تصميم 2 بوست + ستوري أو ريلز", owner: "content" },
+      { id: 23, text: "نشر المحتوى اليومي + الرد على العملاء", owner: "marketing" },
+      { id: 24, text: "متابعة أداء الإعلانات وتعديلها إذا لزم", owner: "marketing" },
+    ],
+  },
+  wednesday: {
+    label: "الأربعاء", theme: "يوم التحسين والمراجعة", themeIcon: "🔧",
+    tasks: [
+      { id: 25, text: "مراجعة صفحات المنتجات الموجودة وتحسين الأوصاف", owner: "store" },
+      { id: 26, text: "ترتيب التصنيفات وتحسين تجربة التصفح في المتجر", owner: "store" },
+      { id: 27, text: "تحسين الصور القديمة أو إعادة تصميمها", owner: "content" },
+      { id: 28, text: "تجهيز محتوى احتياطي للأسبوع الجاي", owner: "content" },
+      { id: 29, text: "تحليل أداء الإعلانات والمحتوى (وش اشتغل ووش لا)", owner: "marketing" },
+      { id: 30, text: "نشر المحتوى اليومي + الرد على العملاء", owner: "marketing" },
+    ],
+  },
+  thursday: {
+    label: "الخميس", theme: "يوم الإبداع والتقييم", themeIcon: "💡",
+    tasks: [
+      { id: 31, text: "دراسة المنافسين — وش المنتجات اللي عندهم وما عندنا؟", owner: "store" },
+      { id: 32, text: "إعداد قائمة منتجات مقترحة للأسبوع الجاي", owner: "store" },
+      { id: 33, text: "تجربة أفكار محتوى جديدة (ريلز، تيك توك، كواليس)", owner: "content" },
+      { id: 34, text: "تصميم محتوى إبداعي مختلف عن المعتاد", owner: "content" },
+      { id: 35, text: "تجربة إعلان أو جمهور جديد", owner: "marketing" },
+      { id: 36, text: "كتابة تقرير الأسبوع + أفكار للأسبوع الجاي", owner: "marketing" },
+      { id: 37, text: "اجتماع نهاية الأسبوع — ملخص سريع وتقييم", owner: "all" },
+    ],
+  },
+};
+
+const STATUSES = [
+  { key: "todo", label: "المطلوب", icon: "📌", color: "#ef4444" },
+  { key: "doing", label: "قيد التنفيذ", icon: "🔄", color: "#f59e0b" },
+  { key: "done", label: "مكتمل", icon: "✅", color: "#22c55e" },
+];
+
+let activeDay = "saturday";
+let filter = "all";
+let taskStatuses = {};
+
+// Try to load saved state
+try {
+  const saved = localStorage.getItem("trello_board_state");
+  if (saved) taskStatuses = JSON.parse(saved);
+} catch(e) {}
+
+function saveState() {
+  try { localStorage.setItem("trello_board_state", JSON.stringify(taskStatuses)); } catch(e) {}
+}
+
+function getStatus(id) { return taskStatuses[id] || "todo"; }
+
+function cycleStatus(id) {
+  const current = getStatus(id);
+  taskStatuses[id] = current === "todo" ? "doing" : current === "doing" ? "done" : "todo";
+  saveState();
+  render();
+}
+
+function setDay(day) { activeDay = day; render(); }
+function setFilter(f) { filter = f; render(); }
+
+function render() {
+  const day = DAYS[activeDay];
+
+  // Week progress
+  const allTasks = Object.values(DAYS).flatMap(d => d.tasks);
+  const allDone = allTasks.filter(t => getStatus(t.id) === "done").length;
+  const weekPct = Math.round((allDone / allTasks.length) * 100);
+  document.getElementById("weekFill").style.width = weekPct + "%";
+  document.getElementById("weekFill").style.background = weekPct === 100
+    ? "linear-gradient(90deg, #22c55e, #34d399)"
+    : "linear-gradient(90deg, #8b5cf6, #a78bfa)";
+  document.getElementById("weekPct").textContent = weekPct + "%";
+
+  // Day tabs
+  let tabsHTML = "";
+  Object.entries(DAYS).forEach(([key, d]) => {
+    const isActive = activeDay === key;
+    const dDone = d.tasks.filter(t => getStatus(t.id) === "done").length;
+    const dTotal = d.tasks.length;
+    tabsHTML += `<button class="day-tab ${isActive ? 'active' : ''}" onclick="setDay('${key}')">
+      <div class="day-name">${d.label}</div>
+      <div class="day-icon">${d.themeIcon}</div>
+      ${dDone > 0 ? `<div class="day-progress">${dDone}/${dTotal}</div>` : ''}
+    </button>`;
+  });
+  document.getElementById("dayTabs").innerHTML = tabsHTML;
+
+  // Theme banner
+  const total = day.tasks.length;
+  const done = day.tasks.filter(t => getStatus(t.id) === "done").length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById("themeBanner").innerHTML = `
+    <div class="right">
+      <span class="icon">${day.themeIcon}</span>
+      <div>
+        <div class="title">${day.label} — ${day.theme}</div>
+        <div class="count">${total} مهام</div>
+      </div>
+    </div>
+    <div class="left">
+      <div class="mini-track">
+        <div class="mini-fill" style="width:${pct}%; background:${pct === 100 ? 'linear-gradient(90deg,#22c55e,#34d399)' : 'linear-gradient(90deg,#3b82f6,#60a5fa)'}"></div>
+      </div>
+      <span style="font-size:12px;font-weight:700;color:${pct === 100 ? '#34d399' : '#60a5fa'}">${pct}%</span>
+    </div>`;
+
+  // Filters
+  let filtersHTML = `<button class="filter-btn" style="background:${filter === 'all' ? '#475569' : 'rgba(255,255,255,0.06)'};color:${filter === 'all' ? '#fff' : '#94a3b8'}" onclick="setFilter('all')">الكل</button>`;
+  Object.entries(TEAM).forEach(([key, m]) => {
+    filtersHTML += `<button class="filter-btn" style="background:${filter === key ? m.color : 'rgba(255,255,255,0.06)'};color:${filter === key ? '#fff' : '#94a3b8'}" onclick="setFilter('${key}')">${m.icon} ${m.name}</button>`;
+  });
+  document.getElementById("filters").innerHTML = filtersHTML;
+
+  // Kanban
+  const filtered = day.tasks.filter(t => filter === "all" || t.owner === filter || t.owner === "all");
+
+  let kanbanHTML = "";
+  STATUSES.forEach(col => {
+    const tasks = filtered.filter(t => getStatus(t.id) === col.key);
+    let cardsHTML = "";
+    if (tasks.length === 0) {
+      cardsHTML = `<div class="empty-col">لا توجد مهام</div>`;
+    } else {
+      tasks.forEach(t => {
+        const status = getStatus(t.id);
+        const member = t.owner === "all" ? null : TEAM[t.owner];
+        const labelHTML = t.owner === "all"
+          ? `<span class="task-label" style="background:rgba(255,255,255,0.08);color:#94a3b8;">👥 اجتماع مشترك</span>`
+          : `<span class="task-label" style="background:${member.color}22;color:${member.color};">${member.icon} ${member.name}</span>`;
+        cardsHTML += `<div class="task-card ${status}" style="background:${status === 'done' ? 'rgba(34,197,94,0.07)' : 'rgba(255,255,255,0.05)'};border:1px solid ${status === 'done' ? 'rgba(34,197,94,0.15)' : 'rgba(255,255,255,0.05)'};opacity:${status === 'done' ? '0.6' : '1'}" onclick="cycleStatus(${t.id})">
+          <div class="task-text">${t.text}</div>
+          ${labelHTML}
+        </div>`;
+      });
+    }
+
+    kanbanHTML += `<div class="kanban-col">
+      <div class="col-header">
+        <div class="col-title">
+          <span class="col-icon">${col.icon}</span>
+          <span class="col-name">${col.label}</span>
+        </div>
+        <span class="col-count" style="background:${col.color}22;color:${col.color}">${tasks.length}</span>
+      </div>
+      ${cardsHTML}
+    </div>`;
+  });
+  document.getElementById("kanban").innerHTML = kanbanHTML;
+}
+
+// Reset button
+function resetAll() {
+  if (confirm("هل أنت متأكد؟ سيتم إعادة جميع المهام للوضع الأصلي")) {
+    taskStatuses = {};
+    saveState();
+    render();
+  }
+}
+
+render();
+</script>
+</body>
+</html>
