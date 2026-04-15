@@ -46,12 +46,10 @@
   }
   .login-box { position:relative; z-index:1; text-align:center; max-width:520px; width:90%; padding:40px; }
   .login-logo {
-    width:80px; height:80px; margin:0 auto 20px;
-    background:linear-gradient(135deg,var(--brand-primary),var(--brand-gold));
-    border-radius:20px; display:flex; align-items:center; justify-content:center;
-    box-shadow:0 8px 40px rgba(200,164,92,0.3);
+    width:100px; height:100px; margin:0 auto 20px;
+    display:flex; align-items:center; justify-content:center;
   }
-  .login-logo svg { width:50px; height:50px; }
+  .login-logo img { width:100%; height:100%; object-fit:contain; }
   .login-box h1 { font-size:36px; font-weight:900; color:var(--brand-primary); margin-bottom:6px; }
   .login-box p { font-size:18px; color:var(--text-secondary); margin-bottom:40px; font-weight:600; }
   .login-cards { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
@@ -85,11 +83,9 @@
   .brand { display:flex; align-items:center; gap:14px; }
   .logo-wrap {
     width:50px; height:50px;
-    background:linear-gradient(135deg,var(--brand-primary),var(--brand-gold));
-    border-radius:12px; display:flex; align-items:center; justify-content:center;
-    box-shadow:0 4px 20px rgba(200,164,92,0.25);
+    display:flex; align-items:center; justify-content:center;
   }
-  .logo-wrap svg { width:32px; height:32px; }
+  .logo-wrap img { width:100%; height:100%; object-fit:contain; }
   .brand-text h1 { font-size:24px; font-weight:900; }
   .brand-text h1 em { color:var(--brand-primary); font-style:normal; }
   .brand-text p { font-size:14px; color:var(--text-secondary); font-weight:600; }
@@ -232,29 +228,24 @@
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
     <div class="login-logo">
-      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <path d="M50 15 C30 15,15 30,15 45 C15 60,30 70,40 65 C50 60,45 45,35 45 C25 45,25 55,35 58" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
-        <path d="M50 15 C70 15,85 30,85 45 C85 60,70 70,60 65 C50 60,55 45,65 45 C75 45,75 55,65 58" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
-        <path d="M40 65 C45 75,50 85,50 85" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
-        <path d="M60 65 C55 75,50 85,50 85" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
-      </svg>
+      <img src="https://cdn.salla.sa/form-builder/Re5iPZztkH16QkdqJ8PVY9lVfpoIbwAM10ewhNDL.png" alt="مجالي">
     </div>
     <h1>مجالي</h1>
     <p>اختر حسابك للدخول إلى لوحة الإدارة</p>
     <div class="login-cards">
       <div class="login-card store" onclick="login('store')">
         <div class="lc-icon">🏪</div>
-        <div class="lc-name">الشريك الأول</div>
+        <div class="lc-name">المستخدم الأول</div>
         <div class="lc-role">مدير المتجر والمنتجات</div>
       </div>
       <div class="login-card content" onclick="login('content')">
         <div class="lc-icon">🎨</div>
-        <div class="lc-name">الشريك الثاني</div>
+        <div class="lc-name">المستخدم الثاني</div>
         <div class="lc-role">مسؤول المحتوى والتصميم</div>
       </div>
       <div class="login-card marketing" onclick="login('marketing')">
         <div class="lc-icon">📢</div>
-        <div class="lc-name">الشريك الثالث</div>
+        <div class="lc-name">المستخدم الثالث</div>
         <div class="lc-role">مسؤول التسويق والعملاء</div>
       </div>
     </div>
@@ -265,12 +256,7 @@
   <div class="header">
     <div class="brand">
       <div class="logo-wrap">
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M50 15 C30 15,15 30,15 45 C15 60,30 70,40 65 C50 60,45 45,35 45 C25 45,25 55,35 58" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
-          <path d="M50 15 C70 15,85 30,85 45 C85 60,70 70,60 65 C50 60,55 45,65 45 C75 45,75 55,65 58" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
-          <path d="M40 65 C45 75,50 85,50 85" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
-          <path d="M60 65 C55 75,50 85,50 85" stroke="#1a1a2e" fill="none" stroke-width="7" stroke-linecap="round"/>
-        </svg>
+        <img src="https://cdn.salla.sa/form-builder/Re5iPZztkH16QkdqJ8PVY9lVfpoIbwAM10ewhNDL.png" alt="مجالي">
       </div>
       <div class="brand-text">
         <h1><em>مجالي</em> — لوحة إدارة المتجر</h1>
@@ -327,9 +313,9 @@
 
 <script>
 const TEAM={
-  store:{name:"مدير المتجر",title:"الشريك الأول",color:"#4a9eff",icon:"🏪"},
-  content:{name:"مسؤول المحتوى",title:"الشريك الثاني",color:"#c084fc",icon:"🎨"},
-  marketing:{name:"مسؤول التسويق",title:"الشريك الثالث",color:"#34d399",icon:"📢"},
+  store:{name:"مدير المتجر",title:"المستخدم الأول",color:"#4a9eff",icon:"🏪"},
+  content:{name:"مسؤول المحتوى",title:"المستخدم الثاني",color:"#c084fc",icon:"🎨"},
+  marketing:{name:"مسؤول التسويق",title:"المستخدم الثالث",color:"#34d399",icon:"📢"},
 };
 const DAYS={
   saturday:{label:"السبت",theme:"التخطيط والتجهيز",themeIcon:"📋",tasks:[
