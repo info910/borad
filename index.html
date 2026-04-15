@@ -182,6 +182,10 @@
     cursor:pointer; transition:all 0.2s; border:1px solid rgba(255,255,255,0.04);
   }
   .task-card:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(0,0,0,0.25); }
+  .task-card.locked { cursor:default; opacity:0.4; }
+  .task-card.locked:hover { transform:none; box-shadow:none; }
+  .task-card.locked .tc-text { color:var(--text-muted); }
+  .tc-lock { font-size:11px; color:var(--text-muted); margin-right:6px; }
   .task-card.status-done { opacity:0.5; }
   .task-card.status-done .tc-text { text-decoration:line-through; color:var(--text-muted); }
   .tc-text { font-size:15px; line-height:1.9; margin-bottom:8px; font-weight:600; }
@@ -396,7 +400,11 @@ function switchUser(){
 }
 
 function getStatus(id){return taskStatuses[id]||"todo"}
+function canEdit(t){return t.owner===currentUser||t.owner==="all"}
+function getTaskById(id){return Object.values(DAYS).flatMap(d=>d.tasks).find(t=>t.id===id)}
 function cycleStatus(id){
+  const t=getTaskById(id);
+  if(!t||!canEdit(t))return;
   const c=getStatus(id);
   taskStatuses[id]=c==="todo"?"doing":c==="doing"?"done":"todo";
   save();render();
@@ -469,11 +477,13 @@ function render(){
     if(!tasks.length){cards=`<div class="empty-state">لا توجد مهام</div>`}
     else{tasks.forEach(t=>{
       const s=getStatus(t.id), m=t.owner==="all"?null:TEAM[t.owner];
+      const mine=canEdit(t);
       const lbl=t.owner==="all"
         ?`<span class="tc-label" style="background:rgba(200,164,92,0.1);color:var(--brand-primary)">👥 اجتماع مشترك</span>`
         :`<span class="tc-label" style="background:${m.color}15;color:${m.color}">${m.icon} ${m.name}</span>`;
-      cards+=`<div class="task-card status-${s}" style="background:${s==='done'?'rgba(74,222,128,0.04)':'rgba(255,255,255,0.03)'};border-color:${s==='done'?'rgba(74,222,128,0.1)':'rgba(255,255,255,0.04)'}" onclick="cycleStatus(${t.id})">
-        <div class="tc-text">${t.text}</div>${lbl}</div>`;
+      const lockIcon=mine?'':`<span class="tc-lock">🔒</span>`;
+      cards+=`<div class="task-card status-${s} ${mine?'':'locked'}" style="background:${s==='done'?'rgba(74,222,128,0.04)':'rgba(255,255,255,0.03)'};border-color:${s==='done'?'rgba(74,222,128,0.1)':'rgba(255,255,255,0.04)'}" ${mine?`onclick="cycleStatus(${t.id})"`:''}>
+        <div class="tc-text">${t.text}</div><div>${lbl}${lockIcon}</div></div>`;
     })}
     kH+=`<div class="kanban-col"><div class="col-head">
       <div class="ch-left"><span class="ch-icon">${col.icon}</span><span class="ch-name">${col.label}</span></div>
