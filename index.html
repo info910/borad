@@ -39,6 +39,80 @@
   .loading img { width:80px; animation:pulse 1.5s ease-in-out infinite; }
   .loading p { color:var(--text-secondary); font-size:14px; font-weight:600; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  @keyframes pointsPop {
+    0% { opacity:0; transform:translate(-50%,-50%) scale(0.3); }
+    30% { opacity:1; transform:translate(-50%,-50%) scale(1.2); }
+    60% { opacity:1; transform:translate(-50%,-70%) scale(1); }
+    100% { opacity:0; transform:translate(-50%,-120%) scale(0.8); }
+  }
+
+  /* Points badge */
+  .points-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:99px;
+    background:linear-gradient(135deg, rgba(200,164,92,0.15), rgba(212,175,110,0.1));
+    border:1.5px solid rgba(200,164,92,0.35);
+    font-size:14px; font-weight:800; color:var(--brand-primary);
+  }
+  .points-badge .trophy { font-size:16px; }
+
+  /* Point level chip on task card */
+  .tc-points {
+    font-size:11px; padding:2px 8px; border-radius:99px; font-weight:800;
+    background:rgba(200,164,92,0.1); color:var(--brand-primary);
+  }
+
+  /* Leaderboard in admin */
+  .leaderboard {
+    background:var(--brand-surface); border:1px solid var(--brand-border);
+    border-radius:14px; padding:18px 22px; margin-bottom:18px;
+  }
+  .lb-header {
+    display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;
+  }
+  .lb-title { font-size:18px; font-weight:900; display:flex; align-items:center; gap:8px; }
+  .lb-month {
+    font-size:12px; color:var(--text-muted); font-weight:700;
+    padding:5px 12px; background:rgba(255,255,255,0.04); border-radius:99px;
+  }
+  .lb-list { display:flex; flex-direction:column; gap:10px; }
+  .lb-row {
+    display:flex; align-items:center; gap:12px;
+    padding:14px 16px; border-radius:12px;
+    background:rgba(255,255,255,0.03);
+    border:1.5px solid transparent;
+    transition:all 0.3s;
+  }
+  .lb-row.rank-1 {
+    background:linear-gradient(90deg, rgba(200,164,92,0.12), rgba(255,255,255,0.02));
+    border-color:rgba(200,164,92,0.35);
+  }
+  .lb-row.rank-2 {
+    background:linear-gradient(90deg, rgba(148,163,184,0.08), rgba(255,255,255,0.02));
+    border-color:rgba(148,163,184,0.2);
+  }
+  .lb-row.rank-3 {
+    background:linear-gradient(90deg, rgba(180,120,60,0.08), rgba(255,255,255,0.02));
+    border-color:rgba(180,120,60,0.2);
+  }
+  .lb-rank {
+    font-size:24px; font-weight:900; min-width:42px; text-align:center;
+  }
+  .lb-rank.rank-1 { color:var(--brand-primary); }
+  .lb-rank.rank-2 { color:#94a3b8; }
+  .lb-rank.rank-3 { color:#b48050; }
+  .lb-avatar {
+    width:42px; height:42px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center; font-size:20px;
+  }
+  .lb-info { flex:1; }
+  .lb-name { font-size:15px; font-weight:800; }
+  .lb-role { font-size:11px; color:var(--text-muted); font-weight:600; }
+  .lb-points {
+    font-size:22px; font-weight:900;
+    display:flex; align-items:center; gap:4px;
+  }
+  .lb-points-label { font-size:11px; color:var(--text-muted); font-weight:700; }
 
   /* Auth screen */
   .auth-screen {
@@ -390,6 +464,13 @@
   </div>
 
   <div id="userView">
+    <div class="week-bar" id="pointsBar" style="justify-content:space-between">
+      <span class="wb-label">🏆 نقاطي هذا الشهر</span>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span class="points-badge"><span class="trophy">⭐</span><span id="userMonthlyPoints">0</span> نقطة</span>
+        <span style="font-size:12px; color:var(--text-muted); font-weight:600;" id="userWeekEarned"></span>
+      </div>
+    </div>
     <div class="week-bar">
       <span class="wb-label">📊 تقدم الأسبوع</span>
       <div class="wb-track"><div class="wb-fill" id="weekFill"></div></div>
@@ -429,6 +510,16 @@
   </div>
 
   <div id="adminView" style="display:none">
+    <div class="leaderboard">
+      <div class="lb-header">
+        <div class="lb-title">🏆 لوحة الشرف — نقاط الشهر</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="lb-month" id="currentMonth"></span>
+          <button class="hdr-btn danger" onclick="adminResetPoints()">♻️ تصفير النقاط</button>
+        </div>
+      </div>
+      <div class="lb-list" id="leaderboard"></div>
+    </div>
     <div class="admin-summary">
       <h3>📊 ملخص الفريق — مباشر</h3>
       <div class="summary-grid" id="summaryGrid"></div>
@@ -469,6 +560,27 @@ const ROLES = {
   content:   { name:"مسؤول المحتوى",  title:"مسؤول المحتوى والتصميم",  color:"#c084fc", icon:"🎨" },
   marketing: { name:"مسؤول التسويق",  title:"مسؤول التسويق والعملاء",  color:"#34d399", icon:"📢" },
 };
+
+// Points per task (by difficulty)
+// Levels: 1=daily routine, 2-4=medium, 5-6=hard, 8=strategic
+const POINTS = {
+  1:2, 2:2, 3:8, 4:8, 5:5, 6:8, 7:3, 8:5,
+  9:4, 10:4, 11:4, 12:3, 13:3, 14:1, 15:1, 16:1, 17:2,
+  18:4, 19:4, 20:4, 21:6, 22:1, 23:1, 24:5, 25:5,
+  26:4, 27:3, 28:4, 29:4, 30:3, 31:6, 32:1, 33:1, 34:3, 35:3,
+  36:4, 37:3, 38:2, 39:6, 40:3, 41:3, 42:3, 43:1, 44:1, 45:5, 46:5, 47:5,
+  48:5, 49:8, 50:5, 51:5, 52:5, 53:1, 54:5, 55:8, 56:5, 57:4, 58:2,
+};
+
+function getTaskPoints(id) { return POINTS[id] || 1; }
+
+// Point level label
+function getPointLevel(pts) {
+  if(pts <= 2) return { label:"سهل", color:"#94a3b8" };
+  if(pts <= 4) return { label:"متوسط", color:"#60a5fa" };
+  if(pts <= 6) return { label:"صعب", color:"#f59e0b" };
+  return { label:"استراتيجي", color:"#c084fc" };
+}
 
 const DAYS = {
   saturday:{label:"السبت",theme:"التخطيط والتجهيز",themeIcon:"📋",tasks:[
@@ -555,7 +667,7 @@ let activeDay = "saturday";
 let activeFilter = "all";
 let taskStatuses = {};
 let taskUnsubscribe = null;
-let adminData = { users:{}, tasks:{store:{}, content:{}, marketing:{}} };
+let adminData = { users:{}, tasks:{store:{}, content:{}, marketing:{}}, points:{store:0, content:0, marketing:0} };
 let adminUnsubs = [];
 
 const dMap={6:"saturday",0:"sunday",1:"monday",2:"tuesday",3:"wednesday",4:"thursday"};
@@ -758,12 +870,35 @@ function renderBadge(){
 }
 
 // ============ USER VIEW (realtime subscribe) ============
+let userPointsUnsub = null;
+let userMonthlyPoints = 0;
+
 function subscribeUser(){
   if(taskUnsubscribe) taskUnsubscribe();
+  if(userPointsUnsub) userPointsUnsub();
+
   taskUnsubscribe = onSnapshot(doc(db, "tasks", currentSession.role), (snap) => {
     taskStatuses = snap.exists() ? (snap.data().statuses || {}) : {};
     renderUser();
   }, (err) => console.error("task subscribe error:", err));
+
+  // Subscribe to monthly points
+  userPointsUnsub = onSnapshot(doc(db, "points", currentSession.role), (snap) => {
+    userMonthlyPoints = snap.exists() ? (snap.data().monthly || 0) : 0;
+    updatePointsDisplay();
+  }, (err) => console.error("points subscribe error:", err));
+}
+
+function updatePointsDisplay(){
+  const el = document.getElementById("userMonthlyPoints");
+  if(el) el.textContent = userMonthlyPoints;
+
+  // Calculate week earned
+  const weekEarned = Object.keys(taskStatuses || {})
+    .filter(id => taskStatuses[id] === "done")
+    .reduce((sum, id) => sum + getTaskPoints(parseInt(id)), 0);
+  const weekEl = document.getElementById("userWeekEarned");
+  if(weekEl) weekEl.textContent = `(+${weekEarned} هذا الأسبوع)`;
 }
 
 function canEdit(t){ return t.owner === currentSession.role || t.owner === "all" }
@@ -775,18 +910,63 @@ window.cycleStatus = async function(id){
   if(!t || !canEdit(t)) return;
   const c = getStatus(id);
   const newStatus = c === "todo" ? "doing" : c === "doing" ? "done" : "todo";
+  const taskPoints = getTaskPoints(id);
+
+  // Calculate monthly points delta
+  // When task becomes "done" for the first time, add points
+  // When task leaves "done" state, subtract points
+  let pointsDelta = 0;
+  if(c !== "done" && newStatus === "done") pointsDelta = +taskPoints;
+  else if(c === "done" && newStatus !== "done") pointsDelta = -taskPoints;
+
   taskStatuses[id] = newStatus;
   renderUser(); // optimistic
+
   try {
+    // Update task statuses
     await setDoc(doc(db, "tasks", currentSession.role), {
       statuses: taskStatuses,
       updatedAt: new Date().toISOString(),
       updatedBy: currentSession.displayName
     }, { merge: true });
+
+    // Update monthly points if changed
+    if(pointsDelta !== 0) {
+      const pointsRef = doc(db, "points", currentSession.role);
+      const snap = await getDoc(pointsRef);
+      const currentPoints = snap.exists() ? (snap.data().monthly || 0) : 0;
+      const newTotal = Math.max(0, currentPoints + pointsDelta);
+      await setDoc(pointsRef, {
+        monthly: newTotal,
+        lastUpdated: new Date().toISOString(),
+        lastTaskId: id,
+        lastDelta: pointsDelta
+      }, { merge: true });
+
+      // Show floating points animation
+      if(pointsDelta > 0) showPointsAnimation(`+${pointsDelta}`, "#4ade80");
+      else showPointsAnimation(`${pointsDelta}`, "#f87171");
+    }
   } catch(e){
     console.error("update error:", e);
     alert("فشل حفظ التغيير — تحقق من الإنترنت");
   }
+}
+
+// Floating points animation
+function showPointsAnimation(text, color) {
+  const el = document.createElement("div");
+  el.textContent = text;
+  el.style.cssText = `
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-size:60px; font-weight:900; color:${color};
+    text-shadow:0 4px 20px ${color}88;
+    z-index:9999; pointer-events:none;
+    animation:pointsPop 1.2s ease-out forwards;
+    font-family:'Cairo',sans-serif;
+  `;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1200);
 }
 
 window.setDay = function(d){ activeDay = d; renderUser() }
@@ -843,6 +1023,7 @@ function renderUser(){
   const all = Object.values(DAYS).flatMap(d => d.tasks);
   const aD = all.filter(t => getStatus(t.id) === "done").length;
   const wP = Math.round((aD / all.length) * 100);
+  updatePointsDisplay();
   const wF = document.getElementById("weekFill");
   wF.style.width = wP + "%";
   wF.style.background = wP === 100
@@ -893,13 +1074,19 @@ function renderUser(){
       const s = getStatus(t.id);
       const m = t.owner === "all" ? null : ROLES[t.owner];
       const mine = canEdit(t);
+      const pts = getTaskPoints(t.id);
+      const lvl = getPointLevel(pts);
       const lbl = t.owner === "all"
         ? `<span class="tc-label" style="background:rgba(200,164,92,0.1);color:var(--brand-primary)">👥 اجتماع مشترك</span>`
         : `<span class="tc-label" style="background:${m.color}15;color:${m.color}">${m.icon} ${m.name}</span>`;
       const lockIcon = mine ? '' : `<span class="tc-lock">🔒</span>`;
+      const pointsChip = `<span class="tc-points" title="${lvl.label}" style="background:${lvl.color}22;color:${lvl.color}">⭐ ${pts}</span>`;
       cards += `<div class="task-card status-${s} ${mine?'':'locked'}" style="background:${s==='done'?'rgba(74,222,128,0.04)':'rgba(255,255,255,0.03)'};border-color:${s==='done'?'rgba(74,222,128,0.1)':'rgba(255,255,255,0.04)'}" ${mine?`onclick="cycleStatus(${t.id})"`:''}>
         <div class="tc-text">${t.text}</div>
-        <div class="tc-footer">${lbl}${lockIcon}</div>
+        <div class="tc-footer">
+          <div style="display:flex; gap:5px; align-items:center;">${lbl}${pointsChip}</div>
+          ${lockIcon}
+        </div>
       </div>`;
     });
     kH += `<div class="kanban-col"><div class="col-head">
@@ -934,9 +1121,21 @@ function subscribeAdmin(){
     });
     adminUnsubs.push(u);
   });
+
+  // Subscribe to all role points docs
+  ["store","content","marketing"].forEach(role => {
+    const u = onSnapshot(doc(db, "points", role), (snap) => {
+      adminData.points[role] = snap.exists() ? (snap.data().monthly || 0) : 0;
+      renderAdmin();
+    });
+    adminUnsubs.push(u);
+  });
 }
 
 function renderAdmin(){
+  // Render leaderboard first
+  renderLeaderboard();
+
   let totalDone=0, totalPending=0, totalAll=0, activeUsers=0;
   Object.entries(ROLES).forEach(([role]) => {
     const td = adminData.tasks[role] || {};
@@ -1006,6 +1205,81 @@ function renderAdmin(){
     </div>`;
   });
   document.getElementById("adminGrid").innerHTML = grid;
+}
+
+// ============ LEADERBOARD ============
+function renderLeaderboard(){
+  // Update month label
+  const monthNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+  const now = new Date();
+  const monthEl = document.getElementById("currentMonth");
+  if(monthEl) monthEl.textContent = monthNames[now.getMonth()] + " " + now.getFullYear();
+
+  // Build ranked list
+  const rows = Object.entries(ROLES).map(([role, info]) => ({
+    role,
+    info,
+    points: adminData.points[role] || 0,
+    username: adminData.users[role] ? adminData.users[role].username : "لم يسجّل بعد",
+    active: !!adminData.users[role]
+  })).sort((a, b) => b.points - a.points);
+
+  const medals = ["🥇", "🥈", "🥉"];
+  let html = "";
+  rows.forEach((r, i) => {
+    const rank = i + 1;
+    html += `<div class="lb-row rank-${rank}">
+      <div class="lb-rank rank-${rank}">${medals[i] || rank}</div>
+      <div class="lb-avatar" style="background:${r.info.color}22;color:${r.info.color}">${r.info.icon}</div>
+      <div class="lb-info">
+        <div class="lb-name" style="color:${r.info.color}">${r.username}</div>
+        <div class="lb-role">${r.info.name}${r.active ? '' : ' — غير نشط'}</div>
+      </div>
+      <div style="text-align:left">
+        <div class="lb-points" style="color:${r.info.color}">
+          ⭐ ${r.points}
+        </div>
+        <div class="lb-points-label">نقطة</div>
+      </div>
+    </div>`;
+  });
+
+  const lb = document.getElementById("leaderboard");
+  if(lb) lb.innerHTML = html;
+}
+
+// ============ ADMIN: RESET MONTHLY POINTS ============
+window.adminResetPoints = async function(){
+  if(!currentSession || !currentSession.isAdmin) return;
+
+  const msg = "⚠️ تصفير نقاط الشهر\n\n"
+            + "سيتم إعادة نقاط جميع أعضاء الفريق إلى الصفر:\n"
+            + "• مدير المتجر\n"
+            + "• مسؤول المحتوى\n"
+            + "• مسؤول التسويق\n\n"
+            + "هذا الإجراء مناسب في بداية كل شهر جديد.\n"
+            + "ملاحظة: حالات المهام لا تتأثر بهذا الإجراء.\n\n"
+            + "هل أنت متأكد؟";
+
+  if(!confirm(msg)) return;
+  if(!confirm("تأكيد أخير: تصفير نقاط الجميع لبداية شهر جديد؟")) return;
+
+  try {
+    const resetData = {
+      monthly: 0,
+      resetAt: new Date().toISOString(),
+      resetBy: "Admin"
+    };
+    await Promise.all([
+      setDoc(doc(db, "points", "store"), resetData),
+      setDoc(doc(db, "points", "content"), resetData),
+      setDoc(doc(db, "points", "marketing"), resetData),
+    ]);
+    alert("✅ تم تصفير النقاط. شهر جديد يبدأ الآن!");
+  } catch(e){
+    console.error(e);
+    alert("فشل التصفير — تحقق من الاتصال وصلاحيات Firebase");
+  }
 }
 
 // Enter key submit
