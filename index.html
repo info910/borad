@@ -200,6 +200,85 @@
     background:rgba(200,164,92,0.1); color:var(--brand-primary);
   }
 
+  /* Comment button on task cards */
+  .tc-comment-btn {
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:11px; padding:2px 8px; border-radius:99px; font-weight:700;
+    background:rgba(255,255,255,0.05); color:var(--text-muted);
+    border:none; cursor:pointer; font-family:inherit;
+    transition:all 0.2s;
+  }
+  .tc-comment-btn:hover { background:rgba(74,158,255,0.15); color:var(--store-color); }
+  .tc-comment-btn.has-note {
+    background:rgba(74,158,255,0.18); color:var(--store-color);
+    box-shadow:0 0 0 1px rgba(74,158,255,0.3);
+  }
+
+  /* Comment indicator on admin user card task list */
+  .admin-comment-list {
+    margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.05);
+  }
+  .admin-comment-title {
+    font-size:12px; font-weight:800; color:var(--text-muted); margin-bottom:8px;
+    display:flex; align-items:center; gap:5px;
+  }
+  .admin-comment-item {
+    background:rgba(74,158,255,0.06); border:1px solid rgba(74,158,255,0.18);
+    border-radius:8px; padding:8px 10px; margin-bottom:6px;
+    font-size:12px;
+  }
+  .admin-comment-task {
+    font-weight:800; color:var(--text-primary); margin-bottom:3px;
+  }
+  .admin-comment-text {
+    color:var(--text-secondary); line-height:1.5;
+  }
+  .comment-textarea {
+    width:100%; min-height:120px; padding:12px 14px; font-family:inherit;
+    background:var(--brand-surface2); border:1.5px solid rgba(255,255,255,0.06);
+    border-radius:10px; color:var(--text-primary); font-size:14px;
+    transition:all 0.2s; text-align:right; direction:rtl; resize:vertical;
+  }
+  .comment-textarea:focus {
+    outline:none; border-color:var(--brand-primary); background:rgba(200,164,92,0.05);
+  }
+  .comment-task-preview {
+    background:rgba(255,255,255,0.04); border-radius:10px; padding:12px 14px;
+    margin-bottom:14px; font-size:13px; color:var(--text-secondary);
+    border-right:3px solid var(--brand-primary);
+  }
+  .modal-actions {
+    display:flex; gap:10px; margin-top:14px;
+  }
+  .modal-btn-secondary {
+    padding:10px 16px; border-radius:9px; border:1.5px solid rgba(255,255,255,0.08);
+    background:transparent; color:var(--text-secondary);
+    font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s;
+  }
+  .modal-btn-secondary:hover { background:rgba(255,255,255,0.05); }
+
+  /* Light theme overrides */
+  body[data-theme="light"] .tc-comment-btn {
+    background:rgba(0,0,0,0.04) !important;
+  }
+  body[data-theme="light"] .admin-comment-list {
+    border-top-color:rgba(0,0,0,0.06) !important;
+  }
+  body[data-theme="light"] .comment-textarea {
+    background:#fff !important;
+    border-color:rgba(0,0,0,0.12) !important;
+    color:#1a1a2e !important;
+  }
+  body[data-theme="light"] .comment-task-preview {
+    background:rgba(0,0,0,0.03) !important;
+  }
+  body[data-theme="light"] .modal-btn-secondary {
+    border-color:rgba(0,0,0,0.1) !important;
+  }
+  body[data-theme="light"] .modal-btn-secondary:hover {
+    background:rgba(0,0,0,0.04) !important;
+  }
+
   /* Leaderboard in admin */
   .leaderboard {
     background:var(--brand-surface); border:1px solid var(--brand-border);
@@ -251,6 +330,97 @@
     display:flex; align-items:center; gap:4px;
   }
   .lb-points-label { font-size:11px; color:var(--text-muted); font-weight:700; }
+
+  /* Urgent task panel */
+  .urgent-panel {
+    background:var(--brand-surface); border:1px solid var(--brand-border);
+    border-radius:14px; padding:18px 22px; margin-bottom:18px;
+    border-right:4px solid var(--error-color);
+  }
+  .urgent-panel-header {
+    display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;
+    flex-wrap:wrap; gap:10px;
+  }
+  .urgent-add-btn {
+    padding:9px 18px; border-radius:10px; border:none;
+    background:linear-gradient(135deg, #f87171, #ef4444);
+    color:white; font-family:inherit; font-size:13px; font-weight:800;
+    cursor:pointer; transition:all 0.2s;
+    box-shadow:0 2px 12px rgba(239,68,68,0.25);
+  }
+  .urgent-add-btn:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(239,68,68,0.4); }
+  .urgent-tasks-list {
+    display:flex; flex-direction:column; gap:8px;
+    max-height:280px; overflow-y:auto;
+  }
+  .urgent-task-row {
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    padding:12px 14px; border-radius:10px;
+    background:rgba(248,113,113,0.06);
+    border:1px solid rgba(248,113,113,0.2);
+  }
+  .urgent-emoji { font-size:18px; }
+  .urgent-row-info { flex:1; min-width:200px; }
+  .urgent-row-text { font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:3px; }
+  .urgent-row-meta { font-size:11px; color:var(--text-muted); font-weight:600; }
+  .urgent-status-badge {
+    padding:3px 10px; border-radius:99px; font-size:11px; font-weight:800;
+  }
+  .urgent-delete-btn {
+    padding:5px 11px; border-radius:8px; border:none;
+    background:rgba(239,68,68,0.12); color:#ef4444;
+    font-family:inherit; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.2s;
+  }
+  .urgent-delete-btn:hover { background:rgba(239,68,68,0.25); }
+  .urgent-empty {
+    text-align:center; color:var(--text-muted); font-size:14px; padding:20px;
+    font-weight:600;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.6);
+    display:none; align-items:center; justify-content:center;
+    z-index:5000; padding:20px;
+    animation:modalFade 0.2s ease;
+  }
+  .modal-overlay.show { display:flex; }
+  @keyframes modalFade {
+    from { opacity:0; }
+    to { opacity:1; }
+  }
+  .modal-box {
+    background:var(--brand-surface); border:1px solid var(--brand-border);
+    border-radius:16px; max-width:500px; width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+    animation:modalSlide 0.25s ease;
+  }
+  @keyframes modalSlide {
+    from { transform:translateY(20px); opacity:0; }
+    to { transform:translateY(0); opacity:1; }
+  }
+  .modal-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 22px; border-bottom:1px solid var(--brand-border);
+  }
+  .modal-header h3 { font-size:18px; font-weight:900; color:var(--text-primary); }
+  .modal-close {
+    width:32px; height:32px; border-radius:8px; border:none;
+    background:rgba(255,255,255,0.05); color:var(--text-secondary);
+    font-size:22px; font-weight:900; cursor:pointer; transition:all 0.2s;
+    display:flex; align-items:center; justify-content:center;
+    line-height:1;
+  }
+  .modal-close:hover { background:rgba(239,68,68,0.15); color:var(--error-color); }
+  .modal-body { padding:22px; }
+
+  /* Light theme overrides for urgent + modal */
+  body[data-theme="light"] .urgent-task-row {
+    background:rgba(239,68,68,0.04) !important;
+    border-color:rgba(239,68,68,0.2) !important;
+  }
+  body[data-theme="light"] .modal-close { background:rgba(0,0,0,0.05) !important; }
+  body[data-theme="light"] .modal-close:hover { background:rgba(239,68,68,0.15) !important; }
 
   /* Auth screen */
   .auth-screen {
@@ -678,11 +848,66 @@
       </div>
       <div class="lb-list" id="leaderboard"></div>
     </div>
+
+    <div class="urgent-panel">
+      <div class="urgent-panel-header">
+        <div class="lb-title">🚨 المهام الطارئة</div>
+        <button class="urgent-add-btn" onclick="openUrgentModal()">➕ إضافة مهمة طارئة</button>
+      </div>
+      <div id="urgentTasksList" class="urgent-tasks-list"></div>
+    </div>
+
     <div class="admin-summary">
       <h3>📊 ملخص الفريق — مباشر</h3>
       <div class="summary-grid" id="summaryGrid"></div>
     </div>
     <div class="admin-grid" id="adminGrid"></div>
+  </div>
+
+  <!-- Urgent Task Modal -->
+  <div class="modal-overlay" id="urgentModal" onclick="if(event.target===this)closeUrgentModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🚨 إضافة مهمة طارئة</h3>
+        <button class="modal-close" onclick="closeUrgentModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="auth-field">
+          <label>لمن المهمة؟</label>
+          <select id="urgentTo">
+            <option value="store">🏪 مدير المتجر</option>
+            <option value="content">🎨 مسؤول المحتوى</option>
+            <option value="marketing">📢 مسؤول التسويق</option>
+          </select>
+        </div>
+        <div class="auth-field">
+          <label>اليوم</label>
+          <select id="urgentDay">
+            <option value="saturday">السبت</option>
+            <option value="sunday">الأحد</option>
+            <option value="monday">الاثنين</option>
+            <option value="tuesday">الثلاثاء</option>
+            <option value="wednesday">الأربعاء</option>
+            <option value="thursday">الخميس</option>
+          </select>
+        </div>
+        <div class="auth-field">
+          <label>نص المهمة</label>
+          <input type="text" id="urgentText" placeholder="مثال: تصميم بانر عاجل للعرض الجديد" maxlength="150">
+        </div>
+        <div class="auth-field">
+          <label>عدد النقاط</label>
+          <select id="urgentPoints">
+            <option value="2">2 نقاط (سهلة)</option>
+            <option value="4" selected>4 نقاط (متوسطة)</option>
+            <option value="6">6 نقاط (صعبة)</option>
+            <option value="8">8 نقاط (استراتيجية)</option>
+          </select>
+        </div>
+        <div class="auth-error" id="urgentError"></div>
+        <button class="auth-submit" id="urgentSubmitBtn" onclick="submitUrgentTask()">إضافة المهمة</button>
+      </div>
+    </div>
   </div>
 
   <div class="footer"><span class="brand-mark">مجالي</span> — لوحة إدارة داخلية • جميع الحقوق محفوظة © 2026</div>
@@ -984,7 +1209,7 @@ let activeDay = "saturday";
 let activeFilter = "all";
 let taskStatuses = {};
 let taskUnsubscribe = null;
-let adminData = { users:{}, tasks:{store:{}, content:{}, marketing:{}}, points:{store:0, content:0, marketing:0} };
+let adminData = { users:{}, tasks:{store:{}, content:{}, marketing:{}}, points:{store:0, content:0, marketing:0}, urgent:{store:{}, content:{}, marketing:{}} };
 let adminUnsubs = [];
 
 const dMap={6:"saturday",0:"sunday",1:"monday",2:"tuesday",3:"wednesday",4:"thursday"};
@@ -1302,11 +1527,14 @@ function renderBadge(){
 
 // ============ USER VIEW (realtime subscribe) ============
 let userPointsUnsub = null;
+let userUrgentUnsub = null;
 let userMonthlyPoints = 0;
+let userUrgentTasks = {};
 
 function subscribeUser(){
   if(taskUnsubscribe) taskUnsubscribe();
   if(userPointsUnsub) userPointsUnsub();
+  if(userUrgentUnsub) userUrgentUnsub();
 
   taskUnsubscribe = onSnapshot(doc(db, "tasks", currentSession.role), (snap) => {
     taskStatuses = snap.exists() ? (snap.data().statuses || {}) : {};
@@ -1318,30 +1546,50 @@ function subscribeUser(){
     userMonthlyPoints = snap.exists() ? (snap.data().monthly || 0) : 0;
     updatePointsDisplay();
   }, (err) => console.error("points subscribe error:", err));
+
+  // Subscribe to urgent tasks for this user
+  userUrgentUnsub = onSnapshot(doc(db, "urgent_tasks", currentSession.role), (snap) => {
+    userUrgentTasks = snap.exists() ? (snap.data().tasks || {}) : {};
+    renderUser();
+  }, (err) => console.error("urgent subscribe error:", err));
 }
 
 function updatePointsDisplay(){
   const el = document.getElementById("userMonthlyPoints");
   if(el) el.textContent = userMonthlyPoints;
 
-  // Calculate week earned
+  // Calculate week earned (includes urgent tasks)
   const weekEarned = Object.keys(taskStatuses || {})
     .filter(id => taskStatuses[id] === "done")
-    .reduce((sum, id) => sum + getTaskPoints(parseInt(id)), 0);
+    .reduce((sum, id) => sum + getTaskPointsFlexible(id), 0);
   const weekEl = document.getElementById("userWeekEarned");
   if(weekEl) weekEl.textContent = `(+${weekEarned} هذا الأسبوع)`;
 }
 
 function canEdit(t){ return t.owner === currentSession.role || t.owner === "all" }
-function getTaskById(id){ return Object.values(DAYS).flatMap(d => d.tasks).find(t => t.id === id) }
+function getTaskById(id){
+  // Check regular tasks first
+  const regular = Object.values(DAYS).flatMap(d => d.tasks).find(t => String(t.id) === String(id));
+  if (regular) return regular;
+  // Check urgent tasks
+  const urgent = userUrgentTasks && userUrgentTasks[id];
+  if (urgent) return { id: urgent.id, text: urgent.text, owner: currentSession.role, isUrgent: true, points: urgent.points };
+  return null;
+}
 function getStatus(id){ return taskStatuses[id] || "todo" }
+function getTaskPointsFlexible(id){
+  // Urgent tasks have their points stored directly
+  const urgent = userUrgentTasks && userUrgentTasks[id];
+  if (urgent) return urgent.points || 1;
+  return getTaskPoints(parseInt(id));
+}
 
 window.cycleStatus = async function(id){
   const t = getTaskById(id);
   if(!t || !canEdit(t)) return;
   const c = getStatus(id);
   const newStatus = c === "todo" ? "doing" : c === "doing" ? "done" : "todo";
-  const taskPoints = getTaskPoints(id);
+  const taskPoints = getTaskPointsFlexible(id);
 
   // Calculate monthly points delta
   // When task becomes "done" for the first time, add points
@@ -1525,7 +1773,19 @@ function renderUser(){
   });
   document.getElementById("filters").innerHTML = fH;
 
-  const filtered = day.tasks.filter(t => activeFilter === "all" || t.owner === activeFilter || t.owner === "all");
+  // Merge regular tasks with urgent tasks for the active day
+  const urgentForDay = Object.values(userUrgentTasks || {})
+    .filter(u => u.day === activeDay)
+    .map(u => ({
+      id: u.id,
+      text: u.text,
+      owner: currentSession.role,
+      isUrgent: true,
+      points: u.points
+    }));
+  const allDayTasks = [...day.tasks, ...urgentForDay];
+
+  const filtered = allDayTasks.filter(t => activeFilter === "all" || t.owner === activeFilter || t.owner === "all");
   let kH = "";
   STATUSES.forEach(col => {
     const tasks = filtered.filter(t => getStatus(t.id) === col.key);
@@ -1535,14 +1795,17 @@ function renderUser(){
       const s = getStatus(t.id);
       const m = t.owner === "all" ? null : ROLES[t.owner];
       const mine = canEdit(t);
-      const pts = getTaskPoints(t.id);
+      const pts = t.isUrgent ? t.points : getTaskPoints(t.id);
       const lvl = getPointLevel(pts);
-      const lbl = t.owner === "all"
-        ? `<span class="tc-label" style="background:rgba(200,164,92,0.1);color:var(--brand-primary)">👥 اجتماع مشترك</span>`
-        : `<span class="tc-label" style="background:${m.color}15;color:${m.color}">${m.icon} ${m.name}</span>`;
+      const lbl = t.isUrgent
+        ? `<span class="tc-label" style="background:rgba(239,68,68,0.15);color:#ef4444;font-weight:900">🚨 طارئة من المدير</span>`
+        : (t.owner === "all"
+          ? `<span class="tc-label" style="background:rgba(200,164,92,0.1);color:var(--brand-primary)">👥 اجتماع مشترك</span>`
+          : `<span class="tc-label" style="background:${m.color}15;color:${m.color}">${m.icon} ${m.name}</span>`);
       const lockIcon = mine ? '' : `<span class="tc-lock">🔒</span>`;
       const pointsChip = `<span class="tc-points" title="${lvl.label}" style="background:${lvl.color}22;color:${lvl.color}">⭐ ${pts}</span>`;
-      cards += `<div class="task-card status-${s} ${mine?'':'locked'}" style="background:${s==='done'?'rgba(74,222,128,0.04)':'rgba(255,255,255,0.03)'};border-color:${s==='done'?'rgba(74,222,128,0.1)':'rgba(255,255,255,0.04)'}" ${mine?`onclick="cycleStatus(${t.id})"`:''}>
+      const urgentBorder = t.isUrgent ? 'border:2px solid #ef4444 !important;' : '';
+      cards += `<div class="task-card status-${s} ${mine?'':'locked'}" style="background:${s==='done'?'rgba(74,222,128,0.04)':'rgba(255,255,255,0.03)'};${urgentBorder}" ${mine?`onclick="cycleStatus('${t.id}')"`:''}>
         <div class="tc-text">${t.text}</div>
         <div class="tc-footer">
           <div style="display:flex; gap:5px; align-items:center;">${lbl}${pointsChip}</div>
@@ -1588,6 +1851,15 @@ function subscribeAdmin(){
     const u = onSnapshot(doc(db, "points", role), (snap) => {
       adminData.points[role] = snap.exists() ? (snap.data().monthly || 0) : 0;
       renderAdmin();
+    });
+    adminUnsubs.push(u);
+  });
+
+  // Subscribe to urgent tasks
+  ["store","content","marketing"].forEach(role => {
+    const u = onSnapshot(doc(db, "urgent_tasks", role), (snap) => {
+      adminData.urgent[role] = snap.exists() ? (snap.data().tasks || {}) : {};
+      renderUrgentTasksAdmin();
     });
     adminUnsubs.push(u);
   });
@@ -1741,6 +2013,139 @@ window.adminResetPoints = async function(){
     console.error(e);
     alert("فشل التصفير — تحقق من الاتصال وصلاحيات Firebase");
   }
+}
+
+// ============ URGENT TASKS ============
+// Modal controls
+window.openUrgentModal = function() {
+  document.getElementById("urgentModal").classList.add("show");
+  document.getElementById("urgentText").value = "";
+  document.getElementById("urgentError").classList.remove("show");
+  // Default to today's day
+  const dayMap = ["sunday","monday","tuesday","wednesday","thursday","","saturday"];
+  const today = dayMap[new Date().getDay()];
+  if (today) document.getElementById("urgentDay").value = today;
+  setTimeout(() => document.getElementById("urgentText").focus(), 100);
+}
+
+window.closeUrgentModal = function() {
+  document.getElementById("urgentModal").classList.remove("show");
+}
+
+window.submitUrgentTask = async function() {
+  if (!currentSession || !currentSession.isAdmin) return;
+
+  const to = document.getElementById("urgentTo").value;
+  const day = document.getElementById("urgentDay").value;
+  const text = document.getElementById("urgentText").value.trim();
+  const points = parseInt(document.getElementById("urgentPoints").value);
+  const errEl = document.getElementById("urgentError");
+
+  if (!text || text.length < 5) {
+    errEl.textContent = "نص المهمة قصير جداً (5 أحرف على الأقل)";
+    errEl.classList.add("show");
+    return;
+  }
+
+  const btn = document.getElementById("urgentSubmitBtn");
+  btn.disabled = true;
+  btn.textContent = "جاري الإضافة...";
+
+  try {
+    // Generate a unique ID for the urgent task (timestamp-based)
+    const taskId = "u" + Date.now();
+    const urgentTask = {
+      id: taskId,
+      text: text,
+      day: day,
+      points: points,
+      createdAt: new Date().toISOString(),
+      createdBy: "Admin"
+    };
+
+    // Get current urgent tasks for this role
+    const ref = doc(db, "urgent_tasks", to);
+    const snap = await getDoc(ref);
+    const existing = snap.exists() ? (snap.data().tasks || {}) : {};
+    existing[taskId] = urgentTask;
+
+    await setDoc(ref, { tasks: existing }, { merge: true });
+
+    closeUrgentModal();
+  } catch (e) {
+    console.error(e);
+    errEl.textContent = "فشل الإضافة — تحقق من الاتصال وصلاحيات Firebase";
+    errEl.classList.add("show");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "إضافة المهمة";
+  }
+}
+
+window.deleteUrgentTask = async function(role, taskId) {
+  if (!confirm("هل تريد حذف هذه المهمة الطارئة؟")) return;
+  try {
+    const ref = doc(db, "urgent_tasks", role);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return;
+    const existing = snap.data().tasks || {};
+    delete existing[taskId];
+    await setDoc(ref, { tasks: existing });
+  } catch(e) {
+    console.error(e);
+    alert("فشل الحذف");
+  }
+}
+
+// Render urgent tasks panel for admin
+function renderUrgentTasksAdmin() {
+  const listEl = document.getElementById("urgentTasksList");
+  if (!listEl) return;
+
+  const allUrgent = [];
+  ["store","content","marketing"].forEach(role => {
+    const tasks = adminData.urgent[role] || {};
+    Object.values(tasks).forEach(t => {
+      allUrgent.push({...t, role});
+    });
+  });
+
+  if (allUrgent.length === 0) {
+    listEl.innerHTML = '<div class="urgent-empty">لا توجد مهام طارئة حالياً</div>';
+    return;
+  }
+
+  // Sort by createdAt (newest first)
+  allUrgent.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+
+  const dayLabels = {
+    saturday: "السبت", sunday: "الأحد", monday: "الاثنين",
+    tuesday: "الثلاثاء", wednesday: "الأربعاء", thursday: "الخميس"
+  };
+
+  let html = "";
+  allUrgent.forEach(t => {
+    const role = ROLES[t.role];
+    const status = (adminData.tasks[t.role] || {})[t.id] || "todo";
+    const statusInfo = {
+      todo: { label: "لم تبدأ", color: "#f87171", bg: "rgba(248,113,113,0.15)" },
+      doing: { label: "قيد التنفيذ", color: "#fbbf24", bg: "rgba(251,191,36,0.15)" },
+      done: { label: "مكتمل ✓", color: "#4ade80", bg: "rgba(74,222,128,0.15)" }
+    }[status];
+
+    html += `<div class="urgent-task-row">
+      <span class="urgent-emoji">🚨</span>
+      <div class="urgent-row-info">
+        <div class="urgent-row-text">${t.text}</div>
+        <div class="urgent-row-meta">
+          ${role.icon} ${role.name} • ${dayLabels[t.day] || t.day} • ⭐ ${t.points} نقاط
+        </div>
+      </div>
+      <span class="urgent-status-badge" style="background:${statusInfo.bg};color:${statusInfo.color}">${statusInfo.label}</span>
+      <button class="urgent-delete-btn" onclick="deleteUrgentTask('${t.role}','${t.id}')">🗑️ حذف</button>
+    </div>`;
+  });
+  listEl.innerHTML = html;
 }
 
 // ============ THEME TOGGLE ============
