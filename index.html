@@ -910,6 +910,28 @@
     </div>
   </div>
 
+  <!-- Comment Modal -->
+  <div class="modal-overlay" id="commentModal" onclick="if(event.target===this)closeCommentModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>📝 ملاحظة على المهمة</h3>
+        <button class="modal-close" onclick="closeCommentModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="comment-task-preview" id="commentTaskPreview"></div>
+        <div class="auth-field">
+          <label>اكتب ملاحظتك (المدير سيراها)</label>
+          <textarea class="comment-textarea" id="commentText" placeholder="مثال: خلصت 4 من 5 منتجات، الخامس يحتاج صور أفضل" maxlength="500"></textarea>
+        </div>
+        <div class="auth-error" id="commentError"></div>
+        <div class="modal-actions">
+          <button class="auth-submit" id="commentSubmitBtn" onclick="saveComment()" style="flex:1">حفظ الملاحظة</button>
+          <button class="modal-btn-secondary" id="commentDeleteBtn" onclick="deleteComment()" style="display:none">🗑️ حذف</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="footer"><span class="brand-mark">مجالي</span> — لوحة إدارة داخلية • جميع الحقوق محفوظة © 2026</div>
 </div>
 
@@ -1209,7 +1231,7 @@ let activeDay = "saturday";
 let activeFilter = "all";
 let taskStatuses = {};
 let taskUnsubscribe = null;
-let adminData = { users:{}, tasks:{store:{}, content:{}, marketing:{}}, points:{store:0, content:0, marketing:0}, urgent:{store:{}, content:{}, marketing:{}} };
+let adminData = { users:{}, tasks:{store:{}, content:{}, marketing:{}}, points:{store:0, content:0, marketing:0}, urgent:{store:{}, content:{}, marketing:{}}, comments:{store:{}, content:{}, marketing:{}} };
 let adminUnsubs = [];
 
 const dMap={6:"saturday",0:"sunday",1:"monday",2:"tuesday",3:"wednesday",4:"thursday"};
@@ -1528,13 +1550,18 @@ function renderBadge(){
 // ============ USER VIEW (realtime subscribe) ============
 let userPointsUnsub = null;
 let userUrgentUnsub = null;
+let userCommentsUnsub = null;
 let userMonthlyPoints = 0;
 let userUrgentTasks = {};
+let userComments = {};
+let activeCommentTaskId = null;
+let activeCommentTaskText = null;
 
 function subscribeUser(){
   if(taskUnsubscribe) taskUnsubscribe();
   if(userPointsUnsub) userPointsUnsub();
   if(userUrgentUnsub) userUrgentUnsub();
+  if(userCommentsUnsub) userCommentsUnsub();
 
   taskUnsubscribe = onSnapshot(doc(db, "tasks", currentSession.role), (snap) => {
     taskStatuses = snap.exists() ? (snap.data().statuses || {}) : {};
@@ -1552,6 +1579,12 @@ function subscribeUser(){
     userUrgentTasks = snap.exists() ? (snap.data().tasks || {}) : {};
     renderUser();
   }, (err) => console.error("urgent subscribe error:", err));
+
+  // Subscribe to comments for this user
+  userCommentsUnsub = onSnapshot(doc(db, "comments", currentSession.role), (snap) => {
+    userComments = snap.exists() ? (snap.data().notes || {}) : {};
+    renderUser();
+  }, (err) => console.error("comments subscribe error:", err));
 }
 
 function updatePointsDisplay(){
@@ -1805,10 +1838,15 @@ function renderUser(){
       const lockIcon = mine ? '' : `<span class="tc-lock">🔒</span>`;
       const pointsChip = `<span class="tc-points" title="${lvl.label}" style="background:${lvl.color}22;color:${lvl.color}">⭐ ${pts}</span>`;
       const urgentBorder = t.isUrgent ? 'border:2px solid #ef4444 !important;' : '';
+      // Comment button (only shown for tasks the user can edit, not for shared meetings)
+      const hasNote = mine && userComments && userComments[t.id];
+      const commentBtn = (mine && t.owner !== "all")
+        ? `<button class="tc-comment-btn ${hasNote ? 'has-note' : ''}" onclick="event.stopPropagation(); openCommentModal('${t.id}', \`${t.text.replace(/`/g, '\\`')}\`)">${hasNote ? '💬 ملاحظة' : '💬'}</button>`
+        : '';
       cards += `<div class="task-card status-${s} ${mine?'':'locked'}" style="background:${s==='done'?'rgba(74,222,128,0.04)':'rgba(255,255,255,0.03)'};${urgentBorder}" ${mine?`onclick="cycleStatus('${t.id}')"`:''}>
         <div class="tc-text">${t.text}</div>
         <div class="tc-footer">
-          <div style="display:flex; gap:5px; align-items:center;">${lbl}${pointsChip}</div>
+          <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">${lbl}${pointsChip}${commentBtn}</div>
           ${lockIcon}
         </div>
       </div>`;
@@ -1860,6 +1898,15 @@ function subscribeAdmin(){
     const u = onSnapshot(doc(db, "urgent_tasks", role), (snap) => {
       adminData.urgent[role] = snap.exists() ? (snap.data().tasks || {}) : {};
       renderUrgentTasksAdmin();
+    });
+    adminUnsubs.push(u);
+  });
+
+  // Subscribe to comments from each role
+  ["store","content","marketing"].forEach(role => {
+    const u = onSnapshot(doc(db, "comments", role), (snap) => {
+      adminData.comments[role] = snap.exists() ? (snap.data().notes || {}) : {};
+      renderAdmin();
     });
     adminUnsubs.push(u);
   });
@@ -1935,6 +1982,27 @@ function renderAdmin(){
         <div class="auc-stat"><div class="auc-stat-num" style="color:#f87171">${todo}</div><div class="auc-stat-label">متبقي</div></div>
       </div>
       <div class="auc-days">${daysHTML}</div>
+      ${(() => {
+        const comments = adminData.comments[role] || {};
+        const commentEntries = Object.entries(comments);
+        if (commentEntries.length === 0) return '';
+        // Sort by most recent
+        commentEntries.sort((a, b) => (b[1].updatedAt || "").localeCompare(a[1].updatedAt || ""));
+        let html = `<div class="admin-comment-list">
+          <div class="admin-comment-title">💬 ملاحظات (${commentEntries.length})</div>`;
+        // Show only first 3
+        commentEntries.slice(0, 3).forEach(([taskId, note]) => {
+          html += `<div class="admin-comment-item">
+            <div class="admin-comment-task">📌 ${(note.taskText || 'مهمة').slice(0, 60)}</div>
+            <div class="admin-comment-text">${note.text}</div>
+          </div>`;
+        });
+        if (commentEntries.length > 3) {
+          html += `<div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:4px;">+${commentEntries.length - 3} ملاحظات أخرى</div>`;
+        }
+        html += '</div>';
+        return html;
+      })()}
     </div>`;
   });
   document.getElementById("adminGrid").innerHTML = grid;
@@ -2146,6 +2214,89 @@ function renderUrgentTasksAdmin() {
     </div>`;
   });
   listEl.innerHTML = html;
+}
+
+// ============ COMMENTS / NOTES ============
+window.openCommentModal = function(taskId, taskText) {
+  if (!currentSession || currentSession.isAdmin) return;
+  activeCommentTaskId = taskId;
+  activeCommentTaskText = taskText;
+
+  document.getElementById("commentTaskPreview").textContent = "📌 " + taskText;
+  const existing = userComments[taskId];
+  document.getElementById("commentText").value = existing ? (existing.text || "") : "";
+  document.getElementById("commentDeleteBtn").style.display = existing ? "inline-block" : "none";
+  document.getElementById("commentError").classList.remove("show");
+
+  document.getElementById("commentModal").classList.add("show");
+  setTimeout(() => document.getElementById("commentText").focus(), 100);
+}
+
+window.closeCommentModal = function() {
+  document.getElementById("commentModal").classList.remove("show");
+  activeCommentTaskId = null;
+  activeCommentTaskText = null;
+}
+
+window.saveComment = async function() {
+  if (!activeCommentTaskId || !currentSession) return;
+
+  const text = document.getElementById("commentText").value.trim();
+  const errEl = document.getElementById("commentError");
+
+  if (!text) {
+    // Empty = delete
+    return deleteComment();
+  }
+
+  if (text.length > 500) {
+    errEl.textContent = "النص طويل جداً (الحد الأقصى 500 حرف)";
+    errEl.classList.add("show");
+    return;
+  }
+
+  const btn = document.getElementById("commentSubmitBtn");
+  btn.disabled = true;
+  btn.textContent = "جاري الحفظ...";
+
+  try {
+    const ref = doc(db, "comments", currentSession.role);
+    const snap = await getDoc(ref);
+    const existing = snap.exists() ? (snap.data().notes || {}) : {};
+    existing[activeCommentTaskId] = {
+      text: text,
+      taskText: activeCommentTaskText,
+      updatedAt: new Date().toISOString(),
+      updatedBy: currentSession.displayName
+    };
+    await setDoc(ref, { notes: existing }, { merge: true });
+    closeCommentModal();
+  } catch (e) {
+    console.error(e);
+    errEl.textContent = "فشل الحفظ — تحقق من الاتصال";
+    errEl.classList.add("show");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "حفظ الملاحظة";
+  }
+}
+
+window.deleteComment = async function() {
+  if (!activeCommentTaskId || !currentSession) return;
+  if (!confirm("هل تريد حذف هذه الملاحظة؟")) return;
+
+  try {
+    const ref = doc(db, "comments", currentSession.role);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) { closeCommentModal(); return; }
+    const existing = snap.data().notes || {};
+    delete existing[activeCommentTaskId];
+    await setDoc(ref, { notes: existing });
+    closeCommentModal();
+  } catch (e) {
+    console.error(e);
+    alert("فشل الحذف");
+  }
 }
 
 // ============ THEME TOGGLE ============
