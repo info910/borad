@@ -16,6 +16,25 @@
     --text-primary: #f0ece4; --text-secondary: #9a9ab0; --text-muted: #6b6b82;
     --store-color: #4a9eff; --content-color: #c084fc; --marketing-color: #34d399;
     --admin-color: #f59e0b; --error-color: #f87171;
+    --shadow-color: rgba(0,0,0,0.25);
+    --kpi-bg: rgba(255,255,255,0.03);
+    --card-bg: rgba(255,255,255,0.03);
+    --card-done-bg: rgba(74,222,128,0.04);
+    --track-bg: rgba(255,255,255,0.06);
+    --btn-bg: rgba(255,255,255,0.04);
+    --btn-border: rgba(255,255,255,0.08);
+  }
+  body[data-theme="light"] {
+    --brand-deeper: #f7f5f0; --brand-surface: #ffffff; --brand-surface2: #f0ece4;
+    --brand-border: rgba(200,164,92,0.28);
+    --text-primary: #1a1a2e; --text-secondary: #525266; --text-muted: #7a7a8c;
+    --shadow-color: rgba(0,0,0,0.08);
+    --kpi-bg: rgba(0,0,0,0.025);
+    --card-bg: rgba(0,0,0,0.02);
+    --card-done-bg: rgba(34,197,94,0.08);
+    --track-bg: rgba(0,0,0,0.06);
+    --btn-bg: rgba(0,0,0,0.03);
+    --btn-border: rgba(0,0,0,0.1);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
@@ -44,6 +63,65 @@
     30% { opacity:1; transform:translate(-50%,-50%) scale(1.2); }
     60% { opacity:1; transform:translate(-50%,-70%) scale(1); }
     100% { opacity:0; transform:translate(-50%,-120%) scale(0.8); }
+  }
+
+  /* Light mode overrides - replace hardcoded white/black backgrounds */
+  body[data-theme="light"] .hdr-btn {
+    background:rgba(0,0,0,0.04) !important;
+    border-color:rgba(0,0,0,0.1) !important;
+    color:var(--text-secondary);
+  }
+  body[data-theme="light"] .hdr-btn:hover { background:rgba(0,0,0,0.08) !important; }
+  body[data-theme="light"] .wb-track,
+  body[data-theme="light"] .auc-prog-track,
+  body[data-theme="light"] .tb-track,
+  body[data-theme="light"] .loc-prog-track {
+    background:rgba(0,0,0,0.08) !important;
+  }
+  body[data-theme="light"] .filter-btn { border-color:rgba(0,0,0,0.1) !important; }
+  body[data-theme="light"] .task-card { border-color:rgba(0,0,0,0.06) !important; background:rgba(0,0,0,0.02) !important; }
+  body[data-theme="light"] .task-card.status-done { background:rgba(34,197,94,0.08) !important; border-color:rgba(34,197,94,0.25) !important; }
+  body[data-theme="light"] .kpi-item { border-top-color:rgba(0,0,0,0.05) !important; }
+  body[data-theme="light"] .col-head { border-bottom-color:rgba(0,0,0,0.08) !important; }
+  body[data-theme="light"] .auc-stat,
+  body[data-theme="light"] .summary-item,
+  body[data-theme="light"] .lb-row,
+  body[data-theme="light"] .auc-day {
+    background:rgba(0,0,0,0.03) !important;
+  }
+  body[data-theme="light"] .auth-tabs {
+    background:rgba(0,0,0,0.04) !important;
+  }
+  body[data-theme="light"] .auth-field input,
+  body[data-theme="light"] .auth-field select {
+    background:#fff !important;
+    border-color:rgba(0,0,0,0.12) !important;
+    color:#1a1a2e !important;
+  }
+  body[data-theme="light"] .auth-tab:not(.active) { color:var(--text-muted); }
+  body[data-theme="light"] .quote-dismiss:hover { background:rgba(0,0,0,0.06) !important; }
+  body[data-theme="light"] body::before,
+  body[data-theme="light"]::before {
+    display:none;
+  }
+  body[data-theme="light"] .header::after,
+  body[data-theme="light"] .kanban-col,
+  body[data-theme="light"] .leaderboard,
+  body[data-theme="light"] .admin-summary,
+  body[data-theme="light"] .kpis,
+  body[data-theme="light"] .week-bar,
+  body[data-theme="light"] .theme-banner,
+  body[data-theme="light"] .header,
+  body[data-theme="light"] .day-tab,
+  body[data-theme="light"] .admin-user-card,
+  body[data-theme="light"] .auth-box {
+    box-shadow:0 2px 12px rgba(0,0,0,0.05) !important;
+  }
+  body[data-theme="light"] .auth-box {
+    box-shadow:0 20px 60px rgba(0,0,0,0.12) !important;
+  }
+  body[data-theme="light"] .lb-month {
+    background:rgba(0,0,0,0.05) !important;
   }
 
   /* Toast notifications */
@@ -520,6 +598,7 @@
     <div class="header-actions">
       <span class="sync-indicator"><span class="sync-dot"></span> متزامن</span>
       <div class="user-badge" id="userBadge"></div>
+      <button class="hdr-btn" id="themeToggleBtn" onclick="toggleTheme()" title="تبديل الوضع">🌙</button>
       <button class="hdr-btn" onclick="logout()">🚪 خروج</button>
       <button class="hdr-btn danger" id="resetBtn" onclick="resetAll()" style="display:none">🗑️ تصفير</button>
       <button class="hdr-btn danger" id="adminResetBtn" onclick="adminResetAll()" style="display:none">🔄 بدء أسبوع جديد</button>
@@ -1662,6 +1741,30 @@ window.adminResetPoints = async function(){
     console.error(e);
     alert("فشل التصفير — تحقق من الاتصال وصلاحيات Firebase");
   }
+}
+
+// ============ THEME TOGGLE ============
+function applyTheme(theme) {
+  if (theme === "light") {
+    document.body.setAttribute("data-theme", "light");
+    document.getElementById("themeToggleBtn").textContent = "☀️";
+  } else {
+    document.body.removeAttribute("data-theme");
+    document.getElementById("themeToggleBtn").textContent = "🌙";
+  }
+}
+
+// Initialize theme from localStorage (safe to use since this is outside artifacts)
+try {
+  const savedTheme = localStorage.getItem("majaly-theme") || "dark";
+  applyTheme(savedTheme);
+} catch(e) { /* fallback: stay dark */ }
+
+window.toggleTheme = function() {
+  const isLight = document.body.getAttribute("data-theme") === "light";
+  const newTheme = isLight ? "dark" : "light";
+  applyTheme(newTheme);
+  try { localStorage.setItem("majaly-theme", newTheme); } catch(e) {}
 }
 
 // Enter key submit
