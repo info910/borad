@@ -214,6 +214,70 @@
     box-shadow:0 0 0 1px rgba(74,158,255,0.3);
   }
 
+  /* Defer button on task cards */
+  .tc-defer-btn {
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:11px; padding:2px 8px; border-radius:99px; font-weight:700;
+    background:rgba(255,255,255,0.05); color:var(--text-muted);
+    border:none; cursor:pointer; font-family:inherit;
+    transition:all 0.2s;
+  }
+  .tc-defer-btn:hover:not(:disabled) { background:rgba(245,158,11,0.18); color:#f59e0b; }
+  .tc-defer-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .tc-defer-btn.deferred {
+    background:rgba(245,158,11,0.2); color:#f59e0b;
+    box-shadow:0 0 0 1px rgba(245,158,11,0.35);
+  }
+
+  /* Deferral coupon badge (in points bar) */
+  .defer-coupon-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:5px 12px; border-radius:99px; font-size:12px; font-weight:800;
+    background:linear-gradient(135deg, rgba(245,158,11,0.18), rgba(251,191,36,0.08));
+    color:#f59e0b;
+    border:1.5px solid rgba(245,158,11,0.35);
+  }
+  .defer-coupon-badge.used {
+    background:rgba(148,163,184,0.1);
+    color:var(--text-muted);
+    border-color:rgba(148,163,184,0.25);
+  }
+
+  /* Deferred task marker on card */
+  .tc-deferred-marker {
+    font-size:10px; padding:2px 7px; border-radius:99px; font-weight:800;
+    background:rgba(245,158,11,0.15); color:#f59e0b;
+    border:1px solid rgba(245,158,11,0.3);
+  }
+
+  /* Admin deferred tasks panel */
+  .deferred-panel {
+    background:var(--brand-surface); border:1px solid var(--brand-border);
+    border-radius:14px; padding:18px 22px; margin-bottom:18px;
+    border-right:4px solid #f59e0b;
+  }
+  .deferred-row {
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    padding:12px 14px; border-radius:10px;
+    background:rgba(245,158,11,0.06);
+    border:1px solid rgba(245,158,11,0.2);
+    margin-bottom:6px;
+  }
+  .deferred-row-info { flex:1; min-width:200px; }
+  .deferred-row-text { font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:3px; }
+  .deferred-row-meta { font-size:11px; color:var(--text-muted); font-weight:600; }
+  .deferred-row-reason {
+    font-size:12px; color:var(--text-secondary); margin-top:4px;
+    padding:6px 10px; background:rgba(0,0,0,0.15); border-radius:6px;
+    font-style:italic;
+  }
+  body[data-theme="light"] .deferred-row-reason {
+    background:rgba(0,0,0,0.04) !important;
+  }
+  body[data-theme="light"] .tc-defer-btn {
+    background:rgba(0,0,0,0.04) !important;
+  }
+
   /* Comment indicator on admin user card task list */
   .admin-comment-list {
     margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.05);
@@ -422,6 +486,108 @@
   body[data-theme="light"] .modal-close { background:rgba(0,0,0,0.05) !important; }
   body[data-theme="light"] .modal-close:hover { background:rgba(239,68,68,0.15) !important; }
 
+  /* Notification bell */
+  .notif-wrapper { position:relative; display:inline-block; }
+  .notif-bell-btn {
+    padding:8px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.04); color:var(--text-secondary);
+    font-family:inherit; font-size:15px; cursor:pointer; transition:all 0.2s;
+    position:relative;
+  }
+  .notif-bell-btn:hover { background:rgba(255,255,255,0.08); }
+  .notif-bell-btn.has-unread { color:var(--brand-primary); }
+  .notif-badge {
+    position:absolute; top:-4px; left:-4px;
+    min-width:18px; height:18px; border-radius:99px;
+    background:#ef4444; color:white; font-size:10px; font-weight:900;
+    display:flex; align-items:center; justify-content:center;
+    padding:0 5px; box-shadow:0 2px 6px rgba(239,68,68,0.4);
+    animation:bellPulse 2s ease-in-out infinite;
+  }
+  @keyframes bellPulse {
+    0%,100% { transform:scale(1); }
+    50% { transform:scale(1.15); }
+  }
+
+  /* Notification dropdown */
+  .notif-dropdown {
+    position:absolute; top:calc(100% + 8px); right:0;
+    width:340px; max-height:480px; overflow-y:auto;
+    background:var(--brand-surface); border:1px solid var(--brand-border);
+    border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,0.4);
+    z-index:1500; display:none;
+    animation:notifDropIn 0.2s ease;
+  }
+  .notif-dropdown.show { display:block; }
+  @keyframes notifDropIn {
+    from { transform:translateY(-8px); opacity:0; }
+    to { transform:translateY(0); opacity:1; }
+  }
+  .notif-dropdown-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 18px; border-bottom:1px solid rgba(255,255,255,0.05);
+    position:sticky; top:0; background:var(--brand-surface); z-index:2;
+  }
+  .notif-dropdown-title { font-size:15px; font-weight:900; }
+  .notif-mark-read {
+    padding:4px 10px; border-radius:8px; border:none;
+    background:rgba(200,164,92,0.1); color:var(--brand-primary);
+    font-family:inherit; font-size:11px; font-weight:700; cursor:pointer;
+    transition:all 0.2s;
+  }
+  .notif-mark-read:hover { background:rgba(200,164,92,0.2); }
+  .notif-list { padding:8px; }
+  .notif-item {
+    display:flex; gap:10px; padding:10px 12px;
+    border-radius:10px; margin-bottom:4px;
+    cursor:default; transition:all 0.15s;
+  }
+  .notif-item.unread { background:rgba(200,164,92,0.06); }
+  .notif-item:hover { background:rgba(255,255,255,0.04); }
+  .notif-icon { font-size:20px; flex-shrink:0; }
+  .notif-content { flex:1; min-width:0; }
+  .notif-text { font-size:13px; color:var(--text-primary); line-height:1.5; font-weight:600; }
+  .notif-time { font-size:11px; color:var(--text-muted); margin-top:3px; font-weight:600; }
+  .notif-empty { text-align:center; color:var(--text-muted); font-size:13px; padding:30px 20px; font-weight:600; }
+
+  /* Toast notification (popup in corner) */
+  .toast-container {
+    position:fixed; top:20px; left:20px; z-index:3000;
+    display:flex; flex-direction:column; gap:10px;
+    pointer-events:none;
+  }
+  .toast {
+    background:var(--brand-surface); border:1px solid var(--brand-border);
+    border-radius:12px; padding:14px 18px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+    display:flex; align-items:center; gap:12px;
+    min-width:280px; max-width:380px;
+    pointer-events:auto;
+    animation:toastSlideIn 0.3s ease, toastSlideOut 0.3s ease 4.7s forwards;
+    border-right:4px solid var(--brand-primary);
+  }
+  @keyframes toastSlideOut {
+    to { transform:translateX(-120%); opacity:0; }
+  }
+  .toast-icon { font-size:22px; flex-shrink:0; }
+  .toast-text { font-size:13px; color:var(--text-primary); line-height:1.4; font-weight:700; }
+
+  /* Light mode notification overrides */
+  body[data-theme="light"] .notif-bell-btn {
+    background:rgba(0,0,0,0.04) !important;
+    border-color:rgba(0,0,0,0.1) !important;
+  }
+  body[data-theme="light"] .notif-bell-btn:hover { background:rgba(0,0,0,0.08) !important; }
+  body[data-theme="light"] .notif-dropdown,
+  body[data-theme="light"] .toast {
+    box-shadow:0 10px 30px rgba(0,0,0,0.15) !important;
+  }
+  body[data-theme="light"] .notif-dropdown-header {
+    background:var(--brand-surface) !important;
+    border-bottom-color:rgba(0,0,0,0.06) !important;
+  }
+  body[data-theme="light"] .notif-item:hover { background:rgba(0,0,0,0.04) !important; }
+
   /* Auth screen */
   .auth-screen {
     position:fixed; inset:0; background:var(--brand-deeper);
@@ -517,6 +683,36 @@
     background:rgba(74,222,128,0.1); color:#4ade80;
   }
   .sync-dot { width:7px; height:7px; border-radius:50%; background:#4ade80; animation:pulse 2s infinite; }
+
+  /* Clock widget */
+  .clock-widget {
+    display:inline-flex; flex-direction:column; align-items:center;
+    padding:6px 14px; border-radius:10px;
+    background:linear-gradient(135deg, rgba(200,164,92,0.08), rgba(212,175,110,0.05));
+    border:1px solid rgba(200,164,92,0.2);
+    min-width:130px;
+    transition:all 0.3s;
+  }
+  .clock-time {
+    font-size:16px; font-weight:900; color:var(--brand-primary);
+    font-family:'Courier New', monospace; letter-spacing:0.5px;
+    line-height:1.1;
+  }
+  .clock-time .clock-seconds {
+    font-size:11px; color:var(--brand-gold); opacity:0.85;
+  }
+  .clock-date {
+    font-size:10px; font-weight:700; color:var(--text-muted);
+    margin-top:2px; line-height:1.1;
+  }
+  .clock-date .clock-day {
+    color:var(--text-secondary); font-weight:800;
+  }
+  body[data-theme="light"] .clock-widget {
+    background:linear-gradient(135deg, rgba(200,164,92,0.12), rgba(212,175,110,0.06)) !important;
+    border-color:rgba(200,164,92,0.3) !important;
+  }
+
   .hdr-btn {
     padding:8px 16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);
     background:rgba(255,255,255,0.04); color:var(--text-secondary);
@@ -699,6 +895,9 @@
 <!-- Toast notifications container -->
 <div class="toast-container" id="toastContainer"></div>
 
+<!-- Toast notifications container -->
+<div class="toast-container" id="toastContainer"></div>
+
 <!-- Loading -->
 <div class="loading" id="loading">
   <img src="data:image/png;base64,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" alt="مجالي">
@@ -766,8 +965,25 @@
       </div>
     </div>
     <div class="header-actions">
+      <div class="clock-widget" id="clockWidget">
+        <div class="clock-time" id="clockTime">--:--<span class="clock-seconds">:--</span></div>
+        <div class="clock-date" id="clockDate">— — —</div>
+      </div>
       <span class="sync-indicator"><span class="sync-dot"></span> متزامن</span>
       <div class="user-badge" id="userBadge"></div>
+      <div class="notif-wrapper">
+        <button class="notif-bell-btn" id="notifBellBtn" onclick="toggleNotifDropdown()" title="التنبيهات">
+          🔔
+          <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+        </button>
+        <div class="notif-dropdown" id="notifDropdown">
+          <div class="notif-dropdown-header">
+            <div class="notif-dropdown-title">🔔 التنبيهات</div>
+            <button class="notif-mark-read" onclick="markAllNotifRead()">قرأت الكل</button>
+          </div>
+          <div class="notif-list" id="notifList"></div>
+        </div>
+      </div>
       <button class="hdr-btn" id="themeToggleBtn" onclick="toggleTheme()" title="تبديل الوضع">🌙</button>
       <button class="hdr-btn" onclick="logout()">🚪 خروج</button>
       <button class="hdr-btn danger" id="resetBtn" onclick="resetAll()" style="display:none">🗑️ تصفير</button>
@@ -786,8 +1002,9 @@
     </div>
     <div class="week-bar" id="pointsBar" style="justify-content:space-between">
       <span class="wb-label">🏆 نقاطي هذا الشهر</span>
-      <div style="display:flex; align-items:center; gap:14px;">
+      <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
         <span class="points-badge"><span class="trophy">⭐</span><span id="userMonthlyPoints">0</span> نقطة</span>
+        <span class="defer-coupon-badge" id="deferCouponBadge" title="كوبون التأجيل الأسبوعي">🎟️ <span id="couponStatus">كوبون تأجيل متاح</span></span>
         <span style="font-size:12px; color:var(--text-muted); font-weight:600;" id="userWeekEarned"></span>
       </div>
     </div>
@@ -855,6 +1072,14 @@
         <button class="urgent-add-btn" onclick="openUrgentModal()">➕ إضافة مهمة طارئة</button>
       </div>
       <div id="urgentTasksList" class="urgent-tasks-list"></div>
+    </div>
+
+    <div class="deferred-panel" id="deferredPanel" style="display:none">
+      <div class="urgent-panel-header">
+        <div class="lb-title" style="color:#f59e0b">⏰ المهام المؤجّلة</div>
+        <span style="font-size:12px;color:var(--text-muted);font-weight:700">استخدم الفريق كوبونات التأجيل</span>
+      </div>
+      <div id="deferredTasksList"></div>
     </div>
 
     <div class="admin-summary">
@@ -928,6 +1153,39 @@
           <button class="auth-submit" id="commentSubmitBtn" onclick="saveComment()" style="flex:1">حفظ الملاحظة</button>
           <button class="modal-btn-secondary" id="commentDeleteBtn" onclick="deleteComment()" style="display:none">🗑️ حذف</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Defer Task Modal -->
+  <div class="modal-overlay" id="deferModal" onclick="if(event.target===this)closeDeferModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>⏰ تأجيل المهمة ليوم آخر</h3>
+        <button class="modal-close" onclick="closeDeferModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="comment-task-preview" id="deferTaskPreview"></div>
+        <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:10px; padding:10px 14px; margin-bottom:14px; font-size:12px; color:#f59e0b; font-weight:700;">
+          ⚠️ تنبيه: عندك <strong>كوبون تأجيل واحد فقط</strong> كل أسبوع. استخدمه بحكمة!
+        </div>
+        <div class="auth-field">
+          <label>أجّل المهمة إلى يوم</label>
+          <select id="deferToDay">
+            <option value="saturday">السبت</option>
+            <option value="sunday">الأحد</option>
+            <option value="monday">الاثنين</option>
+            <option value="tuesday">الثلاثاء</option>
+            <option value="wednesday">الأربعاء</option>
+            <option value="thursday">الخميس</option>
+          </select>
+        </div>
+        <div class="auth-field">
+          <label>سبب التأجيل (إلزامي)</label>
+          <textarea class="comment-textarea" id="deferReason" placeholder="مثال: ظروف طارئة - سأعوضها في الأسبوع الجاي" maxlength="200"></textarea>
+        </div>
+        <div class="auth-error" id="deferError"></div>
+        <button class="auth-submit" id="deferSubmitBtn" onclick="submitDefer()" style="background:linear-gradient(135deg, #f59e0b, #d97706)">⏰ تأجيل المهمة</button>
       </div>
     </div>
   </div>
@@ -1231,7 +1489,7 @@ let activeDay = "saturday";
 let activeFilter = "all";
 let taskStatuses = {};
 let taskUnsubscribe = null;
-let adminData = { users:{}, tasks:{store:{}, content:{}, marketing:{}}, points:{store:0, content:0, marketing:0}, urgent:{store:{}, content:{}, marketing:{}}, comments:{store:{}, content:{}, marketing:{}} };
+let adminData = { users:{}, tasks:{store:{}, content:{}, marketing:{}}, points:{store:0, content:0, marketing:0}, urgent:{store:{}, content:{}, marketing:{}}, comments:{store:{}, content:{}, marketing:{}}, deferrals:{store:null, content:null, marketing:null} };
 let adminUnsubs = [];
 
 const dMap={6:"saturday",0:"sunday",1:"monday",2:"tuesday",3:"wednesday",4:"thursday"};
@@ -1361,8 +1619,15 @@ window.handleSignup = async function(){
 window.logout = async function(){
   if(taskUnsubscribe) taskUnsubscribe();
   if(userPointsUnsub) userPointsUnsub();
+  if(userUrgentUnsub) userUrgentUnsub();
+  if(userCommentsUnsub) userCommentsUnsub();
+  if(userDeferralUnsub) userDeferralUnsub();
+  if(notifUnsub) notifUnsub();
   adminUnsubs.forEach(u => u());
   adminUnsubs = [];
+  // Reset notif state
+  notifications = [];
+  isFirstNotifLoad = true;
   // Clear session timers
   clearSessionTimers();
   localStorage.removeItem("majaly_session_start");
@@ -1511,6 +1776,9 @@ function enterApp(){
     document.getElementById("resetBtn").style.display = "none";
     document.getElementById("adminResetBtn").style.display = "inline-block";
     document.getElementById("headerSubtitle").textContent = "لوحة المدير — مراقبة تقدم الفريق";
+    // Save admin uid for notifications
+    setDoc(doc(db, "settings", "admin_uid"), { uid: currentSession.uid }, { merge: true })
+      .catch(e => console.error("admin uid save error:", e));
     subscribeAdmin();
   } else {
     document.getElementById("userView").style.display = "block";
@@ -1521,6 +1789,9 @@ function enterApp(){
     subscribeUser();
   }
   renderBadge();
+  // Subscribe to notifications (for both admin and users)
+  isFirstNotifLoad = true;
+  subscribeNotifications();
   startSessionTimers();
   // Show motivational quote for the day
   setTimeout(() => showDailyQuote(), 500);
@@ -1585,6 +1856,9 @@ function subscribeUser(){
     userComments = snap.exists() ? (snap.data().notes || {}) : {};
     renderUser();
   }, (err) => console.error("comments subscribe error:", err));
+
+  // Subscribe to deferrals for this user
+  subscribeDeferrals();
 }
 
 function updatePointsDisplay(){
@@ -1661,6 +1935,17 @@ window.cycleStatus = async function(id){
         showCompletionToast(pointsDelta);
         // Check daily milestone
         checkDailyMilestone();
+
+        // Notify admin if this was a high-value (strategic) task
+        if (pointsDelta >= 6) {
+          getAdminUid().then(adminUid => {
+            if (adminUid) {
+              const taskTextShort = (t.text || "").slice(0, 60);
+              sendNotification(adminUid, "🎯",
+                `${currentSession.displayName} أنهى مهمة ${pointsDelta >= 8 ? 'استراتيجية' : 'صعبة'}: ${taskTextShort}`);
+            }
+          }).catch(e => console.error("admin notif error:", e));
+        }
       } else {
         showPointsAnimation(`${pointsDelta}`, "#f87171");
       }
@@ -1753,6 +2038,19 @@ window.adminResetAll = async function(){
       setDoc(doc(db, "tasks", "content"), resetData),
       setDoc(doc(db, "tasks", "marketing"), resetData),
     ]);
+
+    // Notify all team members about new week
+    try {
+      const teamUids = await getAllTeamUids();
+      // Filter out admin from team
+      const memberUids = teamUids.filter(uid => uid !== currentSession.uid);
+      if (memberUids.length > 0) {
+        await sendNotification(memberUids, "🔄", "بدأ المدير أسبوعاً جديداً — كل المهام جاهزة من جديد!");
+      }
+    } catch(notifErr) {
+      console.error("reset notif error:", notifErr);
+    }
+
     alert("✅ تم بدء أسبوع جديد بنجاح. كل المهام جاهزة للفريق من جديد.");
   } catch(e){
     console.error(e);
@@ -1816,7 +2114,18 @@ function renderUser(){
       isUrgent: true,
       points: u.points
     }));
-  const allDayTasks = [...day.tasks, ...urgentForDay];
+
+  // Filter out tasks that have been deferred AWAY from this day (for current user only)
+  const regularDayTasks = day.tasks.filter(t => {
+    // Only hide this user's own tasks that were deferred
+    if (t.owner !== currentSession.role) return true;
+    return !isTaskDeferredAway(t.id);
+  });
+
+  // Add tasks deferred TO this day
+  const deferredToThisDay = getDeferredTasksForDay(activeDay);
+
+  const allDayTasks = [...regularDayTasks, ...urgentForDay, ...deferredToThisDay];
 
   const filtered = allDayTasks.filter(t => activeFilter === "all" || t.owner === activeFilter || t.owner === "all");
   let kH = "";
@@ -1828,7 +2137,7 @@ function renderUser(){
       const s = getStatus(t.id);
       const m = t.owner === "all" ? null : ROLES[t.owner];
       const mine = canEdit(t);
-      const pts = t.isUrgent ? t.points : getTaskPoints(t.id);
+      const pts = t.isUrgent ? t.points : getTaskPointsFlexible(t.id);
       const lvl = getPointLevel(pts);
       const lbl = t.isUrgent
         ? `<span class="tc-label" style="background:rgba(239,68,68,0.15);color:#ef4444;font-weight:900">🚨 طارئة من المدير</span>`
@@ -1838,15 +2147,25 @@ function renderUser(){
       const lockIcon = mine ? '' : `<span class="tc-lock">🔒</span>`;
       const pointsChip = `<span class="tc-points" title="${lvl.label}" style="background:${lvl.color}22;color:${lvl.color}">⭐ ${pts}</span>`;
       const urgentBorder = t.isUrgent ? 'border:2px solid #ef4444 !important;' : '';
-      // Comment button (only shown for tasks the user can edit, not for shared meetings)
+      const deferredBorder = t.isDeferred ? 'border:2px dashed #f59e0b !important;' : '';
+      // Deferred marker
+      const deferredMarker = t.isDeferred
+        ? `<span class="tc-deferred-marker">⏰ مؤجّلة من ${getDayLabel(t.fromDay)}</span>`
+        : '';
+      // Comment button
       const hasNote = mine && userComments && userComments[t.id];
       const commentBtn = (mine && t.owner !== "all")
-        ? `<button class="tc-comment-btn ${hasNote ? 'has-note' : ''}" onclick="event.stopPropagation(); openCommentModal('${t.id}', \`${t.text.replace(/`/g, '\\`')}\`)">${hasNote ? '💬 ملاحظة' : '💬'}</button>`
+        ? `<button class="tc-comment-btn ${hasNote ? 'has-note' : ''}" onclick="event.stopPropagation(); openCommentModal('${t.id}', \`${(t.text || '').replace(/`/g, '\\`')}\`)">${hasNote ? '💬 ملاحظة' : '💬'}</button>`
         : '';
-      cards += `<div class="task-card status-${s} ${mine?'':'locked'}" style="background:${s==='done'?'rgba(74,222,128,0.04)':'rgba(255,255,255,0.03)'};${urgentBorder}" ${mine?`onclick="cycleStatus('${t.id}')"`:''}>
+      // Defer button (only for deferrable tasks, and not already deferred)
+      const canDefer = mine && !t.isDeferred && isTaskDeferrable(t.text, t.owner, t.isUrgent) && s !== "done";
+      const deferBtn = canDefer
+        ? `<button class="tc-defer-btn" ${!userDeferralData.coupon_available ? 'disabled title="الكوبون مستخدم هذا الأسبوع"' : 'title="تأجيل لليوم الآخر (يحتاج كوبون)"'} onclick="event.stopPropagation(); openDeferModal('${t.id}', \`${(t.text || '').replace(/`/g, '\\`')}\`, '${activeDay}')">⏰</button>`
+        : '';
+      cards += `<div class="task-card status-${s} ${mine?'':'locked'}" style="background:${s==='done'?'rgba(74,222,128,0.04)':'rgba(255,255,255,0.03)'};${urgentBorder}${deferredBorder}" ${mine?`onclick="cycleStatus('${t.id}')"`:''}>
         <div class="tc-text">${t.text}</div>
         <div class="tc-footer">
-          <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">${lbl}${pointsChip}${commentBtn}</div>
+          <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">${lbl}${pointsChip}${deferredMarker}${commentBtn}${deferBtn}</div>
           ${lockIcon}
         </div>
       </div>`;
@@ -1907,6 +2226,15 @@ function subscribeAdmin(){
     const u = onSnapshot(doc(db, "comments", role), (snap) => {
       adminData.comments[role] = snap.exists() ? (snap.data().notes || {}) : {};
       renderAdmin();
+    });
+    adminUnsubs.push(u);
+  });
+
+  // Subscribe to deferrals from each role
+  ["store","content","marketing"].forEach(role => {
+    const u = onSnapshot(doc(db, "deferrals", role), (snap) => {
+      adminData.deferrals[role] = snap.exists() ? snap.data() : null;
+      renderDeferredTasksAdmin();
     });
     adminUnsubs.push(u);
   });
@@ -2076,6 +2404,18 @@ window.adminResetPoints = async function(){
       setDoc(doc(db, "points", "content"), resetData),
       setDoc(doc(db, "points", "marketing"), resetData),
     ]);
+
+    // Notify all team members about points reset
+    try {
+      const teamUids = await getAllTeamUids();
+      const memberUids = teamUids.filter(uid => uid !== currentSession.uid);
+      if (memberUids.length > 0) {
+        await sendNotification(memberUids, "🏆", "بدأ شهر جديد! تم تصفير النقاط — كل واحد من الصفر!");
+      }
+    } catch(notifErr) {
+      console.error("points reset notif error:", notifErr);
+    }
+
     alert("✅ تم تصفير النقاط. شهر جديد يبدأ الآن!");
   } catch(e){
     console.error(e);
@@ -2138,6 +2478,22 @@ window.submitUrgentTask = async function() {
     existing[taskId] = urgentTask;
 
     await setDoc(ref, { tasks: existing }, { merge: true });
+
+    // Send notification to the recipient
+    try {
+      const userQ = query(collection(db, "users"), where("role", "==", to));
+      const userSnap = await getDocs(userQ);
+      if (!userSnap.empty) {
+        const recipientUid = userSnap.docs[0].id;
+        const dayLabels = {
+          saturday:"السبت",sunday:"الأحد",monday:"الاثنين",
+          tuesday:"الثلاثاء",wednesday:"الأربعاء",thursday:"الخميس"
+        };
+        await sendNotification(recipientUid, "🚨", `المدير أضاف لك مهمة طارئة يوم ${dayLabels[day]}: ${text.slice(0, 60)}`);
+      }
+    } catch(notifErr) {
+      console.error("urgent notif error:", notifErr);
+    }
 
     closeUrgentModal();
   } catch (e) {
@@ -2216,6 +2572,257 @@ function renderUrgentTasksAdmin() {
   listEl.innerHTML = html;
 }
 
+// Render deferred tasks for admin
+function renderDeferredTasksAdmin() {
+  const panel = document.getElementById("deferredPanel");
+  const listEl = document.getElementById("deferredTasksList");
+  if (!panel || !listEl) return;
+
+  const allDeferred = [];
+  ["store","content","marketing"].forEach(role => {
+    const data = adminData.deferrals && adminData.deferrals[role];
+    if (!data || !data.deferred_tasks) return;
+    Object.entries(data.deferred_tasks).forEach(([taskId, d]) => {
+      allDeferred.push({
+        role, taskId, ...d
+      });
+    });
+  });
+
+  if (allDeferred.length === 0) {
+    panel.style.display = "none";
+    return;
+  }
+  panel.style.display = "block";
+
+  // Sort by most recent deferrals first
+  allDeferred.sort((a, b) => (b.deferredAt || "").localeCompare(a.deferredAt || ""));
+
+  const dayLabels = {
+    saturday:"السبت",sunday:"الأحد",monday:"الاثنين",
+    tuesday:"الثلاثاء",wednesday:"الأربعاء",thursday:"الخميس"
+  };
+
+  let html = "";
+  allDeferred.forEach(d => {
+    const role = ROLES[d.role];
+    const user = adminData.users[d.role];
+    const userName = user ? user.username : role.name;
+    html += `<div class="deferred-row">
+      <span style="font-size:18px">⏰</span>
+      <div class="deferred-row-info">
+        <div class="deferred-row-text">${d.originalText}</div>
+        <div class="deferred-row-meta">
+          ${role.icon} ${userName} • من ${dayLabels[d.fromDay] || d.fromDay} إلى ${dayLabels[d.toDay] || d.toDay}
+        </div>
+        <div class="deferred-row-reason">📝 السبب: ${d.reason}</div>
+      </div>
+    </div>`;
+  });
+  listEl.innerHTML = html;
+}
+
+// ============ DEFERRALS (TASK POSTPONE) ============
+let userDeferralUnsub = null;
+let userDeferralData = { coupon_available: true, coupon_week_id: "", deferred_tasks: {} };
+let activeDeferTaskId = null;
+let activeDeferTaskText = null;
+let activeDeferCurrentDay = null;
+
+function getCurrentWeekId() {
+  // ISO week identifier e.g. "2026-W16"
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+  const yearStart = new Date(d.getFullYear(), 0, 1);
+  const weekNum = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return `${d.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
+}
+
+function subscribeDeferrals() {
+  if (userDeferralUnsub) userDeferralUnsub();
+  if (!currentSession || currentSession.isAdmin) return;
+
+  userDeferralUnsub = onSnapshot(doc(db, "deferrals", currentSession.role), (snap) => {
+    if (snap.exists()) {
+      userDeferralData = snap.data();
+    } else {
+      userDeferralData = { coupon_available: true, coupon_week_id: getCurrentWeekId(), deferred_tasks: {} };
+    }
+    // Auto-refresh coupon if week changed
+    const currentWeek = getCurrentWeekId();
+    if (userDeferralData.coupon_week_id !== currentWeek) {
+      userDeferralData.coupon_available = true;
+      userDeferralData.coupon_week_id = currentWeek;
+      // Write back
+      setDoc(doc(db, "deferrals", currentSession.role), userDeferralData, { merge: true })
+        .catch(e => console.error("coupon refresh error:", e));
+    }
+    updateCouponBadge();
+    renderUser();
+  }, (err) => console.error("deferral subscribe error:", err));
+}
+
+function updateCouponBadge() {
+  const badge = document.getElementById("deferCouponBadge");
+  const status = document.getElementById("couponStatus");
+  if (!badge || !status) return;
+  if (userDeferralData.coupon_available) {
+    badge.classList.remove("used");
+    status.textContent = "كوبون تأجيل متاح";
+  } else {
+    badge.classList.add("used");
+    status.textContent = "كوبون مستخدم هذا الأسبوع";
+  }
+}
+
+// Check if a task is deferrable (not shared, not daily-recurring)
+function isTaskDeferrable(taskText, owner, isUrgent) {
+  if (owner === "all") return false; // Meetings can't be deferred
+  if (isUrgent) return false; // Urgent tasks can't be deferred
+  // Block daily recurring tasks
+  const dailyPatterns = [
+    "متابعة المخزون",
+    "معالجة الطلبات + التواصل",
+    "إدارة السوشال ميديا اليومية",
+    "مراقبة لوحة الإعلانات",
+    "الرد على رسائل العملاء"
+  ];
+  return !dailyPatterns.some(p => taskText && taskText.includes(p));
+}
+
+window.openDeferModal = function(taskId, taskText, currentDay) {
+  if (!currentSession || currentSession.isAdmin) return;
+  if (!userDeferralData.coupon_available) {
+    alert("❌ لقد استخدمت كوبون التأجيل لهذا الأسبوع. الكوبون الجديد يُجدَّد يوم السبت القادم.");
+    return;
+  }
+  activeDeferTaskId = taskId;
+  activeDeferTaskText = taskText;
+  activeDeferCurrentDay = currentDay;
+
+  document.getElementById("deferTaskPreview").innerHTML =
+    `📌 <strong>${taskText}</strong><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:inline-block">من يوم: ${getDayLabel(currentDay)}</span>`;
+  document.getElementById("deferReason").value = "";
+  document.getElementById("deferError").classList.remove("show");
+
+  // Set default to next day
+  const dayOrder = ["saturday","sunday","monday","tuesday","wednesday","thursday"];
+  const idx = dayOrder.indexOf(currentDay);
+  const nextDay = idx >= 0 && idx < dayOrder.length - 1 ? dayOrder[idx + 1] : "saturday";
+  document.getElementById("deferToDay").value = nextDay;
+
+  document.getElementById("deferModal").classList.add("show");
+  setTimeout(() => document.getElementById("deferReason").focus(), 100);
+}
+
+window.closeDeferModal = function() {
+  document.getElementById("deferModal").classList.remove("show");
+  activeDeferTaskId = null;
+  activeDeferTaskText = null;
+  activeDeferCurrentDay = null;
+}
+
+function getDayLabel(day) {
+  const labels = {
+    saturday:"السبت",sunday:"الأحد",monday:"الاثنين",
+    tuesday:"الثلاثاء",wednesday:"الأربعاء",thursday:"الخميس"
+  };
+  return labels[day] || day;
+}
+
+window.submitDefer = async function() {
+  if (!activeDeferTaskId || !currentSession) return;
+
+  const toDay = document.getElementById("deferToDay").value;
+  const reason = document.getElementById("deferReason").value.trim();
+  const errEl = document.getElementById("deferError");
+
+  if (toDay === activeDeferCurrentDay) {
+    errEl.textContent = "لا يمكن التأجيل لنفس اليوم الحالي";
+    errEl.classList.add("show");
+    return;
+  }
+  if (!reason || reason.length < 5) {
+    errEl.textContent = "السبب مطلوب (5 أحرف على الأقل)";
+    errEl.classList.add("show");
+    return;
+  }
+
+  const btn = document.getElementById("deferSubmitBtn");
+  btn.disabled = true;
+  btn.textContent = "جاري التأجيل...";
+
+  try {
+    const deferralRef = doc(db, "deferrals", currentSession.role);
+    const snap = await getDoc(deferralRef);
+    const data = snap.exists() ? snap.data() : { coupon_available: true, coupon_week_id: getCurrentWeekId(), deferred_tasks: {} };
+
+    if (!data.coupon_available) {
+      errEl.textContent = "الكوبون مستخدم بالفعل هذا الأسبوع";
+      errEl.classList.add("show");
+      return;
+    }
+
+    // Save the deferral
+    data.deferred_tasks = data.deferred_tasks || {};
+    data.deferred_tasks[activeDeferTaskId] = {
+      fromDay: activeDeferCurrentDay,
+      toDay: toDay,
+      reason: reason,
+      originalText: activeDeferTaskText,
+      deferredAt: new Date().toISOString()
+    };
+    data.coupon_available = false;
+    data.coupon_week_id = getCurrentWeekId();
+
+    await setDoc(deferralRef, data);
+
+    // Notify admin
+    try {
+      const adminUid = await getAdminUid();
+      if (adminUid) {
+        await sendNotification(adminUid, "⏰",
+          `${currentSession.displayName} أجّل مهمة من ${getDayLabel(activeDeferCurrentDay)} إلى ${getDayLabel(toDay)}: ${activeDeferTaskText.slice(0, 50)}`);
+      }
+    } catch(nErr) { console.error("defer notif error:", nErr); }
+
+    closeDeferModal();
+  } catch (e) {
+    console.error(e);
+    errEl.textContent = "فشل التأجيل — تحقق من الاتصال";
+    errEl.classList.add("show");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "⏰ تأجيل المهمة";
+  }
+}
+
+// Get deferred tasks for a specific day (for current user)
+function getDeferredTasksForDay(dayKey) {
+  const deferred = (userDeferralData && userDeferralData.deferred_tasks) || {};
+  return Object.entries(deferred)
+    .filter(([taskId, d]) => d.toDay === dayKey)
+    .map(([taskId, d]) => {
+      // Try to find the original task details from DAYS by matching ID (if numeric)
+      // Or reconstruct minimal info
+      return {
+        id: taskId,
+        text: d.originalText,
+        owner: currentSession.role,
+        isDeferred: true,
+        fromDay: d.fromDay,
+        reason: d.reason
+      };
+    });
+}
+
+// Check if a task's ORIGINAL slot should be hidden (because it was deferred away)
+function isTaskDeferredAway(taskId) {
+  const deferred = (userDeferralData && userDeferralData.deferred_tasks) || {};
+  return !!deferred[taskId];
+}
+
 // ============ COMMENTS / NOTES ============
 window.openCommentModal = function(taskId, taskText) {
   if (!currentSession || currentSession.isAdmin) return;
@@ -2270,6 +2877,18 @@ window.saveComment = async function() {
       updatedBy: currentSession.displayName
     };
     await setDoc(ref, { notes: existing }, { merge: true });
+
+    // Notify admin about new comment
+    try {
+      const adminUid = await getAdminUid();
+      if (adminUid) {
+        await sendNotification(adminUid, "💬",
+          `${currentSession.displayName} كتب ملاحظة على: ${(activeCommentTaskText || "مهمة").slice(0, 60)}`);
+      }
+    } catch(notifErr) {
+      console.error("comment notif error:", notifErr);
+    }
+
     closeCommentModal();
   } catch (e) {
     console.error(e);
@@ -2298,6 +2917,222 @@ window.deleteComment = async function() {
     alert("فشل الحذف");
   }
 }
+
+// ============ CLOCK & DATE ============
+let clockInterval = null;
+
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  const s = String(now.getSeconds()).padStart(2, '0');
+
+  const timeEl = document.getElementById("clockTime");
+  if (!timeEl) return;
+  timeEl.innerHTML = `${h}:${m}<span class="clock-seconds">:${s}</span>`;
+
+  // Arabic day names
+  const dayNames = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+  const monthNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+  const day = dayNames[now.getDay()];
+  const date = now.getDate();
+  const month = monthNames[now.getMonth()];
+  const year = now.getFullYear();
+
+  const dateEl = document.getElementById("clockDate");
+  if (dateEl) {
+    dateEl.innerHTML = `<span class="clock-day">${day}</span> • ${date} ${month} ${year}`;
+  }
+}
+
+function startClock() {
+  if (clockInterval) return;
+  updateClock();
+  clockInterval = setInterval(updateClock, 1000);
+}
+
+function stopClock() {
+  if (clockInterval) {
+    clearInterval(clockInterval);
+    clockInterval = null;
+  }
+}
+
+// Start clock when page loads
+startClock();
+
+// ============ NOTIFICATIONS ============
+let notifUnsub = null;
+let notifications = [];
+let notifDropdownOpen = false;
+let lastSeenNotifTime = null;
+let isFirstNotifLoad = true;
+
+function subscribeNotifications() {
+  if (notifUnsub) notifUnsub();
+  if (!currentSession) return;
+
+  // Each user has their own notifications doc keyed by uid
+  notifUnsub = onSnapshot(doc(db, "notifications", currentSession.uid), (snap) => {
+    const data = snap.exists() ? snap.data() : { items: [] };
+    const newNotifications = data.items || [];
+
+    // Detect newly arrived notifications (only after first load)
+    if (!isFirstNotifLoad && newNotifications.length > notifications.length) {
+      const newOnes = newNotifications.slice(notifications.length);
+      newOnes.forEach(n => showToast(n));
+    }
+
+    notifications = newNotifications;
+    isFirstNotifLoad = false;
+    renderNotifications();
+  }, (err) => console.error("notif subscribe error:", err));
+
+  // Initialize last-seen from localStorage
+  try {
+    lastSeenNotifTime = localStorage.getItem(`majaly-notif-seen-${currentSession.uid}`) || "";
+  } catch(e) { lastSeenNotifTime = ""; }
+}
+
+function renderNotifications() {
+  const list = document.getElementById("notifList");
+  const badge = document.getElementById("notifBadge");
+  const bell = document.getElementById("notifBellBtn");
+  if (!list) return;
+
+  // Count unread
+  const unread = notifications.filter(n => (n.timestamp || "") > lastSeenNotifTime).length;
+  if (unread > 0) {
+    badge.style.display = "flex";
+    badge.textContent = unread > 99 ? "99+" : unread;
+    bell.classList.add("has-unread");
+  } else {
+    badge.style.display = "none";
+    bell.classList.remove("has-unread");
+  }
+
+  // Render list (most recent first)
+  if (notifications.length === 0) {
+    list.innerHTML = '<div class="notif-empty">لا توجد تنبيهات حتى الآن</div>';
+    return;
+  }
+
+  // Show last 20, newest at top
+  const sorted = [...notifications].sort((a, b) => (b.timestamp || "").localeCompare(a.timestamp || "")).slice(0, 20);
+  let html = "";
+  sorted.forEach(n => {
+    const isUnread = (n.timestamp || "") > lastSeenNotifTime;
+    html += `<div class="notif-item ${isUnread ? 'unread' : ''}">
+      <div class="notif-icon">${n.icon || '🔔'}</div>
+      <div class="notif-content">
+        <div class="notif-text">${n.text}</div>
+        <div class="notif-time">${formatNotifTime(n.timestamp)}</div>
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html;
+}
+
+function formatNotifTime(ts) {
+  if (!ts) return "";
+  const date = new Date(ts);
+  const now = new Date();
+  const diffMin = Math.floor((now - date) / 60000);
+  if (diffMin < 1) return "الآن";
+  if (diffMin < 60) return `قبل ${diffMin} دقيقة`;
+  const diffH = Math.floor(diffMin / 60);
+  if (diffH < 24) return `قبل ${diffH} ساعة`;
+  const diffD = Math.floor(diffH / 24);
+  if (diffD < 7) return `قبل ${diffD} يوم`;
+  return date.toLocaleDateString("ar-SA");
+}
+
+window.toggleNotifDropdown = function() {
+  notifDropdownOpen = !notifDropdownOpen;
+  document.getElementById("notifDropdown").classList.toggle("show", notifDropdownOpen);
+  if (notifDropdownOpen) {
+    // Mark all as seen when opening
+    setTimeout(() => markAllNotifRead(), 200);
+  }
+}
+
+window.markAllNotifRead = function() {
+  if (notifications.length === 0) return;
+  const newest = notifications.reduce((max, n) => (n.timestamp || "") > max ? n.timestamp : max, "");
+  lastSeenNotifTime = newest;
+  try { localStorage.setItem(`majaly-notif-seen-${currentSession.uid}`, newest); } catch(e) {}
+  renderNotifications();
+}
+
+// Show a toast popup
+function showToast(notif) {
+  const container = document.getElementById("toastContainer");
+  if (!container) return;
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.innerHTML = `
+    <div class="toast-icon">${notif.icon || '🔔'}</div>
+    <div class="toast-text">${notif.text}</div>
+  `;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 5200);
+}
+
+// Helper: send notification to specific user (by uid) or all team members
+async function sendNotification(targetUids, icon, text) {
+  const notif = {
+    icon: icon,
+    text: text,
+    timestamp: new Date().toISOString()
+  };
+  // targetUids can be a single uid or an array
+  const uids = Array.isArray(targetUids) ? targetUids : [targetUids];
+  await Promise.all(uids.map(async (uid) => {
+    try {
+      const ref = doc(db, "notifications", uid);
+      const snap = await getDoc(ref);
+      const items = snap.exists() ? (snap.data().items || []) : [];
+      items.push(notif);
+      // Keep only last 30
+      const trimmed = items.slice(-30);
+      await setDoc(ref, { items: trimmed });
+    } catch(e) {
+      console.error("notif send error for uid", uid, e);
+    }
+  }));
+}
+
+// Get all team members' uids (for broadcasting)
+async function getAllTeamUids() {
+  try {
+    const snap = await getDocs(collection(db, "users"));
+    return snap.docs.map(d => d.id);
+  } catch(e) {
+    return [];
+  }
+}
+
+// Get admin uid (admin email is always admin@majali.local)
+async function getAdminUid() {
+  // Admin uid = current admin user. Since admin's auth uid is fixed once created,
+  // we'll look it up by checking if there's an "admin_uid" doc, or use the current admin session.
+  // Simplest: store admin uid in a settings doc when admin first logs in.
+  try {
+    const snap = await getDoc(doc(db, "settings", "admin_uid"));
+    return snap.exists() ? snap.data().uid : null;
+  } catch(e) {
+    return null;
+  }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener("click", (e) => {
+  const wrapper = document.querySelector(".notif-wrapper");
+  if (notifDropdownOpen && wrapper && !wrapper.contains(e.target)) {
+    notifDropdownOpen = false;
+    document.getElementById("notifDropdown").classList.remove("show");
+  }
+});
 
 // ============ THEME TOGGLE ============
 function applyTheme(theme) {
