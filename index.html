@@ -2980,7 +2980,7 @@ function subscribeNotifications() {
     // Detect newly arrived notifications (only after first load)
     if (!isFirstNotifLoad && newNotifications.length > notifications.length) {
       const newOnes = newNotifications.slice(notifications.length);
-      newOnes.forEach(n => showToast(n));
+      newOnes.forEach(n => showNotifToast(n));
     }
 
     notifications = newNotifications;
@@ -3064,8 +3064,8 @@ window.markAllNotifRead = function() {
   renderNotifications();
 }
 
-// Show a toast popup
-function showToast(notif) {
+// Show a toast popup (for notifications)
+function showNotifToast(notif) {
   const container = document.getElementById("toastContainer");
   if (!container) return;
   const toast = document.createElement("div");
