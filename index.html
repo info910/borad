@@ -513,17 +513,27 @@
 
   /* Notification dropdown */
   .notif-dropdown {
-    position:absolute; top:calc(100% + 8px); right:0;
+    position:absolute; top:calc(100% + 8px); left:auto; right:0;
     width:340px; max-height:480px; overflow-y:auto;
     background:var(--brand-surface); border:1px solid var(--brand-border);
     border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,0.4);
-    z-index:1500; display:none;
+    z-index:5000; display:none;
     animation:notifDropIn 0.2s ease;
   }
   .notif-dropdown.show { display:block; }
   @keyframes notifDropIn {
     from { transform:translateY(-8px); opacity:0; }
     to { transform:translateY(0); opacity:1; }
+  }
+  /* Mobile: full-width fixed panel from top */
+  @media (max-width:768px) {
+    .notif-dropdown {
+      position:fixed;
+      top:70px; right:10px; left:10px;
+      width:auto; max-width:none;
+      max-height:70vh;
+      z-index:9500;
+    }
   }
   .notif-dropdown-header {
     display:flex; align-items:center; justify-content:space-between;
