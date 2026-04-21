@@ -126,16 +126,17 @@
 
   /* Toast notifications */
   @keyframes toastSlideIn {
-    from { transform:translateX(120%); opacity:0; }
+    from { transform:translateX(-120%); opacity:0; }
     to { transform:translateX(0); opacity:1; }
   }
   @keyframes toastSlideOut {
     from { transform:translateX(0); opacity:1; }
-    to { transform:translateX(120%); opacity:0; }
+    to { transform:translateX(-120%); opacity:0; }
   }
   .toast-container {
-    position:fixed; top:20px; left:20px; z-index:2500;
-    display:flex; flex-direction:column; gap:10px;
+    position:fixed; bottom:24px; left:24px; top:auto; right:auto;
+    z-index:9999;
+    display:flex; flex-direction:column-reverse; gap:12px;
     max-width:380px; pointer-events:none;
   }
   .toast {
@@ -146,7 +147,8 @@
     box-shadow:0 10px 40px rgba(0,0,0,0.4);
     animation:toastSlideIn 0.4s cubic-bezier(0.4,0,0.2,1);
     pointer-events:auto; font-weight:700;
-    min-width:280px;
+    min-width:280px; max-width:380px;
+    border-right:4px solid var(--brand-primary);
   }
   .toast.out { animation:toastSlideOut 0.3s ease-in forwards; }
   .toast.success { border-color:#4ade80; background:linear-gradient(135deg, rgba(74,222,128,0.15), var(--brand-surface)); }
@@ -550,25 +552,7 @@
   .notif-time { font-size:11px; color:var(--text-muted); margin-top:3px; font-weight:600; }
   .notif-empty { text-align:center; color:var(--text-muted); font-size:13px; padding:30px 20px; font-weight:600; }
 
-  /* Toast notification (popup in corner) */
-  .toast-container {
-    position:fixed; top:20px; left:20px; z-index:3000;
-    display:flex; flex-direction:column; gap:10px;
-    pointer-events:none;
-  }
-  .toast {
-    background:var(--brand-surface); border:1px solid var(--brand-border);
-    border-radius:12px; padding:14px 18px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.35);
-    display:flex; align-items:center; gap:12px;
-    min-width:280px; max-width:380px;
-    pointer-events:auto;
-    animation:toastSlideIn 0.3s ease, toastSlideOut 0.3s ease 4.7s forwards;
-    border-right:4px solid var(--brand-primary);
-  }
-  @keyframes toastSlideOut {
-    to { transform:translateX(-120%); opacity:0; }
-  }
+  /* Toast notification (popup in corner) - uses main .toast-container defined at top */
   .toast-icon { font-size:22px; flex-shrink:0; }
   .toast-text { font-size:13px; color:var(--text-primary); line-height:1.4; font-weight:700; }
 
@@ -891,9 +875,6 @@
 </style>
 </head>
 <body>
-
-<!-- Toast notifications container -->
-<div class="toast-container" id="toastContainer"></div>
 
 <!-- Toast notifications container -->
 <div class="toast-container" id="toastContainer"></div>
