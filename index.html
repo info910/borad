@@ -654,7 +654,7 @@
     display:flex; align-items:center; justify-content:space-between;
     padding:18px 24px; margin-bottom:20px; background:var(--brand-surface);
     border:1px solid var(--brand-border); border-radius:16px;
-    position:relative; overflow:hidden; flex-wrap:wrap; gap:12px;
+    position:relative; flex-wrap:wrap; gap:12px;
   }
   .header::after {
     content:''; position:absolute; bottom:0; right:0; left:0; height:2px;
@@ -1476,7 +1476,12 @@ const STATUSES=[
 
 // ============ STATE ============
 let currentSession = null;
-let activeDay = "saturday";
+let activeDay = (() => {
+  // Default to today (if it's a workday), else Saturday
+  const jsDay = new Date().getDay();
+  const map = {6:"saturday", 0:"sunday", 1:"monday", 2:"tuesday", 3:"wednesday", 4:"thursday"};
+  return map[jsDay] || "saturday";
+})();
 let activeFilter = "all";
 let taskStatuses = {};
 let taskUnsubscribe = null;
@@ -1864,7 +1869,84 @@ function updatePointsDisplay(){
   if(weekEl) weekEl.textContent = `(+${weekEarned} هذا الأسبوع)`;
 }
 
-function canEdit(t){ return t.owner === currentSession.role || t.owner === "all" }
+// ============ DAY LOCKING (past days locked after 10am next day) ============
+// Maps day key to day number (Saturday=0, ..., Thursday=5, Friday=6 not used)
+const DAY_ORDER = ["saturday","sunday","monday","tuesday","wednesday","thursday"];
+
+function getCurrentDayKey() {
+  // JavaScript: Sun=0, Mon=1, ..., Sat=6
+  // Our week: Saturday=start, Friday=no work
+  const jsDay = new Date().getDay();
+  const map = {6:"saturday", 0:"sunday", 1:"monday", 2:"tuesday", 3:"wednesday", 4:"thursday", 5:"friday"};
+  return map[jsDay] || "saturday";
+}
+
+// Returns: true if user can currently EDIT tasks of a given day
+// Rules:
+// - Current day: always editable
+// - Yesterday's day (in work week): editable only until 10:00 AM today
+// - Future days: NOT editable
+// - Other past days: NOT editable
+function isDayEditable(dayKey) {
+  const todayKey = getCurrentDayKey();
+  if (dayKey === todayKey) return true; // Today is always editable
+
+  // Friday is non-working; treat as "between Thursday and Saturday"
+  if (todayKey === "friday") {
+    // On Friday, Thursday's tasks are "yesterday" - editable until 10am Friday
+    if (dayKey === "thursday") {
+      return new Date().getHours() < 10;
+    }
+    return false;
+  }
+
+  // Find yesterday in the work week sequence
+  const todayIdx = DAY_ORDER.indexOf(todayKey);
+  if (todayIdx < 0) return false;
+
+  // Yesterday = previous day in DAY_ORDER, or Thursday if today is Saturday
+  let yesterdayIdx;
+  if (todayIdx === 0) {
+    // Today is Saturday => yesterday work day is Thursday
+    yesterdayIdx = DAY_ORDER.indexOf("thursday");
+  } else {
+    yesterdayIdx = todayIdx - 1;
+  }
+  const yesterdayKey = DAY_ORDER[yesterdayIdx];
+
+  if (dayKey === yesterdayKey) {
+    return new Date().getHours() < 10;
+  }
+  return false;
+}
+
+// Returns the day a task belongs to
+function getTaskDay(taskId) {
+  // Check urgent tasks first
+  if (userUrgentTasks && userUrgentTasks[taskId]) {
+    return userUrgentTasks[taskId].day;
+  }
+  // Check deferred-TO day
+  if (userDeferralData && userDeferralData.deferred_tasks && userDeferralData.deferred_tasks[taskId]) {
+    return userDeferralData.deferred_tasks[taskId].toDay;
+  }
+  // Check regular tasks in DAYS
+  for (const [dayKey, dayData] of Object.entries(DAYS)) {
+    if (dayData.tasks.find(t => String(t.id) === String(taskId))) {
+      return dayKey;
+    }
+  }
+  return null;
+}
+
+function canEdit(t){
+  // Must be user's task or shared
+  if (t.owner !== currentSession.role && t.owner !== "all") return false;
+  // Check day lock
+  const taskDay = getTaskDay(t.id);
+  if (taskDay && !isDayEditable(taskDay)) return false;
+  return true;
+}
 function getTaskById(id){
   // Check regular tasks first
   const regular = Object.values(DAYS).flatMap(d => d.tasks).find(t => String(t.id) === String(id));
@@ -2065,10 +2147,17 @@ function renderUser(){
   document.getElementById("weekCount").textContent = aD + "/" + all.length + " مهمة";
 
   let tabs = "";
+  const todayKeyForTabs = getCurrentDayKey();
   Object.entries(DAYS).forEach(([k, d]) => {
     const a = activeDay === k;
     const dd = d.tasks.filter(t => getStatus(t.id) === "done").length;
-    tabs += `<button class="day-tab ${a?'active':''}" onclick="setDay('${k}')">
+    const isToday = k === todayKeyForTabs;
+    const editable = isDayEditable(k);
+    const dayIndicator = isToday
+      ? '<span style="position:absolute;top:4px;left:4px;font-size:9px;background:#4ade80;color:#0a2e18;padding:1px 5px;border-radius:99px;font-weight:900;">اليوم</span>'
+      : (!editable ? '<span style="position:absolute;top:4px;left:4px;font-size:10px;opacity:0.7;">🔒</span>' : '');
+    tabs += `<button class="day-tab ${a?'active':''}" style="position:relative;" onclick="setDay('${k}')">
+      ${dayIndicator}
       <div class="dt-name">${d.label}</div><div class="dt-theme">${d.theme}</div>
       <div class="dt-icon">${d.themeIcon}</div>
       ${dd > 0 ? `<div class="dt-prog">${dd}/${d.tasks.length}</div>` : ''}
@@ -2079,15 +2168,39 @@ function renderUser(){
   const total = day.tasks.length;
   const done = day.tasks.filter(t => getStatus(t.id) === "done").length;
   const pct = Math.round((done / total) * 100);
-  document.getElementById("themeBanner").innerHTML = `
+  const dayEditable = isDayEditable(activeDay);
+  const todayKey = getCurrentDayKey();
+
+  // Determine lock reason for user message
+  let lockBanner = "";
+  if (!dayEditable) {
+    const todayIdx = DAY_ORDER.indexOf(todayKey);
+    const activeIdx = DAY_ORDER.indexOf(activeDay);
+    let reason = "";
+    if (activeIdx > todayIdx && todayKey !== "friday") {
+      reason = "لم يحن وقت هذا اليوم بعد - تقدر تشاهد المهام فقط";
+    } else {
+      reason = "انتهى وقت تعديل هذا اليوم - يمكن المشاهدة فقط (نافذة التعديل حتى 10 صباحاً من اليوم التالي)";
+    }
+    lockBanner = `<div style="margin-bottom:14px;padding:12px 16px;border-radius:12px;background:rgba(148,163,184,0.1);border:1px solid rgba(148,163,184,0.3);display:flex;align-items:center;gap:10px;">
+      <span style="font-size:20px;">🔒</span>
+      <div style="flex:1;">
+        <div style="font-weight:800;font-size:13px;color:#94a3b8;">هذا اليوم للعرض فقط</div>
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-top:2px;">${reason}</div>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById("themeBanner").innerHTML = `${lockBanner}
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;${!dayEditable ? 'opacity:0.85;' : ''}">
     <div class="tb-right"><span class="tb-icon">${day.themeIcon}</span><div>
-      <div class="tb-title">${day.label} — ${day.theme}</div>
+      <div class="tb-title">${day.label} — ${day.theme} ${!dayEditable ? '<span style="font-size:12px;color:#94a3b8;margin-right:6px;">🔒 مقفل</span>' : ''}</div>
       <div class="tb-count">${total} مهام • ${done} مكتملة</div>
     </div></div>
     <div class="tb-left">
       <div class="tb-track"><div class="tb-fill" style="width:${pct}%;background:${pct===100?'linear-gradient(90deg,#4ade80,#34d399)':'linear-gradient(90deg,var(--brand-primary),var(--brand-gold))'}"></div></div>
       <span class="tb-pct" style="color:${pct===100?'#4ade80':'var(--brand-primary)'}">${pct}%</span>
-    </div>`;
+    </div></div>`;
 
   let fH = `<button class="filter-btn" style="background:${activeFilter==='all'?'rgba(200,164,92,0.15)':'rgba(255,255,255,0.04)'};color:${activeFilter==='all'?'var(--brand-primary)':'var(--text-muted)'};border-color:${activeFilter==='all'?'rgba(200,164,92,0.3)':'rgba(255,255,255,0.06)'}" onclick="setFilter('all')">👥 الكل</button>`;
   Object.entries(ROLES).forEach(([k, m]) => {
