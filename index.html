@@ -919,6 +919,9 @@
         <input type="password" id="loginPassword" placeholder="ادخل كلمة المرور">
       </div>
       <button class="auth-submit" id="loginBtn" onclick="handleLogin()">دخول</button>
+      <div style="text-align:center;margin-top:14px;">
+        <button onclick="showForgotPassword()" style="background:none;border:none;color:var(--brand-primary);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:underline;">🔐 نسيت كلمة المرور؟</button>
+      </div>
     </div>
     <div id="signupForm" style="display:none">
       <div class="auth-field">
@@ -1073,11 +1076,58 @@
       <div id="deferredTasksList"></div>
     </div>
 
+    <div class="urgent-panel" style="border-right-color:var(--brand-primary);">
+      <div class="urgent-panel-header">
+        <div class="lb-title">🔐 إعادة تعيين كلمات المرور</div>
+        <button class="urgent-add-btn" onclick="openPasswordResetGuide()" style="background:linear-gradient(135deg, var(--brand-primary), var(--brand-gold));">📖 دليل إعادة التعيين</button>
+      </div>
+      <div style="font-size:13px; color:var(--text-secondary); line-height:1.8; font-weight:600;">
+        لو نسي أحد من الفريق كلمة المرور، تواصلوا معك مباشرة (واتساب/شخصياً)، وأنت تعيد تعيينها من Firebase Console خلال 30 ثانية.
+      </div>
+    </div>
+
     <div class="admin-summary">
       <h3>📊 ملخص الفريق — مباشر</h3>
       <div class="summary-grid" id="summaryGrid"></div>
     </div>
     <div class="admin-grid" id="adminGrid"></div>
+  </div>
+
+  <!-- Admin Password Reset Guide Modal -->
+  <div class="modal-overlay" id="passwordResetGuideModal" onclick="if(event.target===this)closePasswordResetGuide()">
+    <div class="modal-box" style="max-width:560px;">
+      <div class="modal-header">
+        <h3>🔐 دليل إعادة تعيين كلمة مرور موظف</h3>
+        <button class="modal-close" onclick="closePasswordResetGuide()">×</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.3); border-radius:12px; padding:14px; margin-bottom:16px; font-size:13px; color:var(--text-secondary); line-height:1.7; font-weight:600;">
+          ✅ <strong style="color:#4ade80;">آمن وسريع:</strong> Firebase يتولى العملية بشكل آمن. ما تحتاج تعرف كلمة المرور القديمة.
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <div style="font-weight:900; font-size:14px; color:var(--brand-primary); margin-bottom:10px;">📋 الخطوات:</div>
+          <ol style="padding-right:20px; font-size:13px; line-height:2; color:var(--text-secondary); font-weight:600;">
+            <li style="margin-bottom:6px;">افتح <a href="https://console.firebase.google.com" target="_blank" style="color:var(--brand-primary); font-weight:800; text-decoration:underline;">Firebase Console</a></li>
+            <li style="margin-bottom:6px;">اختر مشروع <strong style="color:var(--brand-primary);">majaly-board</strong></li>
+            <li style="margin-bottom:6px;">من القائمة الجانبية: <strong>Build → Authentication</strong></li>
+            <li style="margin-bottom:6px;">دور على إيميل الموظف (مثل <code style="background:rgba(200,164,92,0.1); padding:2px 6px; border-radius:4px; font-size:12px;">mohammed@majali.local</code>)</li>
+            <li style="margin-bottom:6px;">اضغط ⋮ (الثلاث نقاط) → <strong>Reset password</strong></li>
+            <li style="margin-bottom:6px;">انسخ الرابط اللي يظهر</li>
+            <li style="margin-bottom:6px;">أرسله للموظف عبر واتساب</li>
+            <li>الموظف يضغط الرابط ويختار كلمة مرور جديدة</li>
+          </ol>
+        </div>
+
+        <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); border-radius:12px; padding:14px; font-size:12px; color:#f59e0b; line-height:1.7; font-weight:700;">
+          ⚠️ <strong>ملاحظة:</strong> هذي الإيميلات وهمية (<code style="background:rgba(0,0,0,0.2); padding:2px 5px; border-radius:4px;">@majali.local</code>) فما تشتغل خاصية "إرسال إيميل" مباشرة. لازم تنسخ الرابط يدوياً.
+        </div>
+
+        <a href="https://console.firebase.google.com/project/majaly-board/authentication/users" target="_blank" class="auth-submit" style="display:block; text-align:center; text-decoration:none; margin-top:16px;">
+          🚀 افتح Firebase Console الآن
+        </a>
+      </div>
+    </div>
   </div>
 
   <!-- Urgent Task Modal -->
@@ -1177,6 +1227,42 @@
         </div>
         <div class="auth-error" id="deferError"></div>
         <button class="auth-submit" id="deferSubmitBtn" onclick="submitDefer()" style="background:linear-gradient(135deg, #f59e0b, #d97706)">⏰ تأجيل المهمة</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal-overlay" id="forgotPasswordModal" onclick="if(event.target===this)closeForgotPassword()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🔐 نسيت كلمة المرور؟</h3>
+        <button class="modal-close" onclick="closeForgotPassword()">×</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:rgba(200,164,92,0.08); border:1px solid rgba(200,164,92,0.25); border-radius:12px; padding:16px; margin-bottom:16px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+            <span style="font-size:24px;">💡</span>
+            <div style="font-weight:900; font-size:15px; color:var(--brand-primary);">الخطوات السريعة:</div>
+          </div>
+          <div style="font-size:13px; line-height:1.9; color:var(--text-secondary); font-weight:600;">
+            <div style="margin-bottom:8px;">
+              <strong style="color:var(--brand-primary);">1.</strong> تواصل مع مدير المتجر مباشرة (واتساب أو شخصياً)
+            </div>
+            <div style="margin-bottom:8px;">
+              <strong style="color:var(--brand-primary);">2.</strong> اخبره باسم المستخدم اللي عندك
+            </div>
+            <div style="margin-bottom:8px;">
+              <strong style="color:var(--brand-primary);">3.</strong> راح يعطيك كلمة مرور جديدة خلال دقيقة
+            </div>
+            <div>
+              <strong style="color:var(--brand-primary);">4.</strong> سجّل دخولك بالكلمة الجديدة وغيّرها لاحقاً
+            </div>
+          </div>
+        </div>
+        <div style="background:rgba(74,158,255,0.06); border:1px solid rgba(74,158,255,0.25); border-radius:12px; padding:14px; font-size:12px; color:var(--text-muted); line-height:1.7; font-weight:600;">
+          🔒 لأسباب أمنية، فقط المدير يقدر يعيد تعيين كلمة المرور لحماية حسابات الفريق
+        </div>
+        <button class="auth-submit" onclick="closeForgotPassword()" style="margin-top:16px;">حسناً، فهمت</button>
       </div>
     </div>
   </div>
@@ -2825,6 +2911,24 @@ window.closeDeferModal = function() {
   activeDeferTaskId = null;
   activeDeferTaskText = null;
   activeDeferCurrentDay = null;
+}
+
+// ============ FORGOT PASSWORD ============
+window.showForgotPassword = function() {
+  document.getElementById("forgotPasswordModal").classList.add("show");
+}
+
+window.closeForgotPassword = function() {
+  document.getElementById("forgotPasswordModal").classList.remove("show");
+}
+
+// Admin's password reset guide
+window.openPasswordResetGuide = function() {
+  document.getElementById("passwordResetGuideModal").classList.add("show");
+}
+
+window.closePasswordResetGuide = function() {
+  document.getElementById("passwordResetGuideModal").classList.remove("show");
 }
 
 function getDayLabel(day) {
