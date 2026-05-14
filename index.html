@@ -1231,43 +1231,43 @@
     </div>
   </div>
 
-  <!-- Forgot Password Modal -->
-  <div class="modal-overlay" id="forgotPasswordModal" onclick="if(event.target===this)closeForgotPassword()">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h3>🔐 نسيت كلمة المرور؟</h3>
-        <button class="modal-close" onclick="closeForgotPassword()">×</button>
-      </div>
-      <div class="modal-body">
-        <div style="background:rgba(200,164,92,0.08); border:1px solid rgba(200,164,92,0.25); border-radius:12px; padding:16px; margin-bottom:16px;">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-            <span style="font-size:24px;">💡</span>
-            <div style="font-weight:900; font-size:15px; color:var(--brand-primary);">الخطوات السريعة:</div>
+  <div class="footer"><span class="brand-mark">مجالي</span> — لوحة إدارة داخلية • جميع الحقوق محفوظة © 2026</div>
+</div>
+
+<!-- Forgot Password Modal (outside mainApp so it works on the login screen too) -->
+<div class="modal-overlay" id="forgotPasswordModal" style="z-index:9000" onclick="if(event.target===this)closeForgotPassword()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>🔐 نسيت كلمة المرور؟</h3>
+      <button class="modal-close" onclick="closeForgotPassword()">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:rgba(200,164,92,0.08); border:1px solid rgba(200,164,92,0.25); border-radius:12px; padding:16px; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span style="font-size:24px;">💡</span>
+          <div style="font-weight:900; font-size:15px; color:var(--brand-primary);">الخطوات السريعة:</div>
+        </div>
+        <div style="font-size:13px; line-height:1.9; color:var(--text-secondary); font-weight:600;">
+          <div style="margin-bottom:8px;">
+            <strong style="color:var(--brand-primary);">1.</strong> تواصل مع مدير المتجر مباشرة (واتساب أو شخصياً)
           </div>
-          <div style="font-size:13px; line-height:1.9; color:var(--text-secondary); font-weight:600;">
-            <div style="margin-bottom:8px;">
-              <strong style="color:var(--brand-primary);">1.</strong> تواصل مع مدير المتجر مباشرة (واتساب أو شخصياً)
-            </div>
-            <div style="margin-bottom:8px;">
-              <strong style="color:var(--brand-primary);">2.</strong> اخبره باسم المستخدم اللي عندك
-            </div>
-            <div style="margin-bottom:8px;">
-              <strong style="color:var(--brand-primary);">3.</strong> راح يعطيك كلمة مرور جديدة خلال دقيقة
-            </div>
-            <div>
-              <strong style="color:var(--brand-primary);">4.</strong> سجّل دخولك بالكلمة الجديدة وغيّرها لاحقاً
-            </div>
+          <div style="margin-bottom:8px;">
+            <strong style="color:var(--brand-primary);">2.</strong> اخبره باسم المستخدم اللي عندك
+          </div>
+          <div style="margin-bottom:8px;">
+            <strong style="color:var(--brand-primary);">3.</strong> راح يعطيك كلمة مرور جديدة خلال دقيقة
+          </div>
+          <div>
+            <strong style="color:var(--brand-primary);">4.</strong> سجّل دخولك بالكلمة الجديدة وغيّرها لاحقاً
           </div>
         </div>
-        <div style="background:rgba(74,158,255,0.06); border:1px solid rgba(74,158,255,0.25); border-radius:12px; padding:14px; font-size:12px; color:var(--text-muted); line-height:1.7; font-weight:600;">
-          🔒 لأسباب أمنية، فقط المدير يقدر يعيد تعيين كلمة المرور لحماية حسابات الفريق
-        </div>
-        <button class="auth-submit" onclick="closeForgotPassword()" style="margin-top:16px;">حسناً، فهمت</button>
       </div>
+      <div style="background:rgba(74,158,255,0.06); border:1px solid rgba(74,158,255,0.25); border-radius:12px; padding:14px; font-size:12px; color:var(--text-muted); line-height:1.7; font-weight:600;">
+        🔒 لأسباب أمنية، فقط المدير يقدر يعيد تعيين كلمة المرور لحماية حسابات الفريق
+      </div>
+      <button class="auth-submit" onclick="closeForgotPassword()" style="margin-top:16px;">حسناً، فهمت</button>
     </div>
   </div>
-
-  <div class="footer"><span class="brand-mark">مجالي</span> — لوحة إدارة داخلية • جميع الحقوق محفوظة © 2026</div>
 </div>
 
 <!-- Session Warning Modal -->
