@@ -1195,6 +1195,7 @@
       </div>
       <div class="modal-body">
         <div class="comment-task-preview" id="commentTaskPreview"></div>
+        <div id="commentThreadContainer" style="max-height:280px; overflow-y:auto; margin-bottom:14px; padding:4px;"></div>
         <div class="auth-field">
           <label>اكتب رسالتك (يراها الفريق كله)</label>
           <textarea class="comment-textarea" id="commentText" placeholder="مثال: محمد، البانر جاهز - تقدر تطلعه؟" maxlength="500"></textarea>
@@ -3143,6 +3144,10 @@ function subscribeAllComments() {
     } else {
       renderUser();
     }
+    // If comment modal is open, refresh the thread view
+    if (activeCommentTaskId) {
+      renderCommentThread(activeCommentTaskId);
+    }
   }, (err) => console.error("[comments] subscribe error:", err));
 }
 
@@ -3167,13 +3172,11 @@ window.openCommentModal = function(taskId, taskText) {
 }
 
 function renderCommentThread(taskId) {
-  // Insert a thread container before the textarea
   const thread = allCommentsThreads[taskId] || [];
   let html = '';
   if (thread.length === 0) {
     html = '<div style="text-align:center; color:var(--text-muted); font-size:13px; padding:14px; font-weight:600;">لا توجد تعليقات بعد. كن أول من يبدأ النقاش 💬</div>';
   } else {
-    // Sort by timestamp (oldest first, like a chat)
     const sorted = [...thread].sort((a, b) => (a.ts || "").localeCompare(b.ts || ""));
     sorted.forEach(c => {
       const isMine = c.from === currentSession.uid;
@@ -3185,25 +3188,20 @@ function renderCommentThread(taskId) {
       const timeStr = c.ts ? formatNotifTime(c.ts) : '';
       html += `<div style="background:${bgColor}; border:1px solid ${borderColor}; border-radius:10px; padding:10px 12px; margin-bottom:8px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-          <div style="font-weight:800; font-size:12px; color:${nameColor};">${roleEmoji} ${c.displayName || 'مستخدم'}</div>
+          <div style="font-weight:800; font-size:12px; color:${nameColor};">${roleEmoji} ${escapeHtml(c.displayName || 'مستخدم')}</div>
           <div style="font-size:10px; color:var(--text-muted); font-weight:600;">${timeStr}</div>
         </div>
         <div style="font-size:13px; color:var(--text-primary); line-height:1.5; font-weight:600; white-space:pre-wrap; word-break:break-word;">${escapeHtml(c.text)}</div>
       </div>`;
     });
   }
-  // Insert into a thread container
-  let container = document.getElementById("commentThreadContainer");
-  if (!container) {
-    container = document.createElement("div");
-    container.id = "commentThreadContainer";
-    container.style.cssText = "max-height:280px; overflow-y:auto; margin-bottom:14px; padding:4px;";
-    const textarea = document.getElementById("commentText");
-    textarea.parentNode.insertBefore(container, textarea.parentNode);
+
+  // Render into the dedicated thread container (defined in HTML below)
+  const container = document.getElementById("commentThreadContainer");
+  if (container) {
+    container.innerHTML = html;
+    setTimeout(() => container.scrollTop = container.scrollHeight, 50);
   }
-  container.innerHTML = html;
-  // Scroll to bottom of thread
-  setTimeout(() => container.scrollTop = container.scrollHeight, 50);
 }
 
 function escapeHtml(s) {
