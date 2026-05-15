@@ -2974,11 +2974,20 @@ window.testNotifications = async function() {
 
   const results = [];
 
-  // Step 1: Get all team uids
+  // Step 1: Get all team uids and their info
   let teamUids = [];
+  let allUsers = [];
   try {
-    teamUids = await getAllTeamUids();
+    const snap = await getDocs(collection(db, "users"));
+    snap.forEach(d => {
+      const data = d.data();
+      allUsers.push({ uid: d.id, ...data });
+      teamUids.push(d.id);
+    });
     results.push(`✅ <strong>عدد المستخدمين المسجلين:</strong> ${teamUids.length}`);
+    allUsers.forEach(u => {
+      results.push(`&nbsp;&nbsp;&nbsp;• ${u.displayName || u.username || '?'} (${u.role || '?'}) — uid: <code style="font-size:10px;">${u.uid.substring(0,8)}...</code>`);
+    });
   } catch(e) {
     results.push(`❌ فشل قراءة قائمة المستخدمين: ${e.message}`);
     output.innerHTML = results.join('<br>');
@@ -2998,31 +3007,60 @@ window.testNotifications = async function() {
     results.push(`❌ خطأ في getAdminUid: ${e.message}`);
   }
 
-  // Step 3: Send test notif to each team member (except admin)
+  // Step 3: Send test notif to each team member
   const memberUids = teamUids.filter(uid => uid !== currentSession.uid);
   if (memberUids.length === 0) {
     results.push(`⚠️ لا يوجد موظفين مسجلين غير المدير`);
   } else {
-    try {
-      await sendNotification(memberUids, "🧪",
-        `اختبار من المدير - ${new Date().toLocaleTimeString("ar-SA")} - إذا وصلك هذا التنبيه فالنظام شغّال 100%`);
-      results.push(`✅ <strong>تم إرسال تنبيه تجريبي إلى ${memberUids.length} موظف</strong>`);
-      results.push(`<div style="background:rgba(74,222,128,0.1); padding:10px; border-radius:8px; margin-top:8px; color:#4ade80;">
-        💡 اطلب من كل موظف يفتح اللوحة ويتحقق من الجرس 🔔 — لو فيه رقم أحمر، النظام يشتغل!
-      </div>`);
-    } catch(e) {
-      results.push(`❌ فشل إرسال التنبيه: ${e.message}`);
+    let successCount = 0;
+    let failCount = 0;
+    const testMessage = `اختبار من المدير - ${new Date().toLocaleTimeString("ar-SA")} - إذا وصلك هذا التنبيه فالنظام شغّال 100%`;
+
+    for (const uid of memberUids) {
+      try {
+        const ref = doc(db, "notifications", uid);
+        const snap = await getDoc(ref);
+        const items = snap.exists() ? (snap.data().items || []) : [];
+        items.push({
+          icon: "🧪",
+          text: testMessage,
+          timestamp: new Date().toISOString()
+        });
+        await setDoc(ref, { items: items.slice(-30) });
+        successCount++;
+      } catch(e) {
+        failCount++;
+        const user = allUsers.find(u => u.uid === uid);
+        results.push(`❌ فشل لـ ${user ? user.displayName : uid.substring(0,8)}: ${e.code || e.message}`);
+      }
+    }
+
+    if (successCount > 0) {
+      results.push(`✅ <strong>تم الإرسال بنجاح إلى ${successCount} موظف</strong>`);
+    }
+    if (failCount > 0) {
+      results.push(`❌ <strong>فشل الإرسال إلى ${failCount} موظف</strong>`);
     }
   }
 
-  // Step 4: Send test notif to admin (self)
-  try {
-    await sendNotification(currentSession.uid, "🧪",
-      `اختبار ذاتي - ${new Date().toLocaleTimeString("ar-SA")} - تحقق من جرسك`);
-    results.push(`✅ <strong>تم إرسال تنبيه ذاتي للمدير</strong>`);
-  } catch(e) {
-    results.push(`❌ فشل التنبيه الذاتي: ${e.message}`);
+  // Step 4: Try to read notifications for each member (test READ permission)
+  results.push(`<br><strong style="color:var(--brand-primary);">🔍 اختبار قراءة التنبيهات لكل موظف:</strong>`);
+  for (const uid of memberUids) {
+    const user = allUsers.find(u => u.uid === uid);
+    try {
+      const ref = doc(db, "notifications", uid);
+      const snap = await getDoc(ref);
+      const count = snap.exists() ? (snap.data().items || []).length : 0;
+      results.push(`&nbsp;&nbsp;✅ ${user ? user.displayName : uid.substring(0,8)}: عدد التنبيهات في قاعدة البيانات = <strong>${count}</strong>`);
+    } catch(e) {
+      results.push(`&nbsp;&nbsp;❌ ${user ? user.displayName : uid.substring(0,8)}: ${e.code || e.message}`);
+    }
   }
+
+  results.push(`<br><div style="background:rgba(74,222,128,0.1); padding:10px; border-radius:8px; color:#4ade80; font-size:12px;">
+    💡 <strong>الخطوة الأخيرة:</strong> اطلب من كل موظف يفتح اللوحة (أو يضغط F5 لو فاتحها). الجرس 🔔 لازم يصير عليه رقم أحمر.<br>
+    <strong>إذا التنبيه محفوظ في قاعدة البيانات (الخطوة 4 أعلاه) لكن الموظف ما يشوفه</strong>، يعني المشكلة في قراءة الموظف للتنبيهات.
+  </div>`);
 
   output.innerHTML = results.join('<br>');
 }
@@ -3369,21 +3407,41 @@ function subscribeNotifications() {
   if (notifUnsub) notifUnsub();
   if (!currentSession) return;
 
+  console.log("[notif] subscribing to notifications/" + currentSession.uid + " (role=" + (currentSession.isAdmin ? "admin" : currentSession.role) + ")");
+
   // Each user has their own notifications doc keyed by uid
   notifUnsub = onSnapshot(doc(db, "notifications", currentSession.uid), (snap) => {
     const data = snap.exists() ? snap.data() : { items: [] };
     const newNotifications = data.items || [];
 
+    console.log("[notif] received update. Total notifs:", newNotifications.length, "(was: " + notifications.length + ")");
+
     // Detect newly arrived notifications (only after first load)
     if (!isFirstNotifLoad && newNotifications.length > notifications.length) {
       const newOnes = newNotifications.slice(notifications.length);
+      console.log("[notif] new arrivals:", newOnes.length);
       newOnes.forEach(n => showNotifToast(n));
     }
 
     notifications = newNotifications;
     isFirstNotifLoad = false;
     renderNotifications();
-  }, (err) => console.error("notif subscribe error:", err));
+  }, (err) => {
+    console.error("[notif] SUBSCRIBE ERROR:", err.code, err.message);
+    // Show visible error on bell
+    const bell = document.getElementById("notifBellBtn");
+    if (bell) {
+      bell.title = "خطأ في التنبيهات: " + (err.code || err.message);
+      bell.style.color = "#ef4444";
+      // Show alert ONLY first time
+      if (!window._notifErrorShown) {
+        window._notifErrorShown = true;
+        setTimeout(() => {
+          alert("⚠️ خطأ في نظام التنبيهات:\n\nالكود: " + (err.code || "غير معروف") + "\nالرسالة: " + err.message + "\n\nالغالب: قواعد Firestore لا تسمح بقراءة notifications. تواصل مع المدير لتحديث القواعد.");
+        }, 1500);
+      }
+    }
+  });
 
   // Initialize last-seen from localStorage
   try {
