@@ -1086,6 +1086,16 @@
       </div>
     </div>
 
+    <div class="urgent-panel" style="border-right-color:#34d399;">
+      <div class="urgent-panel-header">
+        <div class="lb-title">🔔 تشخيص نظام التنبيهات</div>
+        <button class="urgent-add-btn" onclick="testNotifications()" style="background:linear-gradient(135deg, #34d399, #10b981);">🧪 اختبار التنبيهات</button>
+      </div>
+      <div id="notifDiagnosticOutput" style="font-size:13px; color:var(--text-secondary); line-height:1.8; font-weight:600;">
+        اضغط "اختبار التنبيهات" لإرسال تنبيه تجريبي لكل أعضاء الفريق والتأكد إن النظام شغّال.
+      </div>
+    </div>
+
     <div class="admin-summary">
       <h3>📊 ملخص الفريق — مباشر</h3>
       <div class="summary-grid" id="summaryGrid"></div>
@@ -1180,19 +1190,19 @@
   <div class="modal-overlay" id="commentModal" onclick="if(event.target===this)closeCommentModal()">
     <div class="modal-box">
       <div class="modal-header">
-        <h3>📝 ملاحظة على المهمة</h3>
+        <h3>💬 نقاش المهمة</h3>
         <button class="modal-close" onclick="closeCommentModal()">×</button>
       </div>
       <div class="modal-body">
         <div class="comment-task-preview" id="commentTaskPreview"></div>
         <div class="auth-field">
-          <label>اكتب ملاحظتك (المدير سيراها)</label>
-          <textarea class="comment-textarea" id="commentText" placeholder="مثال: خلصت 4 من 5 منتجات، الخامس يحتاج صور أفضل" maxlength="500"></textarea>
+          <label>اكتب رسالتك (يراها الفريق كله)</label>
+          <textarea class="comment-textarea" id="commentText" placeholder="مثال: محمد، البانر جاهز - تقدر تطلعه؟" maxlength="500"></textarea>
         </div>
         <div class="auth-error" id="commentError"></div>
         <div class="modal-actions">
-          <button class="auth-submit" id="commentSubmitBtn" onclick="saveComment()" style="flex:1">حفظ الملاحظة</button>
-          <button class="modal-btn-secondary" id="commentDeleteBtn" onclick="deleteComment()" style="display:none">🗑️ حذف</button>
+          <button class="auth-submit" id="commentSubmitBtn" onclick="saveComment()" style="flex:1">إرسال 💬</button>
+          <button class="modal-btn-secondary" id="commentDeleteBtn" onclick="deleteComment()" style="display:none">إغلاق</button>
         </div>
       </div>
     </div>
@@ -1704,6 +1714,7 @@ window.logout = async function(){
   if(userUrgentUnsub) userUrgentUnsub();
   if(userCommentsUnsub) userCommentsUnsub();
   if(userDeferralUnsub) userDeferralUnsub();
+  if(allCommentsUnsub) allCommentsUnsub();
   if(notifUnsub) notifUnsub();
   adminUnsubs.forEach(u => u());
   adminUnsubs = [];
@@ -1858,9 +1869,13 @@ function enterApp(){
     document.getElementById("resetBtn").style.display = "none";
     document.getElementById("adminResetBtn").style.display = "inline-block";
     document.getElementById("headerSubtitle").textContent = "لوحة المدير — مراقبة تقدم الفريق";
-    // Save admin uid for notifications
+    // Save admin uid in TWO places for redundancy:
+    // 1. settings/admin_uid - quick lookup
+    // 2. users/{uid}.isAdmin = true - fallback query
     setDoc(doc(db, "settings", "admin_uid"), { uid: currentSession.uid }, { merge: true })
-      .catch(e => console.error("admin uid save error:", e));
+      .catch(e => console.error("[notif] admin_uid save error:", e));
+    setDoc(doc(db, "users", currentSession.uid), { isAdmin: true }, { merge: true })
+      .catch(e => console.error("[notif] users.isAdmin save error:", e));
     subscribeAdmin();
   } else {
     document.getElementById("userView").style.display = "block";
@@ -1933,11 +1948,8 @@ function subscribeUser(){
     renderUser();
   }, (err) => console.error("urgent subscribe error:", err));
 
-  // Subscribe to comments for this user
-  userCommentsUnsub = onSnapshot(doc(db, "comments", currentSession.role), (snap) => {
-    userComments = snap.exists() ? (snap.data().notes || {}) : {};
-    renderUser();
-  }, (err) => console.error("comments subscribe error:", err));
+  // Subscribe to comments thread (all users see all comments)
+  subscribeAllComments();
 
   // Subscribe to deferrals for this user
   subscribeDeferrals();
@@ -2342,10 +2354,11 @@ function renderUser(){
       const deferredMarker = t.isDeferred
         ? `<span class="tc-deferred-marker">⏰ مؤجّلة من ${getDayLabel(t.fromDay)}</span>`
         : '';
-      // Comment button
-      const hasNote = mine && userComments && userComments[t.id];
-      const commentBtn = (mine && t.owner !== "all")
-        ? `<button class="tc-comment-btn ${hasNote ? 'has-note' : ''}" onclick="event.stopPropagation(); openCommentModal('${t.id}', \`${(t.text || '').replace(/`/g, '\\`')}\`)">${hasNote ? '💬 ملاحظة' : '💬'}</button>`
+      // Comment button - all team members and admin can comment
+      // Skip shared meetings (they're brief, no need for thread)
+      const commentCount = getCommentCount(t.id);
+      const commentBtn = (t.owner !== "all")
+        ? `<button class="tc-comment-btn ${commentCount > 0 ? 'has-note' : ''}" onclick="event.stopPropagation(); openCommentModal('${t.id}', \`${(t.text || '').replace(/`/g, '\\`')}\`)">💬 ${commentCount > 0 ? commentCount : ''}</button>`
         : '';
       // Defer button (only for deferrable tasks, and not already deferred)
       const canDefer = mine && !t.isDeferred && isTaskDeferrable(t.text, t.owner, t.isUrgent) && s !== "done";
@@ -2411,14 +2424,8 @@ function subscribeAdmin(){
     adminUnsubs.push(u);
   });
 
-  // Subscribe to comments from each role
-  ["store","content","marketing"].forEach(role => {
-    const u = onSnapshot(doc(db, "comments", role), (snap) => {
-      adminData.comments[role] = snap.exists() ? (snap.data().notes || {}) : {};
-      renderAdmin();
-    });
-    adminUnsubs.push(u);
-  });
+  // Subscribe to ALL comments thread (admin sees the same as everyone)
+  subscribeAllComments();
 
   // Subscribe to deferrals from each role
   ["store","content","marketing"].forEach(role => {
@@ -2501,22 +2508,49 @@ function renderAdmin(){
       </div>
       <div class="auc-days">${daysHTML}</div>
       ${(() => {
-        const comments = adminData.comments[role] || {};
-        const commentEntries = Object.entries(comments);
-        if (commentEntries.length === 0) return '';
-        // Sort by most recent
-        commentEntries.sort((a, b) => (b[1].updatedAt || "").localeCompare(a[1].updatedAt || ""));
+        // Find comment threads on tasks that belong to this role
+        const threads = allCommentsThreads || {};
+        const relevantThreads = [];
+        Object.entries(threads).forEach(([taskId, msgs]) => {
+          if (!Array.isArray(msgs) || msgs.length === 0) return;
+          // Determine which role owns this task
+          let taskOwner = null;
+          // Check regular tasks
+          for (const dayKey in DAYS) {
+            const t = DAYS[dayKey].tasks.find(x => String(x.id) === String(taskId));
+            if (t) { taskOwner = t.owner; break; }
+          }
+          // Check urgent tasks
+          if (!taskOwner) {
+            const urg = (adminData.urgent[role] || {})[taskId];
+            if (urg) taskOwner = role;
+          }
+          if (taskOwner === role) {
+            const lastMsg = msgs[msgs.length - 1];
+            relevantThreads.push({
+              taskId,
+              taskText: lastMsg.taskText || 'مهمة',
+              count: msgs.length,
+              lastTs: lastMsg.ts,
+              lastFrom: lastMsg.displayName,
+              lastText: lastMsg.text
+            });
+          }
+        });
+
+        if (relevantThreads.length === 0) return '';
+        relevantThreads.sort((a, b) => (b.lastTs || "").localeCompare(a.lastTs || ""));
+
         let html = `<div class="admin-comment-list">
-          <div class="admin-comment-title">💬 ملاحظات (${commentEntries.length})</div>`;
-        // Show only first 3
-        commentEntries.slice(0, 3).forEach(([taskId, note]) => {
+          <div class="admin-comment-title">💬 نقاشات نشطة (${relevantThreads.length})</div>`;
+        relevantThreads.slice(0, 3).forEach(t => {
           html += `<div class="admin-comment-item">
-            <div class="admin-comment-task">📌 ${(note.taskText || 'مهمة').slice(0, 60)}</div>
-            <div class="admin-comment-text">${note.text}</div>
+            <div class="admin-comment-task">📌 ${escapeHtml((t.taskText || 'مهمة').slice(0, 60))} (${t.count} رسالة)</div>
+            <div class="admin-comment-text"><strong>${escapeHtml(t.lastFrom || '')}:</strong> ${escapeHtml((t.lastText || '').slice(0, 80))}</div>
           </div>`;
         });
-        if (commentEntries.length > 3) {
-          html += `<div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:4px;">+${commentEntries.length - 3} ملاحظات أخرى</div>`;
+        if (relevantThreads.length > 3) {
+          html += `<div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:4px;">+${relevantThreads.length - 3} نقاشات أخرى</div>`;
         }
         html += '</div>';
         return html;
@@ -2931,6 +2965,67 @@ window.closePasswordResetGuide = function() {
   document.getElementById("passwordResetGuideModal").classList.remove("show");
 }
 
+// Test notification system - admin only
+window.testNotifications = async function() {
+  if (!currentSession || !currentSession.isAdmin) return;
+  const output = document.getElementById("notifDiagnosticOutput");
+  output.innerHTML = '<div style="color:#fbbf24;">⏳ جاري اختبار النظام...</div>';
+
+  const results = [];
+
+  // Step 1: Get all team uids
+  let teamUids = [];
+  try {
+    teamUids = await getAllTeamUids();
+    results.push(`✅ <strong>عدد المستخدمين المسجلين:</strong> ${teamUids.length}`);
+  } catch(e) {
+    results.push(`❌ فشل قراءة قائمة المستخدمين: ${e.message}`);
+    output.innerHTML = results.join('<br>');
+    return;
+  }
+
+  // Step 2: Check admin uid
+  let adminUid = null;
+  try {
+    adminUid = await getAdminUid();
+    if (adminUid) {
+      results.push(`✅ <strong>تم العثور على admin_uid:</strong> ${adminUid.substring(0,8)}...`);
+    } else {
+      results.push(`❌ ما تم العثور على admin_uid`);
+    }
+  } catch(e) {
+    results.push(`❌ خطأ في getAdminUid: ${e.message}`);
+  }
+
+  // Step 3: Send test notif to each team member (except admin)
+  const memberUids = teamUids.filter(uid => uid !== currentSession.uid);
+  if (memberUids.length === 0) {
+    results.push(`⚠️ لا يوجد موظفين مسجلين غير المدير`);
+  } else {
+    try {
+      await sendNotification(memberUids, "🧪",
+        `اختبار من المدير - ${new Date().toLocaleTimeString("ar-SA")} - إذا وصلك هذا التنبيه فالنظام شغّال 100%`);
+      results.push(`✅ <strong>تم إرسال تنبيه تجريبي إلى ${memberUids.length} موظف</strong>`);
+      results.push(`<div style="background:rgba(74,222,128,0.1); padding:10px; border-radius:8px; margin-top:8px; color:#4ade80;">
+        💡 اطلب من كل موظف يفتح اللوحة ويتحقق من الجرس 🔔 — لو فيه رقم أحمر، النظام يشتغل!
+      </div>`);
+    } catch(e) {
+      results.push(`❌ فشل إرسال التنبيه: ${e.message}`);
+    }
+  }
+
+  // Step 4: Send test notif to admin (self)
+  try {
+    await sendNotification(currentSession.uid, "🧪",
+      `اختبار ذاتي - ${new Date().toLocaleTimeString("ar-SA")} - تحقق من جرسك`);
+    results.push(`✅ <strong>تم إرسال تنبيه ذاتي للمدير</strong>`);
+  } catch(e) {
+    results.push(`❌ فشل التنبيه الذاتي: ${e.message}`);
+  }
+
+  output.innerHTML = results.join('<br>');
+}
+
 function getDayLabel(day) {
   const labels = {
     saturday:"السبت",sunday:"الأحد",monday:"الاثنين",
@@ -3031,20 +3126,93 @@ function isTaskDeferredAway(taskId) {
   return !!deferred[taskId];
 }
 
-// ============ COMMENTS / NOTES ============
+// ============ COMMENTS / NOTES (Thread-based - all team can comment) ============
+// Storage model: comments/all/threads = { taskId: [{from, role, text, ts}, ...] }
+// This way everyone can see and add comments on any task
+
+let allCommentsThreads = {}; // Loaded for current user/admin
+let allCommentsUnsub = null;
+
+function subscribeAllComments() {
+  if (allCommentsUnsub) allCommentsUnsub();
+  if (!currentSession) return;
+  allCommentsUnsub = onSnapshot(doc(db, "comments", "all"), (snap) => {
+    allCommentsThreads = snap.exists() ? (snap.data().threads || {}) : {};
+    if (currentSession.isAdmin) {
+      renderAdmin();
+    } else {
+      renderUser();
+    }
+  }, (err) => console.error("[comments] subscribe error:", err));
+}
+
 window.openCommentModal = function(taskId, taskText) {
-  if (!currentSession || currentSession.isAdmin) return;
+  if (!currentSession) return;
   activeCommentTaskId = taskId;
   activeCommentTaskText = taskText;
 
   document.getElementById("commentTaskPreview").textContent = "📌 " + taskText;
-  const existing = userComments[taskId];
-  document.getElementById("commentText").value = existing ? (existing.text || "") : "";
-  document.getElementById("commentDeleteBtn").style.display = existing ? "inline-block" : "none";
+  document.getElementById("commentText").value = "";
   document.getElementById("commentError").classList.remove("show");
+
+  // Render the thread of existing comments
+  renderCommentThread(taskId);
+
+  // Hide delete button (no longer applicable in thread mode)
+  const delBtn = document.getElementById("commentDeleteBtn");
+  if (delBtn) delBtn.style.display = "none";
 
   document.getElementById("commentModal").classList.add("show");
   setTimeout(() => document.getElementById("commentText").focus(), 100);
+}
+
+function renderCommentThread(taskId) {
+  // Insert a thread container before the textarea
+  const thread = allCommentsThreads[taskId] || [];
+  let html = '';
+  if (thread.length === 0) {
+    html = '<div style="text-align:center; color:var(--text-muted); font-size:13px; padding:14px; font-weight:600;">لا توجد تعليقات بعد. كن أول من يبدأ النقاش 💬</div>';
+  } else {
+    // Sort by timestamp (oldest first, like a chat)
+    const sorted = [...thread].sort((a, b) => (a.ts || "").localeCompare(b.ts || ""));
+    sorted.forEach(c => {
+      const isMine = c.from === currentSession.uid;
+      const isAdminMsg = c.role === "admin";
+      const bgColor = isAdminMsg ? 'rgba(200,164,92,0.1)' : (isMine ? 'rgba(74,222,128,0.08)' : 'rgba(255,255,255,0.03)');
+      const borderColor = isAdminMsg ? 'rgba(200,164,92,0.3)' : (isMine ? 'rgba(74,222,128,0.25)' : 'rgba(255,255,255,0.08)');
+      const nameColor = isAdminMsg ? 'var(--brand-primary)' : (isMine ? '#4ade80' : 'var(--text-secondary)');
+      const roleEmoji = c.role === 'store' ? '🏪' : c.role === 'content' ? '🎨' : c.role === 'marketing' ? '📢' : c.role === 'admin' ? '👑' : '👤';
+      const timeStr = c.ts ? formatNotifTime(c.ts) : '';
+      html += `<div style="background:${bgColor}; border:1px solid ${borderColor}; border-radius:10px; padding:10px 12px; margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+          <div style="font-weight:800; font-size:12px; color:${nameColor};">${roleEmoji} ${c.displayName || 'مستخدم'}</div>
+          <div style="font-size:10px; color:var(--text-muted); font-weight:600;">${timeStr}</div>
+        </div>
+        <div style="font-size:13px; color:var(--text-primary); line-height:1.5; font-weight:600; white-space:pre-wrap; word-break:break-word;">${escapeHtml(c.text)}</div>
+      </div>`;
+    });
+  }
+  // Insert into a thread container
+  let container = document.getElementById("commentThreadContainer");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "commentThreadContainer";
+    container.style.cssText = "max-height:280px; overflow-y:auto; margin-bottom:14px; padding:4px;";
+    const textarea = document.getElementById("commentText");
+    textarea.parentNode.insertBefore(container, textarea.parentNode);
+  }
+  container.innerHTML = html;
+  // Scroll to bottom of thread
+  setTimeout(() => container.scrollTop = container.scrollHeight, 50);
+}
+
+function escapeHtml(s) {
+  return String(s || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 window.closeCommentModal = function() {
@@ -3060,8 +3228,9 @@ window.saveComment = async function() {
   const errEl = document.getElementById("commentError");
 
   if (!text) {
-    // Empty = delete
-    return deleteComment();
+    errEl.textContent = "اكتب رسالتك أولاً";
+    errEl.classList.add("show");
+    return;
   }
 
   if (text.length > 500) {
@@ -3072,40 +3241,62 @@ window.saveComment = async function() {
 
   const btn = document.getElementById("commentSubmitBtn");
   btn.disabled = true;
-  btn.textContent = "جاري الحفظ...";
+  btn.textContent = "جاري الإرسال...";
+
+  const newComment = {
+    from: currentSession.uid,
+    displayName: currentSession.displayName,
+    role: currentSession.isAdmin ? "admin" : currentSession.role,
+    text: text,
+    taskText: activeCommentTaskText,
+    ts: new Date().toISOString()
+  };
 
   try {
-    const ref = doc(db, "comments", currentSession.role);
+    const ref = doc(db, "comments", "all");
     const snap = await getDoc(ref);
-    const existing = snap.exists() ? (snap.data().notes || {}) : {};
-    existing[activeCommentTaskId] = {
-      text: text,
-      taskText: activeCommentTaskText,
-      updatedAt: new Date().toISOString(),
-      updatedBy: currentSession.displayName
-    };
-    await setDoc(ref, { notes: existing }, { merge: true });
+    const existing = snap.exists() ? (snap.data().threads || {}) : {};
+    const thread = existing[activeCommentTaskId] || [];
+    thread.push(newComment);
+    // Keep last 30 messages per task to control storage
+    existing[activeCommentTaskId] = thread.slice(-30);
 
-    // Notify admin about new comment
+    await setDoc(ref, { threads: existing }, { merge: true });
+
+    // Notify all other team members (so they see the discussion)
     try {
-      const adminUid = await getAdminUid();
-      if (adminUid) {
-        await sendNotification(adminUid, "💬",
-          `${currentSession.displayName} كتب ملاحظة على: ${(activeCommentTaskText || "مهمة").slice(0, 60)}`);
+      const allUids = await getAllTeamUids();
+      const targetUids = allUids.filter(uid => uid !== currentSession.uid);
+      if (targetUids.length > 0) {
+        await sendNotification(targetUids, "💬",
+          `${currentSession.displayName} على "${(activeCommentTaskText || 'مهمة').slice(0, 40)}": ${text.slice(0, 50)}`);
       }
     } catch(notifErr) {
-      console.error("comment notif error:", notifErr);
+      console.warn("[comment] notif error:", notifErr);
     }
 
-    closeCommentModal();
+    // Clear the textarea but keep the modal open so user can see their message in the thread
+    document.getElementById("commentText").value = "";
   } catch (e) {
     console.error(e);
-    errEl.textContent = "فشل الحفظ — تحقق من الاتصال";
+    errEl.textContent = "فشل الإرسال — تحقق من الاتصال";
     errEl.classList.add("show");
   } finally {
     btn.disabled = false;
-    btn.textContent = "حفظ الملاحظة";
+    btn.textContent = "إرسال 💬";
   }
+}
+
+// Get count of comments on a task (for badge)
+function getCommentCount(taskId) {
+  const thread = allCommentsThreads[taskId] || [];
+  return thread.length;
+}
+
+// Legacy deleteComment - kept for backward compat
+window.deleteComment = async function() {
+  // No-op in thread mode
+  closeCommentModal();
 }
 
 window.deleteComment = async function() {
@@ -3295,7 +3486,12 @@ async function sendNotification(targetUids, icon, text) {
   };
   // targetUids can be a single uid or an array
   const uids = Array.isArray(targetUids) ? targetUids : [targetUids];
-  await Promise.all(uids.map(async (uid) => {
+  const validUids = uids.filter(u => u && typeof u === "string");
+  if (validUids.length === 0) {
+    console.warn("[notif] No valid UIDs to send to");
+    return;
+  }
+  await Promise.all(validUids.map(async (uid) => {
     try {
       const ref = doc(db, "notifications", uid);
       const snap = await getDoc(ref);
@@ -3304,8 +3500,9 @@ async function sendNotification(targetUids, icon, text) {
       // Keep only last 30
       const trimmed = items.slice(-30);
       await setDoc(ref, { items: trimmed });
+      console.log("[notif] sent to", uid, ":", text);
     } catch(e) {
-      console.error("notif send error for uid", uid, e);
+      console.error("[notif] send error for uid", uid, e);
     }
   }));
 }
@@ -3316,21 +3513,40 @@ async function getAllTeamUids() {
     const snap = await getDocs(collection(db, "users"));
     return snap.docs.map(d => d.id);
   } catch(e) {
+    console.error("[notif] getAllTeamUids error:", e);
     return [];
   }
 }
 
-// Get admin uid (admin email is always admin@majali.local)
+// Get admin uid - tries multiple strategies
 async function getAdminUid() {
-  // Admin uid = current admin user. Since admin's auth uid is fixed once created,
-  // we'll look it up by checking if there's an "admin_uid" doc, or use the current admin session.
-  // Simplest: store admin uid in a settings doc when admin first logs in.
+  // Strategy 1: from settings doc (saved when admin logs in)
   try {
     const snap = await getDoc(doc(db, "settings", "admin_uid"));
-    return snap.exists() ? snap.data().uid : null;
+    if (snap.exists() && snap.data().uid) {
+      return snap.data().uid;
+    }
   } catch(e) {
-    return null;
+    console.warn("[notif] settings doc check failed:", e);
   }
+
+  // Strategy 2: query users where isAdmin == true
+  try {
+    const q = query(collection(db, "users"), where("isAdmin", "==", true));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      const adminUid = snap.docs[0].id;
+      // Cache it for next time
+      setDoc(doc(db, "settings", "admin_uid"), { uid: adminUid }, { merge: true })
+        .catch(e => console.warn("[notif] caching admin_uid failed:", e));
+      return adminUid;
+    }
+  } catch(e) {
+    console.warn("[notif] users query failed:", e);
+  }
+
+  console.warn("[notif] could not find admin uid - notifications to admin will be skipped");
+  return null;
 }
 
 // Close dropdown when clicking outside
