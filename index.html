@@ -443,6 +443,63 @@
     font-weight:600;
   }
 
+  /* Employee management list */
+  .emp-row {
+    display:flex; flex-wrap:wrap; align-items:center; gap:12px;
+    padding:14px 16px; margin-bottom:8px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:12px;
+    transition:all 0.2s;
+  }
+  .emp-row:hover { background:rgba(255,255,255,0.05); }
+  .emp-avatar {
+    width:42px; height:42px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; flex-shrink:0;
+  }
+  .emp-info { flex:1; min-width:160px; }
+  .emp-name { font-weight:900; font-size:14px; color:var(--text-primary); margin-bottom:2px; }
+  .emp-meta { font-size:11px; color:var(--text-muted); font-weight:600; line-height:1.6; }
+  .emp-stats {
+    display:flex; gap:8px; flex-wrap:wrap; font-size:11px;
+  }
+  .emp-stat-chip {
+    padding:3px 9px; border-radius:99px; font-weight:800;
+    background:rgba(200,164,92,0.1); color:var(--brand-primary);
+  }
+  .emp-actions {
+    display:flex; gap:6px; flex-wrap:wrap;
+  }
+  .emp-btn {
+    padding:7px 12px; border-radius:8px; border:none;
+    font-family:inherit; font-size:12px; font-weight:800;
+    cursor:pointer; transition:all 0.2s;
+    white-space:nowrap;
+  }
+  .emp-btn-reset {
+    background:rgba(245,158,11,0.15); color:#f59e0b;
+  }
+  .emp-btn-reset:hover { background:rgba(245,158,11,0.25); }
+  .emp-btn-clean {
+    background:rgba(74,158,255,0.15); color:#60a5fa;
+  }
+  .emp-btn-clean:hover { background:rgba(74,158,255,0.25); }
+  .emp-btn-delete {
+    background:rgba(239,68,68,0.15); color:#ef4444;
+  }
+  .emp-btn-delete:hover { background:rgba(239,68,68,0.25); }
+  .emp-empty {
+    text-align:center; color:var(--text-muted); font-size:13px;
+    padding:18px; font-weight:600;
+  }
+
+  body[data-theme="light"] .emp-row {
+    background:rgba(0,0,0,0.025) !important;
+    border-color:rgba(0,0,0,0.08) !important;
+  }
+  body[data-theme="light"] .emp-row:hover { background:rgba(0,0,0,0.04) !important; }
+
   /* Modal */
   .modal-overlay {
     position:fixed; inset:0; background:rgba(0,0,0,0.6);
@@ -1078,12 +1135,13 @@
 
     <div class="urgent-panel" style="border-right-color:var(--brand-primary);">
       <div class="urgent-panel-header">
-        <div class="lb-title">🔐 إعادة تعيين كلمات المرور</div>
-        <button class="urgent-add-btn" onclick="openPasswordResetGuide()" style="background:linear-gradient(135deg, var(--brand-primary), var(--brand-gold));">📖 دليل إعادة التعيين</button>
+        <div class="lb-title">👥 إدارة الموظفين</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="urgent-add-btn" onclick="openCleanRolePanel()" style="background:linear-gradient(135deg, #f59e0b, #d97706);">🧹 تنظيف بيانات دور</button>
+          <button class="urgent-add-btn" onclick="openPasswordResetGuide()" style="background:linear-gradient(135deg, var(--brand-primary), var(--brand-gold));">📖 دليل كلمات المرور</button>
+        </div>
       </div>
-      <div style="font-size:13px; color:var(--text-secondary); line-height:1.8; font-weight:600;">
-        لو نسي أحد من الفريق كلمة المرور، تواصلوا معك مباشرة (واتساب/شخصياً)، وأنت تعيد تعيينها من Firebase Console خلال 30 ثانية.
-      </div>
+      <div id="employeesManagementList" style="font-size:13px;"></div>
     </div>
 
     <div class="urgent-panel" style="border-right-color:#34d399;">
@@ -1136,6 +1194,37 @@
         <a href="https://console.firebase.google.com/project/majaly-board/authentication/users" target="_blank" class="auth-submit" style="display:block; text-align:center; text-decoration:none; margin-top:16px;">
           🚀 افتح Firebase Console الآن
         </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clean Role Modal -->
+  <div class="modal-overlay" id="cleanRoleModal" onclick="if(event.target===this)closeCleanRolePanel()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🧹 تنظيف بيانات دور</h3>
+        <button class="modal-close" onclick="closeCleanRolePanel()">×</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:10px; padding:14px; margin-bottom:16px; font-size:13px; color:#f59e0b; font-weight:700; line-height:1.7;">
+          ⚠️ <strong>هذا الإجراء يصفّر:</strong>
+          <br>• كل المهام المكتملة/قيد التنفيذ
+          <br>• النقاط الشهرية
+          <br>• المهام الطارئة
+          <br>• كوبون التأجيل
+          <br><br>
+          مفيد عند استبدال موظف بآخر.
+        </div>
+        <div class="auth-field">
+          <label>الدور المراد تنظيف بياناته</label>
+          <select id="cleanRoleSelect">
+            <option value="store">🏪 مدير المتجر</option>
+            <option value="content">🎨 مسؤول المحتوى</option>
+            <option value="marketing" selected>📢 مسؤول التسويق</option>
+          </select>
+        </div>
+        <div class="auth-error" id="cleanRoleError"></div>
+        <button class="auth-submit" id="cleanRoleSubmitBtn" onclick="executeCleanRole()" style="background:linear-gradient(135deg, #f59e0b, #d97706);">🧹 تنفيذ التنظيف</button>
       </div>
     </div>
   </div>
@@ -2442,6 +2531,9 @@ function renderAdmin(){
   // Render leaderboard first
   renderLeaderboard();
 
+  // Render employee management panel
+  renderEmployeesManagement();
+
   let totalDone=0, totalPending=0, totalAll=0, activeUsers=0;
   Object.entries(ROLES).forEach(([role]) => {
     const td = adminData.tasks[role] || {};
@@ -2964,6 +3056,191 @@ window.openPasswordResetGuide = function() {
 
 window.closePasswordResetGuide = function() {
   document.getElementById("passwordResetGuideModal").classList.remove("show");
+}
+
+// ============ EMPLOYEE MANAGEMENT ============
+function renderEmployeesManagement() {
+  const listEl = document.getElementById("employeesManagementList");
+  if (!listEl) return;
+
+  const employees = Object.entries(adminData.users || {})
+    .filter(([role, info]) => role !== "admin"); // Exclude admin from list
+
+  if (employees.length === 0) {
+    listEl.innerHTML = '<div class="emp-empty">لا يوجد موظفين مسجلين حالياً</div>';
+    return;
+  }
+
+  let html = '';
+  employees.forEach(([role, info]) => {
+    const roleInfo = ROLES[role];
+    if (!roleInfo) return;
+
+    // Calculate stats
+    const tasks = adminData.tasks[role] || {};
+    const done = Object.values(tasks).filter(s => s === "done").length;
+    const doing = Object.values(tasks).filter(s => s === "doing").length;
+    const points = adminData.points[role] || 0;
+    const uid = info.uid || "";
+
+    html += `<div class="emp-row">
+      <div class="emp-avatar" style="background:${roleInfo.color}22; color:${roleInfo.color}">${roleInfo.icon}</div>
+      <div class="emp-info">
+        <div class="emp-name" style="color:${roleInfo.color}">${escapeHtml(info.username || roleInfo.name)}</div>
+        <div class="emp-meta">${roleInfo.name} • <code style="font-size:10px;">${uid ? uid.substring(0,10) + "..." : "—"}</code></div>
+        <div class="emp-stats" style="margin-top:6px;">
+          <span class="emp-stat-chip">⭐ ${points} نقطة</span>
+          <span class="emp-stat-chip" style="background:rgba(74,222,128,0.12); color:#4ade80;">✅ ${done} مكتملة</span>
+          <span class="emp-stat-chip" style="background:rgba(251,191,36,0.12); color:#fbbf24;">🔄 ${doing} قيد التنفيذ</span>
+        </div>
+      </div>
+      <div class="emp-actions">
+        <button class="emp-btn emp-btn-reset" onclick="openEmployeePasswordReset('${escapeHtml(info.username || "")}', '${role}')">🔐 كلمة المرور</button>
+        <button class="emp-btn emp-btn-clean" onclick="cleanEmployeeData('${role}', '${escapeHtml(info.username || "")}')">🧹 تنظيف بياناته</button>
+        <button class="emp-btn emp-btn-delete" onclick="deleteEmployeeData('${role}', '${escapeHtml(info.username || "")}', '${uid}')">🗑️ حذف</button>
+      </div>
+    </div>`;
+  });
+
+  listEl.innerHTML = html;
+}
+
+// Open Firebase Console for password reset for specific employee
+window.openEmployeePasswordReset = function(username, role) {
+  const msg = `🔐 إعادة تعيين كلمة مرور: ${username}\n\n` +
+              `سيتم فتح Firebase Console.\n\n` +
+              `الخطوات:\n` +
+              `1. ابحث عن إيميل: ${username.toLowerCase()}@majali.local\n` +
+              `2. اضغط الثلاث نقاط ⋮ بجانب الإيميل\n` +
+              `3. اختر "Reset password"\n` +
+              `4. انسخ الرابط وأرسله للموظف عبر واتساب\n\n` +
+              `هل تريد المتابعة؟`;
+  if (confirm(msg)) {
+    window.open("https://console.firebase.google.com/project/majaly-board/authentication/users", "_blank");
+  }
+}
+
+// Clean a specific employee's data (tasks, points, urgent, deferrals, comments)
+window.cleanEmployeeData = async function(role, username) {
+  if (!currentSession || !currentSession.isAdmin) return;
+
+  const msg = `🧹 تنظيف بيانات: ${username}\n\n` +
+              `سيتم تصفير:\n` +
+              `• المهام المكتملة وقيد التنفيذ\n` +
+              `• النقاط الشهرية\n` +
+              `• المهام الطارئة\n` +
+              `• كوبون التأجيل\n\n` +
+              `الحساب نفسه يبقى موجود (يقدر يدخل عادي).\n\n` +
+              `هل أنت متأكد؟`;
+  if (!confirm(msg)) return;
+  if (!confirm(`تأكيد أخير: تنظيف بيانات ${username}؟`)) return;
+
+  try {
+    const resetData = {
+      updatedAt: new Date().toISOString(),
+      updatedBy: "Admin (تنظيف بيانات)",
+    };
+    await Promise.all([
+      setDoc(doc(db, "tasks", role), { ...resetData, statuses: {} }),
+      setDoc(doc(db, "points", role), { ...resetData, monthly: 0 }),
+      setDoc(doc(db, "urgent_tasks", role), { ...resetData, tasks: {} }),
+      setDoc(doc(db, "deferrals", role), {
+        coupon_available: true,
+        coupon_week_id: getCurrentWeekId(),
+        deferred_tasks: {}
+      }),
+    ]);
+    alert(`✅ تم تنظيف بيانات ${username} بنجاح`);
+  } catch(e) {
+    console.error(e);
+    alert(`فشل التنظيف: ${e.code || e.message}`);
+  }
+}
+
+// Delete employee's data from Firestore (DOES NOT delete from Authentication)
+window.deleteEmployeeData = async function(role, username, uid) {
+  if (!currentSession || !currentSession.isAdmin) return;
+
+  const msg = `🗑️ حذف بيانات: ${username}\n\n` +
+              `⚠️ هذا الإجراء سيحذف:\n` +
+              `• وثيقة المستخدم من Firestore\n` +
+              `• كل مهامه ونقاطه\n` +
+              `• مهامه الطارئة وكوبوناته\n` +
+              `• تنبيهاته\n\n` +
+              `⚠️ ملاحظة مهمة:\n` +
+              `الحساب في Firebase Authentication يبقى موجود.\n` +
+              `لحذفه نهائياً، اذهب لـ Firebase Console > Authentication.\n\n` +
+              `هل أنت متأكد؟`;
+  if (!confirm(msg)) return;
+  if (!confirm(`⚠️ تأكيد أخير: حذف بيانات ${username} من Firestore؟ (لا يمكن التراجع)`)) return;
+
+  try {
+    const promises = [
+      deleteDoc(doc(db, "tasks", role)).catch(e => console.warn("tasks delete:", e.code)),
+      deleteDoc(doc(db, "points", role)).catch(e => console.warn("points delete:", e.code)),
+      deleteDoc(doc(db, "urgent_tasks", role)).catch(e => console.warn("urgent delete:", e.code)),
+      deleteDoc(doc(db, "deferrals", role)).catch(e => console.warn("deferrals delete:", e.code)),
+    ];
+    if (uid) {
+      promises.push(deleteDoc(doc(db, "users", uid)).catch(e => console.warn("users delete:", e.code)));
+      promises.push(deleteDoc(doc(db, "notifications", uid)).catch(e => console.warn("notif delete:", e.code)));
+    }
+    await Promise.all(promises);
+    alert(`✅ تم حذف بيانات ${username}\n\n📌 لا تنسى: لحذف الحساب نهائياً، اذهب لـ Firebase Console > Authentication وحذف ${username.toLowerCase()}@majali.local`);
+  } catch(e) {
+    console.error(e);
+    alert(`فشل الحذف: ${e.code || e.message}`);
+  }
+}
+
+// Clean role panel (the dropdown selector)
+window.openCleanRolePanel = function() {
+  document.getElementById("cleanRoleModal").classList.add("show");
+  document.getElementById("cleanRoleError").classList.remove("show");
+}
+
+window.closeCleanRolePanel = function() {
+  document.getElementById("cleanRoleModal").classList.remove("show");
+}
+
+window.executeCleanRole = async function() {
+  if (!currentSession || !currentSession.isAdmin) return;
+  const role = document.getElementById("cleanRoleSelect").value;
+  const roleInfo = ROLES[role];
+  if (!roleInfo) return;
+
+  if (!confirm(`🧹 تأكيد: تنظيف بيانات ${roleInfo.name}؟\n\nالحساب يبقى، البيانات فقط تتصفر.`)) return;
+
+  const btn = document.getElementById("cleanRoleSubmitBtn");
+  btn.disabled = true;
+  btn.textContent = "جاري التنفيذ...";
+
+  try {
+    const resetData = {
+      updatedAt: new Date().toISOString(),
+      updatedBy: "Admin (تنظيف دور)",
+    };
+    await Promise.all([
+      setDoc(doc(db, "tasks", role), { ...resetData, statuses: {} }),
+      setDoc(doc(db, "points", role), { ...resetData, monthly: 0 }),
+      setDoc(doc(db, "urgent_tasks", role), { ...resetData, tasks: {} }),
+      setDoc(doc(db, "deferrals", role), {
+        coupon_available: true,
+        coupon_week_id: getCurrentWeekId(),
+        deferred_tasks: {}
+      }),
+    ]);
+    closeCleanRolePanel();
+    alert(`✅ تم تنظيف بيانات ${roleInfo.name} بنجاح`);
+  } catch(e) {
+    console.error(e);
+    const errEl = document.getElementById("cleanRoleError");
+    errEl.textContent = `فشل: ${e.code || e.message}`;
+    errEl.classList.add("show");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "🧹 تنفيذ التنظيف";
+  }
 }
 
 // Test notification system - admin only
