@@ -629,7 +629,7 @@
 
   /* ============ CHAT WIDGET ============ */
   .chat-fab {
-    position:fixed; bottom:24px; left:24px;
+    position:fixed; bottom:24px; right:24px;
     width:60px; height:60px; border-radius:50%;
     background:linear-gradient(135deg, var(--brand-primary), var(--brand-gold));
     border:none; cursor:pointer; z-index:8000;
@@ -658,7 +658,7 @@
 
   /* Chat modal */
   .chat-modal {
-    position:fixed; bottom:96px; left:24px;
+    position:fixed; bottom:96px; right:24px;
     width:360px; max-height:500px;
     background:var(--brand-surface); border:1px solid var(--brand-border);
     border-radius:18px; z-index:8001;
@@ -759,10 +759,10 @@
 
   /* Mobile responsive */
   @media (max-width:768px) {
-    .chat-fab { bottom:20px; left:20px; width:56px; height:56px; }
+    .chat-fab { bottom:20px; right:20px; width:56px; height:56px; }
     .chat-fab-icon { font-size:24px; }
     .chat-modal {
-      bottom:90px; left:10px; right:10px;
+      bottom:90px; right:10px; left:10px;
       width:auto; max-height:75vh;
     }
   }
@@ -784,6 +784,45 @@
   }
   body[data-theme="light"] .chat-fab-badge {
     border-color:#f7f5f0;
+  }
+
+  /* ============ ACTIVITY LOG ============ */
+  .activity-log-list {
+    display:flex; flex-direction:column; gap:6px;
+    max-height:380px; overflow-y:auto; padding:4px;
+  }
+  .activity-empty {
+    text-align:center; color:var(--text-muted); font-size:13px;
+    padding:20px; font-weight:600;
+  }
+  .activity-item {
+    display:flex; align-items:center; gap:10px;
+    padding:10px 14px; border-radius:10px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.06);
+    transition:all 0.15s;
+  }
+  .activity-item:hover { background:rgba(255,255,255,0.05); }
+  .activity-icon { font-size:18px; flex-shrink:0; }
+  .activity-body { flex:1; min-width:0; }
+  .activity-text {
+    font-size:13px; color:var(--text-primary);
+    font-weight:600; line-height:1.4;
+    word-break:break-word;
+  }
+  .activity-time {
+    font-size:11px; color:var(--text-muted);
+    font-weight:600; margin-top:2px;
+  }
+  .activity-author {
+    font-weight:900;
+  }
+  body[data-theme="light"] .activity-item {
+    background:rgba(0,0,0,0.025) !important;
+    border-color:rgba(0,0,0,0.06) !important;
+  }
+  body[data-theme="light"] .activity-item:hover {
+    background:rgba(0,0,0,0.04) !important;
   }
   .notif-icon { font-size:20px; flex-shrink:0; }
   .notif-content { flex:1; min-width:0; }
@@ -1326,6 +1365,16 @@
       </div>
       <div id="notifDiagnosticOutput" style="font-size:13px; color:var(--text-secondary); line-height:1.8; font-weight:600;">
         اضغط "اختبار التنبيهات" لإرسال تنبيه تجريبي لكل أعضاء الفريق والتأكد إن النظام شغّال.
+      </div>
+    </div>
+
+    <div class="urgent-panel" style="border-right-color:#60a5fa;">
+      <div class="urgent-panel-header">
+        <div class="lb-title">📋 سجل نشاطات الفريق</div>
+        <span style="font-size:12px;color:var(--text-muted);font-weight:700">آخر 30 حدث</span>
+      </div>
+      <div id="activityLogList" class="activity-log-list">
+        <div class="activity-empty">لا يوجد نشاط بعد</div>
       </div>
     </div>
 
@@ -2023,6 +2072,7 @@ window.logout = async function(){
   if(allCommentsUnsub) allCommentsUnsub();
   if(notifUnsub) notifUnsub();
   if(chatUnsub) chatUnsub();
+  if(activityLogUnsub) activityLogUnsub();
   adminUnsubs.forEach(u => u());
   adminUnsubs = [];
   // Reset notif state
@@ -2208,6 +2258,8 @@ function enterApp(){
   // Subscribe to team chat
   isFirstChatLoad = true;
   subscribeChat();
+  // Subscribe to activity log (admin sees full log)
+  subscribeActivityLog();
   startSessionTimers();
   // Show motivational quote for the day
   setTimeout(() => showDailyQuote(), 500);
@@ -2426,6 +2478,10 @@ window.cycleStatus = async function(id){
         // Check daily milestone
         checkDailyMilestone();
 
+        // Log activity for any task completion
+        const taskTextForLog = (t.text || "").slice(0, 80);
+        logActivity("✅", `أنهى مهمة "${taskTextForLog}" (+${pointsDelta} نقطة)`);
+
         // Notify admin if this was a high-value (strategic) task
         if (pointsDelta >= 6) {
           getAdminUid().then(adminUid => {
@@ -2540,6 +2596,9 @@ window.adminResetAll = async function(){
     } catch(notifErr) {
       console.error("reset notif error:", notifErr);
     }
+
+    // Log activity
+    await logActivity("🔄", "بدأ أسبوعاً جديداً للفريق");
 
     alert("✅ تم بدء أسبوع جديد بنجاح. كل المهام جاهزة للفريق من جديد.");
   } catch(e){
@@ -3035,7 +3094,11 @@ window.submitUrgentTask = async function() {
           saturday:"السبت",sunday:"الأحد",monday:"الاثنين",
           tuesday:"الثلاثاء",wednesday:"الأربعاء",thursday:"الخميس"
         };
+        const recipientInfo = userSnap.docs[0].data();
+        const recipientName = recipientInfo.displayName || recipientInfo.username || to;
         await sendNotification(recipientUid, "🚨", `المدير أضاف لك مهمة طارئة يوم ${dayLabels[day]}: ${text.slice(0, 60)}`);
+        // Log activity
+        await logActivity("🚨", `أضاف مهمة طارئة لـ ${recipientName} يوم ${dayLabels[day]}: "${text.slice(0, 60)}"`);
       }
     } catch(notifErr) {
       console.error("urgent notif error:", notifErr);
@@ -3734,6 +3797,9 @@ window.submitDefer = async function() {
 
     await setDoc(deferralRef, data);
 
+    // Log activity
+    await logActivity("⏰", `أجّل مهمة "${activeDeferTaskText.slice(0, 50)}" من ${getDayLabel(activeDeferCurrentDay)} إلى ${getDayLabel(toDay)}`);
+
     // Notify admin
     try {
       const adminUid = await getAdminUid();
@@ -3912,6 +3978,9 @@ window.saveComment = async function() {
     existing[activeCommentTaskId] = thread.slice(-30);
 
     await setDoc(ref, { threads: existing }, { merge: true });
+
+    // Log activity
+    await logActivity("💬", `كتب تعليقاً على "${(activeCommentTaskText || 'مهمة').slice(0, 60)}"`);
 
     // Notify all other team members (so they see the discussion)
     try {
@@ -4382,6 +4451,79 @@ window.deleteChatMessage = async function(ts) {
     console.error("[chat delete]", e);
     alert("فشل الحذف");
   }
+}
+
+// ============ ACTIVITY LOG ============
+let activityLogUnsub = null;
+let activityLog = [];
+
+// Helper to log an activity (called from various places)
+async function logActivity(icon, text, actorName, actorRole) {
+  if (!currentSession) return;
+  const event = {
+    icon: icon,
+    text: text,
+    actor: actorName || (currentSession && currentSession.displayName) || "",
+    role: actorRole || (currentSession && (currentSession.isAdmin ? "admin" : currentSession.role)) || "",
+    ts: new Date().toISOString()
+  };
+  try {
+    // Use arrayUnion-style write to avoid read permission issues
+    const ref = doc(db, "activity_log", "recent");
+    const snap = await getDoc(ref).catch(() => null);
+    let events = (snap && snap.exists()) ? (snap.data().events || []) : [];
+    events.push(event);
+    // Keep only last 30 events
+    if (events.length > 30) events = events.slice(-30);
+    await setDoc(ref, { events });
+  } catch(e) {
+    console.warn("[activity] log error:", e.code || e.message);
+  }
+}
+
+// Subscribe to activity log (admin only)
+function subscribeActivityLog() {
+  if (activityLogUnsub) activityLogUnsub();
+  if (!currentSession || !currentSession.isAdmin) return;
+
+  activityLogUnsub = onSnapshot(doc(db, "activity_log", "recent"), (snap) => {
+    activityLog = snap.exists() ? (snap.data().events || []) : [];
+    renderActivityLog();
+  }, (err) => console.error("[activity] subscribe error:", err));
+}
+
+function renderActivityLog() {
+  const listEl = document.getElementById("activityLogList");
+  if (!listEl) return;
+
+  if (activityLog.length === 0) {
+    listEl.innerHTML = '<div class="activity-empty">لا يوجد نشاط بعد</div>';
+    return;
+  }
+
+  // Sort newest first
+  const sorted = [...activityLog].sort((a, b) => (b.ts || "").localeCompare(a.ts || ""));
+
+  let html = '';
+  sorted.forEach(ev => {
+    const roleColor = ev.role === 'store' ? '#4a9eff' :
+                      ev.role === 'content' ? '#c084fc' :
+                      ev.role === 'marketing' ? '#34d399' :
+                      ev.role === 'admin' ? 'var(--brand-primary)' : 'var(--text-secondary)';
+    const timeStr = formatNotifTime(ev.ts);
+    html += `<div class="activity-item">
+      <div class="activity-icon">${ev.icon || '📌'}</div>
+      <div class="activity-body">
+        <div class="activity-text">
+          <span class="activity-author" style="color:${roleColor}">${escapeHtml(ev.actor || '')}</span>
+          ${escapeHtml(ev.text || '')}
+        </div>
+        <div class="activity-time">${timeStr}</div>
+      </div>
+    </div>`;
+  });
+
+  listEl.innerHTML = html;
 }
 
 // Show a toast popup (for notifications)
