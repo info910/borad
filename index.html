@@ -3904,10 +3904,20 @@ function renderCommentThread(taskId) {
       const nameColor = isAdminMsg ? 'var(--brand-primary)' : (isMine ? '#4ade80' : 'var(--text-secondary)');
       const roleEmoji = c.role === 'store' ? '🏪' : c.role === 'content' ? '🎨' : c.role === 'marketing' ? '📢' : c.role === 'admin' ? '👑' : '👤';
       const timeStr = c.ts ? formatNotifTime(c.ts) : '';
+      // Delete button: only for own comments or admin
+      const canDelete = isMine || (currentSession && currentSession.isAdmin);
+      const tsAttr = (c.ts || "").replace(/'/g, "\\'");
+      const taskIdAttr = String(taskId).replace(/'/g, "\\'");
+      const deleteBtn = canDelete
+        ? `<button onclick="deleteCommentMessage('${taskIdAttr}', '${tsAttr}')" title="حذف التعليق" style="background:rgba(239,68,68,0.15); color:#ef4444; border:none; width:22px; height:22px; border-radius:6px; cursor:pointer; font-size:14px; font-weight:900; display:flex; align-items:center; justify-content:center; line-height:1; padding:0;">×</button>`
+        : '';
       html += `<div style="background:${bgColor}; border:1px solid ${borderColor}; border-radius:10px; padding:10px 12px; margin-bottom:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; gap:8px;">
           <div style="font-weight:800; font-size:12px; color:${nameColor};">${roleEmoji} ${escapeHtml(c.displayName || 'مستخدم')}</div>
-          <div style="font-size:10px; color:var(--text-muted); font-weight:600;">${timeStr}</div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div style="font-size:10px; color:var(--text-muted); font-weight:600;">${timeStr}</div>
+            ${deleteBtn}
+          </div>
         </div>
         <div style="font-size:13px; color:var(--text-primary); line-height:1.5; font-weight:600; white-space:pre-wrap; word-break:break-word;">${escapeHtml(c.text)}</div>
       </div>`;
@@ -3919,6 +3929,30 @@ function renderCommentThread(taskId) {
   if (container) {
     container.innerHTML = html;
     setTimeout(() => container.scrollTop = container.scrollHeight, 50);
+  }
+}
+
+// Delete a single comment by taskId + timestamp
+window.deleteCommentMessage = async function(taskId, ts) {
+  if (!currentSession || !taskId || !ts) return;
+  if (!confirm("هل تريد حذف هذا التعليق؟")) return;
+
+  try {
+    const ref = doc(db, "comments", "all");
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return;
+    const existing = snap.data().threads || {};
+    const thread = existing[taskId] || [];
+    // Remove the comment with matching timestamp
+    existing[taskId] = thread.filter(c => (c.ts || "") !== ts);
+    // If thread is empty, remove the taskId entry
+    if (existing[taskId].length === 0) {
+      delete existing[taskId];
+    }
+    await setDoc(ref, { threads: existing });
+  } catch (e) {
+    console.error("[comment delete]", e);
+    alert("فشل الحذف — تحقق من الاتصال");
   }
 }
 
