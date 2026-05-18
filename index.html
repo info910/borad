@@ -613,6 +613,19 @@
   }
   .notif-item.unread { background:rgba(200,164,92,0.06); }
   .notif-item:hover { background:rgba(255,255,255,0.04); }
+  .notif-delete-btn {
+    position:absolute; top:8px; left:8px;
+    width:22px; height:22px; border-radius:6px; border:none;
+    background:rgba(255,255,255,0.05); color:var(--text-muted);
+    font-size:16px; font-weight:900; cursor:pointer; transition:all 0.2s;
+    display:flex; align-items:center; justify-content:center;
+    line-height:1; padding:0;
+    opacity:0.5;
+  }
+  .notif-item:hover .notif-delete-btn { opacity:1; }
+  .notif-delete-btn:hover { background:rgba(239,68,68,0.2); color:#ef4444; }
+  body[data-theme="light"] .notif-delete-btn { background:rgba(0,0,0,0.04); }
+  body[data-theme="light"] .notif-delete-btn:hover { background:rgba(239,68,68,0.15); }
   .notif-icon { font-size:20px; flex-shrink:0; }
   .notif-content { flex:1; min-width:0; }
   .notif-text { font-size:13px; color:var(--text-primary); line-height:1.5; font-weight:600; }
@@ -1030,7 +1043,10 @@
         <div class="notif-dropdown" id="notifDropdown">
           <div class="notif-dropdown-header">
             <div class="notif-dropdown-title">🔔 التنبيهات</div>
-            <button class="notif-mark-read" onclick="markAllNotifRead()">قرأت الكل</button>
+            <div style="display:flex; gap:6px;">
+              <button class="notif-mark-read" onclick="markAllNotifRead()">قرأت الكل</button>
+              <button class="notif-mark-read" onclick="deleteAllNotifications()" style="background:rgba(239,68,68,0.12); color:#ef4444;">🗑️ حذف الكل</button>
+            </div>
           </div>
           <div class="notif-list" id="notifList"></div>
         </div>
@@ -3903,12 +3919,15 @@ function renderNotifications() {
   let html = "";
   sorted.forEach(n => {
     const isUnread = (n.timestamp || "") > lastSeenNotifTime;
-    html += `<div class="notif-item ${isUnread ? 'unread' : ''}">
+    // Escape timestamp for safe attribute use
+    const tsAttr = (n.timestamp || "").replace(/'/g, "\\'");
+    html += `<div class="notif-item ${isUnread ? 'unread' : ''}" style="position:relative;">
       <div class="notif-icon">${n.icon || '🔔'}</div>
       <div class="notif-content">
-        <div class="notif-text">${n.text}</div>
+        <div class="notif-text" style="padding-left:24px;">${n.text}</div>
         <div class="notif-time">${formatNotifTime(n.timestamp)}</div>
       </div>
+      <button class="notif-delete-btn" onclick="deleteOneNotification('${tsAttr}')" title="حذف هذا التنبيه">×</button>
     </div>`;
   });
   list.innerHTML = html;
@@ -3943,6 +3962,35 @@ window.markAllNotifRead = function() {
   lastSeenNotifTime = newest;
   try { localStorage.setItem(`majaly-notif-seen-${currentSession.uid}`, newest); } catch(e) {}
   renderNotifications();
+}
+
+// Delete all notifications for current user
+window.deleteAllNotifications = async function() {
+  if (!currentSession || notifications.length === 0) return;
+  if (!confirm(`🗑️ حذف كل التنبيهات (${notifications.length})؟\n\nلا يمكن التراجع.`)) return;
+
+  try {
+    await setDoc(doc(db, "notifications", currentSession.uid), { items: [] });
+    // Local state will update via the snapshot listener
+  } catch(e) {
+    console.error("[deleteAll]", e);
+    alert("فشل الحذف — تحقق من الاتصال");
+  }
+}
+
+// Delete a single notification by timestamp
+window.deleteOneNotification = async function(timestamp) {
+  if (!currentSession || !timestamp) return;
+
+  try {
+    // Filter out the notification with matching timestamp
+    const filtered = notifications.filter(n => (n.timestamp || "") !== timestamp);
+    await setDoc(doc(db, "notifications", currentSession.uid), { items: filtered });
+    // Local state will update via the snapshot listener
+  } catch(e) {
+    console.error("[deleteOne]", e);
+    alert("فشل الحذف — تحقق من الاتصال");
+  }
 }
 
 // Show a toast popup (for notifications)
