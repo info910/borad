@@ -1137,8 +1137,8 @@
       <div class="urgent-panel-header">
         <div class="lb-title">👥 إدارة الموظفين</div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="urgent-add-btn" onclick="openCreateEmployee()" style="background:linear-gradient(135deg, #4ade80, #22c55e);">➕ إضافة موظف</button>
           <button class="urgent-add-btn" onclick="openCleanRolePanel()" style="background:linear-gradient(135deg, #f59e0b, #d97706);">🧹 تنظيف بيانات دور</button>
-          <button class="urgent-add-btn" onclick="openPasswordResetGuide()" style="background:linear-gradient(135deg, var(--brand-primary), var(--brand-gold));">📖 دليل كلمات المرور</button>
         </div>
       </div>
       <div id="employeesManagementList" style="font-size:13px;"></div>
@@ -1225,6 +1225,39 @@
         </div>
         <div class="auth-error" id="cleanRoleError"></div>
         <button class="auth-submit" id="cleanRoleSubmitBtn" onclick="executeCleanRole()" style="background:linear-gradient(135deg, #f59e0b, #d97706);">🧹 تنفيذ التنظيف</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Employee Modal -->
+  <div class="modal-overlay" id="createEmployeeModal" onclick="if(event.target===this)closeCreateEmployee()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>➕ إضافة موظف جديد</h3>
+        <button class="modal-close" onclick="closeCreateEmployee()">×</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.3); border-radius:10px; padding:12px 14px; margin-bottom:14px; font-size:12px; color:#4ade80; font-weight:700; line-height:1.6;">
+          💡 سيتم إنشاء حساب الموظف فوراً. أرسل له اسم المستخدم وكلمة المرور عبر واتساب.
+        </div>
+        <div class="auth-field">
+          <label>اسم المستخدم (بالإنجليزية فقط)</label>
+          <input type="text" id="newEmpUsername" placeholder="مثال: ahmed" maxlength="20">
+        </div>
+        <div class="auth-field">
+          <label>كلمة المرور (6 أحرف على الأقل)</label>
+          <input type="text" id="newEmpPassword" placeholder="مثال: Majaly2026" minlength="6">
+        </div>
+        <div class="auth-field">
+          <label>الدور</label>
+          <select id="newEmpRole">
+            <option value="store">🏪 مدير المتجر</option>
+            <option value="content">🎨 مسؤول المحتوى</option>
+            <option value="marketing">📢 مسؤول التسويق</option>
+          </select>
+        </div>
+        <div class="auth-error" id="newEmpError"></div>
+        <button class="auth-submit" id="newEmpSubmitBtn" onclick="submitCreateEmployee()" style="background:linear-gradient(135deg, #4ade80, #22c55e);">➕ إنشاء الحساب</button>
       </div>
     </div>
   </div>
@@ -1400,6 +1433,8 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, si
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, query, where, getDocs, onSnapshot, arrayUnion }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFunctions, httpsCallable }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB6ReTnID6X0oRFTaUxl903Y0JDB_11_D0",
@@ -1413,6 +1448,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const functions = getFunctions(app, "us-central1");
+
+// Cloud Functions references
+const cfResetPassword = httpsCallable(functions, "resetEmployeePassword");
+const cfDeleteEmployee = httpsCallable(functions, "deleteEmployeeFully");
+const cfCreateEmployee = httpsCallable(functions, "createEmployeeAccount");
 
 const ADMIN_EMAIL = "admin@majali.local";
 const EMAIL_DOMAIN = "@majali.local";
@@ -3105,18 +3146,55 @@ function renderEmployeesManagement() {
   listEl.innerHTML = html;
 }
 
-// Open Firebase Console for password reset for specific employee
-window.openEmployeePasswordReset = function(username, role) {
-  const msg = `🔐 إعادة تعيين كلمة مرور: ${username}\n\n` +
-              `سيتم فتح Firebase Console.\n\n` +
-              `الخطوات:\n` +
-              `1. ابحث عن إيميل: ${username.toLowerCase()}@majali.local\n` +
-              `2. اضغط الثلاث نقاط ⋮ بجانب الإيميل\n` +
-              `3. اختر "Reset password"\n` +
-              `4. انسخ الرابط وأرسله للموظف عبر واتساب\n\n` +
-              `هل تريد المتابعة؟`;
-  if (confirm(msg)) {
-    window.open("https://console.firebase.google.com/project/majaly-board/authentication/users", "_blank");
+// Reset password for an employee using Cloud Functions
+window.openEmployeePasswordReset = async function(username, role) {
+  if (!currentSession || !currentSession.isAdmin) return;
+
+  const userInfo = adminData.users[role];
+  if (!userInfo || !userInfo.uid) {
+    alert("❌ لا يوجد حساب لهذا الموظف بعد");
+    return;
+  }
+
+  // Step 1: Ask for new password
+  const newPassword = prompt(
+    `🔐 إعادة تعيين كلمة مرور: ${username}\n\n` +
+    `أدخل كلمة المرور الجديدة (6 أحرف على الأقل):\n\n` +
+    `💡 نصيحة: اكتب كلمة قوية ومفهومة، ثم أرسلها للموظف عبر واتساب.`
+  );
+
+  if (!newPassword) return;
+  if (newPassword.length < 6) {
+    alert("❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+    return;
+  }
+
+  // Step 2: Confirm
+  if (!confirm(`⚠️ تأكيد:\n\nكلمة المرور الجديدة لـ ${username}:\n"${newPassword}"\n\nهل أنت متأكد؟`)) return;
+
+  // Step 3: Call Cloud Function
+  try {
+    const result = await cfResetPassword({
+      targetUid: userInfo.uid,
+      newPassword: newPassword
+    });
+
+    if (result.data && result.data.success) {
+      alert(
+        `✅ تم تغيير كلمة المرور بنجاح!\n\n` +
+        `👤 الموظف: ${username}\n` +
+        `🔑 كلمة المرور الجديدة: ${newPassword}\n\n` +
+        `📱 الآن أرسل هذه المعلومات للموظف عبر واتساب:\n\n` +
+        `اسم المستخدم: ${username}\n` +
+        `كلمة المرور: ${newPassword}\n\n` +
+        `⚠️ احرص ينصحه يغيرها بنفسه لاحقاً.`
+      );
+    } else {
+      alert("❌ فشل تغيير كلمة المرور — تحقق من الاتصال");
+    }
+  } catch (err) {
+    console.error("[resetPassword]", err);
+    alert(`❌ فشل تغيير كلمة المرور:\n\n${err.message || err.code || "خطأ غير معروف"}`);
   }
 }
 
@@ -3157,39 +3235,41 @@ window.cleanEmployeeData = async function(role, username) {
   }
 }
 
-// Delete employee's data from Firestore (DOES NOT delete from Authentication)
+// Delete employee fully (from Authentication + Firestore) using Cloud Functions
 window.deleteEmployeeData = async function(role, username, uid) {
   if (!currentSession || !currentSession.isAdmin) return;
 
-  const msg = `🗑️ حذف بيانات: ${username}\n\n` +
+  if (!uid) {
+    alert("❌ لا يوجد uid للموظف. لا يمكن الحذف.");
+    return;
+  }
+
+  const msg = `🗑️ حذف نهائي للموظف: ${username}\n\n` +
               `⚠️ هذا الإجراء سيحذف:\n` +
+              `• الحساب من Firebase Authentication\n` +
               `• وثيقة المستخدم من Firestore\n` +
               `• كل مهامه ونقاطه\n` +
               `• مهامه الطارئة وكوبوناته\n` +
               `• تنبيهاته\n\n` +
-              `⚠️ ملاحظة مهمة:\n` +
-              `الحساب في Firebase Authentication يبقى موجود.\n` +
-              `لحذفه نهائياً، اذهب لـ Firebase Console > Authentication.\n\n` +
+              `⚠️ لا يمكن التراجع عن هذا الإجراء!\n\n` +
               `هل أنت متأكد؟`;
   if (!confirm(msg)) return;
-  if (!confirm(`⚠️ تأكيد أخير: حذف بيانات ${username} من Firestore؟ (لا يمكن التراجع)`)) return;
+  if (!confirm(`⚠️ تأكيد أخير: حذف ${username} نهائياً؟`)) return;
 
   try {
-    const promises = [
-      deleteDoc(doc(db, "tasks", role)).catch(e => console.warn("tasks delete:", e.code)),
-      deleteDoc(doc(db, "points", role)).catch(e => console.warn("points delete:", e.code)),
-      deleteDoc(doc(db, "urgent_tasks", role)).catch(e => console.warn("urgent delete:", e.code)),
-      deleteDoc(doc(db, "deferrals", role)).catch(e => console.warn("deferrals delete:", e.code)),
-    ];
-    if (uid) {
-      promises.push(deleteDoc(doc(db, "users", uid)).catch(e => console.warn("users delete:", e.code)));
-      promises.push(deleteDoc(doc(db, "notifications", uid)).catch(e => console.warn("notif delete:", e.code)));
+    const result = await cfDeleteEmployee({
+      targetUid: uid,
+      targetRole: role
+    });
+
+    if (result.data && result.data.success) {
+      alert(`✅ تم حذف ${username} نهائياً!\n\nالموظف لن يقدر يدخل اللوحة مرة ثانية، وكل بياناته انحذفت.`);
+    } else {
+      alert("❌ فشل الحذف — تحقق من الاتصال");
     }
-    await Promise.all(promises);
-    alert(`✅ تم حذف بيانات ${username}\n\n📌 لا تنسى: لحذف الحساب نهائياً، اذهب لـ Firebase Console > Authentication وحذف ${username.toLowerCase()}@majali.local`);
-  } catch(e) {
-    console.error(e);
-    alert(`فشل الحذف: ${e.code || e.message}`);
+  } catch (err) {
+    console.error("[deleteEmployee]", err);
+    alert(`❌ فشل الحذف:\n\n${err.message || err.code || "خطأ غير معروف"}`);
   }
 }
 
@@ -3240,6 +3320,90 @@ window.executeCleanRole = async function() {
   } finally {
     btn.disabled = false;
     btn.textContent = "🧹 تنفيذ التنظيف";
+  }
+}
+
+// Create Employee Account
+window.openCreateEmployee = function() {
+  document.getElementById("createEmployeeModal").classList.add("show");
+  document.getElementById("newEmpUsername").value = "";
+  document.getElementById("newEmpPassword").value = "";
+  document.getElementById("newEmpError").classList.remove("show");
+  setTimeout(() => document.getElementById("newEmpUsername").focus(), 100);
+}
+
+window.closeCreateEmployee = function() {
+  document.getElementById("createEmployeeModal").classList.remove("show");
+}
+
+window.submitCreateEmployee = async function() {
+  if (!currentSession || !currentSession.isAdmin) return;
+
+  const username = document.getElementById("newEmpUsername").value.trim();
+  const password = document.getElementById("newEmpPassword").value;
+  const role = document.getElementById("newEmpRole").value;
+  const errEl = document.getElementById("newEmpError");
+
+  if (!username || username.length < 3) {
+    errEl.textContent = "اسم المستخدم قصير جداً (3 أحرف على الأقل)";
+    errEl.classList.add("show");
+    return;
+  }
+  if (!/^[a-zA-Z0-9]+$/.test(username)) {
+    errEl.textContent = "اسم المستخدم بحروف وأرقام إنجليزية فقط";
+    errEl.classList.add("show");
+    return;
+  }
+  if (!password || password.length < 6) {
+    errEl.textContent = "كلمة المرور 6 أحرف على الأقل";
+    errEl.classList.add("show");
+    return;
+  }
+
+  // Check if role is taken
+  if (adminData.users[role]) {
+    errEl.textContent = `الدور (${ROLES[role].name}) مأخوذ بالفعل من ${adminData.users[role].username}. احذف الموظف الحالي أولاً.`;
+    errEl.classList.add("show");
+    return;
+  }
+
+  const btn = document.getElementById("newEmpSubmitBtn");
+  btn.disabled = true;
+  btn.textContent = "جاري الإنشاء...";
+
+  try {
+    const result = await cfCreateEmployee({
+      username: username,
+      password: password,
+      role: role
+    });
+
+    if (result.data && result.data.success) {
+      closeCreateEmployee();
+      alert(
+        `✅ تم إنشاء حساب ${username} بنجاح!\n\n` +
+        `📱 أرسل هذه المعلومات للموظف عبر واتساب:\n\n` +
+        `🔗 رابط اللوحة: (الرابط الخاص بك)\n` +
+        `👤 اسم المستخدم: ${username}\n` +
+        `🔑 كلمة المرور: ${password}\n` +
+        `🏷️ الدور: ${ROLES[role].name}\n\n` +
+        `⚠️ احرص ينصحه يغيرها بنفسه لاحقاً.`
+      );
+    } else {
+      errEl.textContent = "فشل الإنشاء — تحقق من الاتصال";
+      errEl.classList.add("show");
+    }
+  } catch (err) {
+    console.error("[createEmployee]", err);
+    let msg = err.message || err.code || "خطأ غير معروف";
+    if (err.code === "functions/already-exists") {
+      msg = `اسم المستخدم "${username}" مأخوذ أو الدور مأخوذ. جرّب اسماً آخر.`;
+    }
+    errEl.textContent = msg;
+    errEl.classList.add("show");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "➕ إنشاء الحساب";
   }
 }
 
