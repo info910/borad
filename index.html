@@ -626,6 +626,165 @@
   .notif-delete-btn:hover { background:rgba(239,68,68,0.2); color:#ef4444; }
   body[data-theme="light"] .notif-delete-btn { background:rgba(0,0,0,0.04); }
   body[data-theme="light"] .notif-delete-btn:hover { background:rgba(239,68,68,0.15); }
+
+  /* ============ CHAT WIDGET ============ */
+  .chat-fab {
+    position:fixed; bottom:24px; left:24px;
+    width:60px; height:60px; border-radius:50%;
+    background:linear-gradient(135deg, var(--brand-primary), var(--brand-gold));
+    border:none; cursor:pointer; z-index:8000;
+    box-shadow:0 6px 20px rgba(200,164,92,0.4);
+    display:flex; align-items:center; justify-content:center;
+    transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .chat-fab:hover {
+    transform:translateY(-3px) scale(1.05);
+    box-shadow:0 10px 28px rgba(200,164,92,0.55);
+  }
+  .chat-fab:active { transform:translateY(0) scale(0.95); }
+  .chat-fab-icon {
+    font-size:26px;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  }
+  .chat-fab-badge {
+    position:absolute; top:-4px; right:-4px;
+    min-width:22px; height:22px; border-radius:99px;
+    background:#ef4444; color:white; font-size:11px; font-weight:900;
+    display:flex; align-items:center; justify-content:center;
+    padding:0 6px; box-shadow:0 2px 8px rgba(239,68,68,0.5);
+    animation:bellPulse 2s ease-in-out infinite;
+    border:2px solid var(--brand-deeper);
+  }
+
+  /* Chat modal */
+  .chat-modal {
+    position:fixed; bottom:96px; left:24px;
+    width:360px; max-height:500px;
+    background:var(--brand-surface); border:1px solid var(--brand-border);
+    border-radius:18px; z-index:8001;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+    display:none; flex-direction:column; overflow:hidden;
+    animation:chatSlideUp 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .chat-modal.show { display:flex; }
+  @keyframes chatSlideUp {
+    from { transform:translateY(20px); opacity:0; }
+    to { transform:translateY(0); opacity:1; }
+  }
+  .chat-modal-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 18px; border-bottom:1px solid rgba(255,255,255,0.05);
+    background:linear-gradient(135deg, rgba(200,164,92,0.08), rgba(212,175,110,0.04));
+  }
+  .chat-messages {
+    flex:1; overflow-y:auto; padding:12px;
+    display:flex; flex-direction:column; gap:8px;
+    min-height:280px; max-height:380px;
+  }
+  .chat-empty {
+    text-align:center; color:var(--text-muted); font-size:13px;
+    padding:30px 20px; font-weight:600;
+  }
+  .chat-message {
+    display:flex; flex-direction:column;
+    padding:8px 12px; border-radius:12px;
+    max-width:85%; word-break:break-word; position:relative;
+  }
+  .chat-message.mine {
+    align-self:flex-end;
+    background:rgba(74,222,128,0.12);
+    border:1px solid rgba(74,222,128,0.3);
+  }
+  .chat-message.other {
+    align-self:flex-start;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08);
+  }
+  .chat-message.admin-msg {
+    background:rgba(200,164,92,0.12);
+    border:1px solid rgba(200,164,92,0.35);
+  }
+  .chat-msg-header {
+    display:flex; align-items:center; justify-content:space-between;
+    gap:8px; margin-bottom:3px;
+  }
+  .chat-msg-author {
+    font-weight:900; font-size:11px;
+  }
+  .chat-msg-time {
+    font-size:9px; color:var(--text-muted); font-weight:600;
+  }
+  .chat-msg-text {
+    font-size:13px; color:var(--text-primary);
+    line-height:1.5; font-weight:600; white-space:pre-wrap;
+  }
+  .chat-msg-delete {
+    position:absolute; top:4px; left:4px;
+    width:18px; height:18px; border-radius:4px; border:none;
+    background:rgba(239,68,68,0.15); color:#ef4444;
+    font-size:11px; font-weight:900; cursor:pointer;
+    display:none; align-items:center; justify-content:center;
+    line-height:1; padding:0;
+  }
+  .chat-message:hover .chat-msg-delete { display:flex; }
+  .chat-msg-delete:hover { background:rgba(239,68,68,0.3); }
+
+  .chat-input-area {
+    display:flex; gap:8px; padding:12px;
+    border-top:1px solid rgba(255,255,255,0.05);
+    background:rgba(0,0,0,0.1);
+  }
+  .chat-input {
+    flex:1; padding:10px 14px; border-radius:99px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    color:var(--text-primary); font-family:inherit;
+    font-size:13px; font-weight:600; text-align:right; direction:rtl;
+    outline:none; transition:all 0.2s;
+  }
+  .chat-input:focus {
+    border-color:var(--brand-primary);
+    background:rgba(200,164,92,0.05);
+  }
+  .chat-send-btn {
+    width:42px; height:42px; border-radius:50%;
+    background:linear-gradient(135deg, var(--brand-primary), var(--brand-gold));
+    border:none; cursor:pointer; font-size:18px;
+    display:flex; align-items:center; justify-content:center;
+    transition:all 0.2s;
+  }
+  .chat-send-btn:hover { transform:scale(1.05); }
+  .chat-send-btn:active { transform:scale(0.95); }
+  .chat-send-btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+  /* Mobile responsive */
+  @media (max-width:768px) {
+    .chat-fab { bottom:20px; left:20px; width:56px; height:56px; }
+    .chat-fab-icon { font-size:24px; }
+    .chat-modal {
+      bottom:90px; left:10px; right:10px;
+      width:auto; max-height:75vh;
+    }
+  }
+
+  /* Light theme */
+  body[data-theme="light"] .chat-modal {
+    box-shadow:0 20px 60px rgba(0,0,0,0.15);
+  }
+  body[data-theme="light"] .chat-message.other {
+    background:rgba(0,0,0,0.03);
+    border-color:rgba(0,0,0,0.08);
+  }
+  body[data-theme="light"] .chat-input {
+    background:#fff;
+    border-color:rgba(0,0,0,0.1);
+  }
+  body[data-theme="light"] .chat-input-area {
+    background:rgba(0,0,0,0.02);
+  }
+  body[data-theme="light"] .chat-fab-badge {
+    border-color:#f7f5f0;
+  }
   .notif-icon { font-size:20px; flex-shrink:0; }
   .notif-content { flex:1; min-width:0; }
   .notif-text { font-size:13px; color:var(--text-primary); line-height:1.5; font-weight:600; }
@@ -1863,11 +2022,21 @@ window.logout = async function(){
   if(userDeferralUnsub) userDeferralUnsub();
   if(allCommentsUnsub) allCommentsUnsub();
   if(notifUnsub) notifUnsub();
+  if(chatUnsub) chatUnsub();
   adminUnsubs.forEach(u => u());
   adminUnsubs = [];
   // Reset notif state
   notifications = [];
   isFirstNotifLoad = true;
+  // Reset chat state
+  chatMessages = [];
+  isFirstChatLoad = true;
+  chatOpen = false;
+  // Hide chat FAB
+  const fab = document.getElementById("chatFab");
+  if (fab) fab.style.display = "none";
+  const modal = document.getElementById("chatModal");
+  if (modal) modal.classList.remove("show");
   // Clear session timers
   clearSessionTimers();
   localStorage.removeItem("majaly_session_start");
@@ -2036,6 +2205,9 @@ function enterApp(){
   // Subscribe to notifications (for both admin and users)
   isFirstNotifLoad = true;
   subscribeNotifications();
+  // Subscribe to team chat
+  isFirstChatLoad = true;
+  subscribeChat();
   startSessionTimers();
   // Show motivational quote for the day
   setTimeout(() => showDailyQuote(), 500);
@@ -3993,6 +4165,225 @@ window.deleteOneNotification = async function(timestamp) {
   }
 }
 
+// ============ TEAM CHAT ============
+let chatUnsub = null;
+let chatMessages = [];
+let chatOpen = false;
+let lastChatSeenTs = "";
+let isFirstChatLoad = true;
+
+function subscribeChat() {
+  if (chatUnsub) chatUnsub();
+  if (!currentSession) return;
+
+  chatUnsub = onSnapshot(doc(db, "chat", "general"), (snap) => {
+    let messages = snap.exists() ? (snap.data().messages || []) : [];
+    // Filter out messages older than 7 days
+    const cutoff = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    messages = messages.filter(m => {
+      const ts = new Date(m.ts).getTime();
+      return ts > cutoff;
+    });
+
+    // Detect new messages (not on first load, and not from self)
+    if (!isFirstChatLoad && messages.length > chatMessages.length) {
+      const newOnes = messages.slice(chatMessages.length);
+      // If chat is closed, mark as unread
+      if (!chatOpen) {
+        // Badge will update via renderChatBadge
+      }
+    }
+
+    chatMessages = messages;
+    isFirstChatLoad = false;
+    renderChatMessages();
+    renderChatBadge();
+  }, (err) => console.error("[chat] subscribe error:", err));
+
+  // Initialize last-seen timestamp from localStorage
+  try {
+    lastChatSeenTs = localStorage.getItem(`majaly-chat-seen-${currentSession.uid}`) || "";
+  } catch(e) { lastChatSeenTs = ""; }
+
+  // Show the FAB button
+  const fab = document.getElementById("chatFab");
+  if (fab) fab.style.display = "flex";
+}
+
+function renderChatBadge() {
+  const badge = document.getElementById("chatFabBadge");
+  if (!badge || !currentSession) return;
+
+  // Count unread (not from current user, and ts > lastSeen)
+  const unread = chatMessages.filter(m =>
+    m.from !== currentSession.uid && (m.ts || "") > lastChatSeenTs
+  ).length;
+
+  if (unread > 0 && !chatOpen) {
+    badge.style.display = "flex";
+    badge.textContent = unread > 99 ? "99+" : unread;
+  } else {
+    badge.style.display = "none";
+  }
+}
+
+function renderChatMessages() {
+  const container = document.getElementById("chatMessages");
+  if (!container) return;
+
+  if (chatMessages.length === 0) {
+    container.innerHTML = '<div class="chat-empty">لا توجد رسائل بعد.<br>كن أول من يبدأ النقاش 💬</div>';
+    return;
+  }
+
+  // Sort by timestamp (oldest first)
+  const sorted = [...chatMessages].sort((a, b) => (a.ts || "").localeCompare(b.ts || ""));
+
+  let html = '';
+  let lastDateLabel = '';
+  sorted.forEach(m => {
+    const isMine = m.from === currentSession.uid;
+    const isAdmin = m.role === "admin";
+    const roleEmoji = m.role === 'store' ? '🏪' : m.role === 'content' ? '🎨' : m.role === 'marketing' ? '📢' : m.role === 'admin' ? '👑' : '👤';
+
+    // Day separator
+    const msgDate = new Date(m.ts);
+    const dayLabel = formatChatDayLabel(msgDate);
+    if (dayLabel !== lastDateLabel) {
+      html += `<div style="text-align:center; font-size:10px; color:var(--text-muted); font-weight:700; padding:6px 0; margin:4px 0; opacity:0.7;">— ${dayLabel} —</div>`;
+      lastDateLabel = dayLabel;
+    }
+
+    const time = msgDate.toLocaleTimeString("ar-SA", {hour: '2-digit', minute: '2-digit'});
+    const msgClass = isMine ? 'mine' : (isAdmin ? 'admin-msg' : 'other');
+    const authorColor = isAdmin ? 'var(--brand-primary)' : (isMine ? '#4ade80' : (m.role === 'store' ? '#4a9eff' : m.role === 'content' ? '#c084fc' : m.role === 'marketing' ? '#34d399' : 'var(--text-secondary)'));
+
+    // Delete button only for own messages or admin
+    const canDelete = isMine || (currentSession.isAdmin);
+    const deleteBtn = canDelete ? `<button class="chat-msg-delete" onclick="deleteChatMessage('${m.ts}')" title="حذف">×</button>` : '';
+
+    html += `<div class="chat-message ${msgClass}">
+      ${deleteBtn}
+      <div class="chat-msg-header">
+        <span class="chat-msg-author" style="color:${authorColor}">${roleEmoji} ${escapeHtml(m.displayName || 'مستخدم')}</span>
+        <span class="chat-msg-time">${time}</span>
+      </div>
+      <div class="chat-msg-text">${escapeHtml(m.text)}</div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+  // Scroll to bottom
+  setTimeout(() => { container.scrollTop = container.scrollHeight; }, 50);
+}
+
+function formatChatDayLabel(date) {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const isSameDay = (a, b) =>
+    a.getDate() === b.getDate() &&
+    a.getMonth() === b.getMonth() &&
+    a.getFullYear() === b.getFullYear();
+
+  if (isSameDay(date, today)) return "اليوم";
+  if (isSameDay(date, yesterday)) return "أمس";
+
+  const dayNames = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+  return `${dayNames[date.getDay()]} ${date.getDate()}/${date.getMonth()+1}`;
+}
+
+window.toggleChat = function() {
+  chatOpen = !chatOpen;
+  const modal = document.getElementById("chatModal");
+  if (modal) modal.classList.toggle("show", chatOpen);
+
+  if (chatOpen) {
+    // Mark all as seen when opening
+    if (chatMessages.length > 0) {
+      const newest = chatMessages.reduce((max, m) => (m.ts || "") > max ? m.ts : max, "");
+      lastChatSeenTs = newest;
+      try { localStorage.setItem(`majaly-chat-seen-${currentSession.uid}`, newest); } catch(e) {}
+      renderChatBadge();
+    }
+    // Focus input
+    setTimeout(() => {
+      const input = document.getElementById("chatInput");
+      if (input) input.focus();
+    }, 200);
+    // Scroll to bottom
+    setTimeout(() => {
+      const c = document.getElementById("chatMessages");
+      if (c) c.scrollTop = c.scrollHeight;
+    }, 200);
+  }
+}
+
+window.sendChatMessage = async function() {
+  if (!currentSession) return;
+  const input = document.getElementById("chatInput");
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+  if (text.length > 300) {
+    alert("الرسالة طويلة جداً (300 حرف كحد أقصى)");
+    return;
+  }
+
+  const newMsg = {
+    from: currentSession.uid,
+    displayName: currentSession.displayName,
+    role: currentSession.isAdmin ? "admin" : currentSession.role,
+    text: text,
+    ts: new Date().toISOString()
+  };
+
+  const btn = document.getElementById("chatSendBtn");
+  btn.disabled = true;
+  input.disabled = true;
+
+  try {
+    // Get current messages, add new one, keep last 50, filter out >7 days
+    const ref = doc(db, "chat", "general");
+    const snap = await getDoc(ref);
+    let messages = snap.exists() ? (snap.data().messages || []) : [];
+    messages.push(newMsg);
+    // Keep last 50
+    if (messages.length > 50) messages = messages.slice(-50);
+    // Filter out >7 days old
+    const cutoff = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    messages = messages.filter(m => new Date(m.ts).getTime() > cutoff);
+
+    await setDoc(ref, { messages });
+    input.value = "";
+  } catch (e) {
+    console.error("[chat send]", e);
+    alert("فشل إرسال الرسالة — تحقق من الاتصال");
+  } finally {
+    btn.disabled = false;
+    input.disabled = false;
+    input.focus();
+  }
+}
+
+window.deleteChatMessage = async function(ts) {
+  if (!currentSession || !ts) return;
+  if (!confirm("هل تريد حذف هذه الرسالة؟")) return;
+
+  try {
+    const ref = doc(db, "chat", "general");
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return;
+    let messages = snap.data().messages || [];
+    messages = messages.filter(m => (m.ts || "") !== ts);
+    await setDoc(ref, { messages });
+  } catch (e) {
+    console.error("[chat delete]", e);
+    alert("فشل الحذف");
+  }
+}
+
 // Show a toast popup (for notifications)
 function showNotifToast(notif) {
   const container = document.getElementById("toastContainer");
@@ -4118,6 +4509,55 @@ document.getElementById("loginPassword").addEventListener("keypress", e => {
 document.getElementById("signupPassword").addEventListener("keypress", e => {
   if(e.key === "Enter") handleSignup();
 });
+
+// Chat input: Enter to send
+document.addEventListener("DOMContentLoaded", () => {
+  const chatInput = document.getElementById("chatInput");
+  if (chatInput) {
+    chatInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendChatMessage();
+      }
+    });
+  }
+});
+
+// Fallback: also attach right now in case DOM is already loaded
+const _chatInput = document.getElementById("chatInput");
+if (_chatInput) {
+  _chatInput.addEventListener("keypress", e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendChatMessage();
+    }
+  });
+}
 </script>
+
+<!-- Floating Chat Button -->
+<button id="chatFab" class="chat-fab" onclick="toggleChat()" style="display:none;" title="شات الفريق">
+  <span class="chat-fab-icon">💬</span>
+  <span class="chat-fab-badge" id="chatFabBadge" style="display:none;">0</span>
+</button>
+
+<!-- Chat Modal -->
+<div class="chat-modal" id="chatModal">
+  <div class="chat-modal-header">
+    <div>
+      <div style="font-weight:900; font-size:15px;">💬 شات الفريق</div>
+      <div style="font-size:10px; color:var(--text-muted); font-weight:600; margin-top:2px;">الرسائل تُحذف تلقائياً بعد 7 أيام</div>
+    </div>
+    <button class="modal-close" onclick="toggleChat()">×</button>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-empty">⏳ جاري التحميل...</div>
+  </div>
+  <div class="chat-input-area">
+    <input type="text" id="chatInput" class="chat-input" placeholder="اكتب رسالتك..." maxlength="300">
+    <button class="chat-send-btn" onclick="sendChatMessage()" id="chatSendBtn">📤</button>
+  </div>
+</div>
+
 </body>
 </html>
