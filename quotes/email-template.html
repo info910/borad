@@ -1,0 +1,391 @@
+<title>رسائل عرض المدرسة الإسبانية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Tajawal:wght@500;700;800;900&display=swap">
+
+<style>
+  :root {
+    --paper:      #F4F8FC;
+    --surface:    #FFFFFF;
+    --surface-2:  #EDF3FA;
+    --deep:       #0D1A2B;
+    --ink:        #0D1A2B;
+    --ink-2:      #3D4D63;
+    --muted:      #5A6B80;
+    --line:       #E3E9F1;
+    --line-hard:  #C4D2E3;
+    --brand:       #1E88FF;
+    --brand-lit:   #5FA8FF;
+    --brand-ink:   #0F63C7;
+    --brand-soft:  #E8F2FF;
+    --on-deep:    #E8EEF7;
+    --on-deep-2:  #9AA9BF;
+    --fill-bg:    #E8F2FF;
+    --fill-ink:   #0F63C7;
+
+    --f-display: 'Tajawal', 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+    --f-body: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+    --f-mono: 'Inter', 'IBM Plex Sans Arabic', 'Segoe UI', sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0A0F1A; --surface: #0F1626; --surface-2: #131C30;
+      --deep: #060A12; --ink: #E8EEF7; --ink-2: #C2CCDA; --muted: #9AA9BF;
+      --line: #1F2A40; --line-hard: #2E3D57;
+      --brand: #1E88FF; --brand-lit: #5FA8FF; --brand-ink: #6DB0FF; --brand-soft: #12233C;
+      --on-deep: #E8EEF7; --on-deep-2: #9AA9BF;
+      --fill-bg: #12233C; --fill-ink: #6DB0FF;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0A0F1A; --surface: #0F1626; --surface-2: #131C30;
+    --deep: #060A12; --ink: #E8EEF7; --ink-2: #C2CCDA; --muted: #9AA9BF;
+    --line: #1F2A40; --line-hard: #2E3D57;
+    --brand: #1E88FF; --brand-lit: #5FA8FF; --brand-ink: #6DB0FF; --brand-soft: #12233C;
+    --on-deep: #E8EEF7; --on-deep-2: #9AA9BF;
+    --fill-bg: #12233C; --fill-ink: #6DB0FF;
+  }
+
+  html { direction: rtl; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 15px;
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc { max-width: 820px; margin: 0 auto; padding: 34px 20px 80px; }
+
+  /* header */
+  .top {
+    background: var(--deep);
+    border-bottom: 3px solid var(--brand);
+    padding: 20px 26px;
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: space-between; gap: 12px 22px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 42px; flex: none; line-height: 0; }
+  .logo svg { width: 100%; height: auto; display: block; }
+  .brand b { display: block; font-family: var(--f-display); font-weight: 800; font-size: 16px; color: var(--on-deep); line-height: 1.35; }
+  .brand small { display: block; font-size: 11.5px; color: var(--on-deep-2); }
+  .top .r { font-family: var(--f-mono); font-size: 11.5px; color: var(--on-deep-2); letter-spacing: .07em; }
+
+  .intro { background: var(--surface); border: 1px solid var(--line-hard); border-top: 0; padding: 22px 26px 24px; margin-bottom: 34px; }
+  .intro h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(20px, 3.4vw, 27px); line-height: 1.4; text-wrap: balance; }
+  .intro p { color: var(--ink-2); margin-top: 8px; max-width: 64ch; }
+  .intro .fillnote {
+    margin-top: 14px; padding: 11px 15px;
+    background: var(--fill-bg); border-inline-start: 3px solid var(--brand);
+    font-size: 13.5px; color: var(--fill-ink);
+  }
+
+  /* message blocks */
+  .msg { border: 1px solid var(--line-hard); background: var(--surface); margin-bottom: 26px; }
+  .msg-head {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px;
+    justify-content: space-between;
+    padding: 13px 20px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line-hard);
+  }
+  .msg-head .id { display: flex; align-items: baseline; gap: 10px; }
+  .msg-head .seq { font-family: var(--f-mono); font-size: 12px; color: var(--brand-ink); }
+  .msg-head h2 { font-family: var(--f-display); font-weight: 700; font-size: 15.5px; line-height: 1.4; }
+  .msg-head .when { font-size: 12px; color: var(--muted); }
+
+  .field { border-bottom: 1px solid var(--line); }
+  .field:last-of-type { border-bottom: 0; }
+  .field-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 9px 20px 8px;
+  }
+  .field-bar .k { font-size: 11px; font-weight: 600; letter-spacing: .05em; color: var(--muted); }
+
+  pre.txt {
+    margin: 0;
+    padding: 4px 20px 18px;
+    font-family: var(--f-body);
+    font-size: 14.3px;
+    line-height: 1.9;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  pre.subject { padding-bottom: 14px; font-weight: 600; }
+  pre.txt mark {
+    background: var(--fill-bg);
+    color: var(--fill-ink);
+    padding: 0 4px;
+    border-bottom: 1px dashed var(--brand);
+    font-weight: 600;
+  }
+
+  button.copy {
+    font-family: var(--f-body);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand-ink);
+    background: transparent;
+    border: 1px solid var(--line-hard);
+    padding: 4px 13px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    white-space: nowrap;
+  }
+  button.copy:hover { background: var(--brand-soft); border-color: var(--brand); }
+  button.copy[data-state="ok"] { color: var(--brand-ink); background: var(--brand-soft); border-color: var(--brand); }
+  button.copy[data-state="fail"] { color: var(--muted); }
+  :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+  /* checklist */
+  .check { border: 1px solid var(--line-hard); background: var(--surface); padding: 20px 24px 22px; margin-top: 34px; }
+  .check h2 { font-family: var(--f-display); font-weight: 700; font-size: 16px; margin-bottom: 10px; }
+  .check ol { list-style: none; counter-reset: c; display: grid; gap: 7px; }
+  .check li {
+    counter-increment: c; position: relative; padding-inline-start: 28px;
+    color: var(--ink-2); font-size: 14px;
+  }
+  .check li::before {
+    content: counter(c);
+    position: absolute; inset-inline-start: 0; top: .3em;
+    font-family: var(--f-mono); font-size: 11px; color: var(--brand-ink);
+    border: 1px solid var(--line-hard);
+    width: 19px; height: 19px; display: grid; place-items: center; line-height: 1;
+  }
+
+  @media (max-width: 640px) {
+    .doc { padding: 18px 12px 60px; }
+    .top, .intro { padding-inline: 18px; }
+    .field-bar, pre.txt { padding-inline: 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="doc">
+
+  <div class="top">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"><svg viewBox="0 0 1080 738" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<path id="m" d="M21.3469 505.536L24.6871 490.457L28.1458 475.777L31.723 461.506L35.4187 447.634L39.2222 434.161L43.155 421.098L47.1955 408.433L51.3546 396.178L55.6321 384.343L60.0174 372.907L64.5105 361.892L69.1113 351.286L73.8091 341.1L78.6254 331.324L83.5279 321.979L88.5274 313.044L93.6239 304.539L98.8065 296.456L104.075 288.803L109.43 281.581L114.85 274.78L120.334 268.41L125.883 262.471L131.476 256.963L137.132 251.876L142.821 247.198L148.543 242.951L154.296 239.103L160.072 235.665L165.869 232.615L171.698 229.952L177.538 227.667L183.399 225.749L189.293 224.175L195.219 222.957L201.199 222.084L207.222 221.534L213.31 221.308L219.484 221.416L225.733 221.847L228.912 222.289L232.015 222.871L235.032 223.615L237.984 224.498L240.893 225.533L243.759 226.719L246.593 228.055L249.416 229.554L252.239 231.213L255.062 233.046L257.885 235.061L260.729 237.26L263.585 239.664L266.462 242.261L269.349 245.064L272.258 248.093L275.189 251.337L278.131 254.808L281.094 258.505L284.057 262.439L287.041 266.621L290.015 271.029L293 275.685L295.984 280.579L298.969 285.72L301.943 291.099L304.906 296.725L307.869 302.599L310.81 308.721L313.752 315.091L316.661 321.699L319.57 328.554L322.447 335.657L325.313 342.997L328.158 350.596L330.97 358.421L333.771 366.505L336.54 374.826L339.288 383.384L342.003 392.19L344.945 401.707L347.897 411.009L350.86 420.085L353.823 428.966L356.797 437.621L359.792 446.071L362.798 454.306L365.815 462.336L368.843 470.161L371.903 477.782L374.974 485.197L378.066 492.408L381.18 499.425L384.326 506.248L387.505 512.876L390.716 519.311L393.97 525.563L397.256 531.62L400.607 537.505L404.012 543.196L407.471 548.726L411.015 554.072L414.636 559.245L418.353 564.257L422.178 569.097L426.122 573.764L430.205 578.259L434.451 582.592L438.857 586.73L443.469 590.686L448.285 594.426L453.328 597.94L458.618 601.206L464.167 604.192L469.964 606.854L476.009 609.16L482.29 611.057L488.755 612.523L495.382 613.504L502.105 614L508.861 613.978L515.595 613.461L522.232 612.448L528.751 610.971L535.087 609.074L541.217 606.789L547.144 604.148L552.843 601.195L558.328 597.962L563.607 594.469L568.682 590.751L573.585 586.817L578.326 582.667L582.916 578.334L587.366 573.818L591.708 569.108L595.942 564.214L600.08 559.138L604.131 553.888L608.118 548.445L612.04 542.83L615.897 537.009L619.711 531.017L623.472 524.819L627.189 518.438L630.885 511.863L634.537 505.084L638.158 498.099L641.767 490.921L645.345 483.537L648.9 475.949L652.434 468.157L655.958 460.148L659.459 451.935L662.951 443.506L666.431 434.873L669.889 426.013L673.348 416.948L676.796 407.668L680.233 398.172L683.336 389.722L686.461 381.541L689.607 373.629L692.764 365.977L695.943 358.593L699.143 351.49L702.343 344.646L705.554 338.082L708.765 331.798L711.986 325.794L715.197 320.06L718.397 314.617L721.587 309.454L724.765 304.582L727.911 299.991L731.025 295.69L734.096 291.681L737.124 287.962L740.098 284.524L742.996 281.376L745.83 278.52L748.577 275.944L751.239 273.648L753.782 271.611L756.217 269.854L758.533 268.334L760.71 267.063L762.757 266.017L764.664 265.187L766.42 264.54L768.037 264.066L769.524 263.754L770.881 263.56L772.131 263.484L773.284 263.506L774.361 263.603L775.396 263.764L776.409 263.991L777.421 264.26L778.477 264.594L782.496 265.284L786.246 266.157L789.78 267.192L793.109 268.378L796.277 269.725L799.326 271.212L802.289 272.851L805.199 274.661L808.086 276.655L810.985 278.854L813.926 281.279L816.9 283.974L819.949 286.938L823.063 290.215L826.253 293.826L829.517 297.792L832.847 302.125L836.23 306.846L839.667 311.977L843.147 317.527L846.66 323.499L850.194 329.901L853.75 336.735L857.295 344.01L860.829 351.738L864.352 359.898L867.854 368.51L871.323 377.564L874.75 387.059L878.122 396.997L881.452 407.388L884.727 418.198L887.938 429.462L891.073 441.156L894.155 453.282L897.15 465.839L900.081 478.827L902.926 492.246L905.684 506.086L908.367 520.357C913.05 542.732 926.371 562.355 945.435 574.961C964.499 587.566 987.767 592.136 1010.18 587.678C1032.59 583.219 1052.34 570.092 1065.14 551.149C1077.93 532.206 1082.73 508.978 1078.5 486.512L1074.92 470.269L1071.21 454.371L1067.33 438.818L1063.31 423.609L1059.13 408.746L1054.8 394.227L1050.3 380.043L1045.64 366.192L1040.81 352.676L1035.81 339.505L1030.63 326.657L1025.26 314.132L1019.71 301.942L1013.96 290.085L1008 278.552L1001.83 267.354L995.438 256.478L988.811 245.937L981.937 235.73L974.825 225.857L967.445 216.339L959.784 207.188L951.854 198.393L943.622 189.986L935.099 181.977L926.274 174.379L917.148 167.232L907.72 160.539L897.991 154.341L887.992 148.661L877.723 143.531L867.218 138.95L856.508 134.972L845.604 131.588L834.571 128.829L823.419 126.695L812.202 125.186L800.953 124.291L789.705 124L778.477 124.302L770.353 124.862L762.283 125.832L754.267 127.212L746.358 129.001L738.568 131.189L730.939 133.755L723.472 136.686L716.189 139.974L709.11 143.595L702.246 147.529L695.598 151.755L689.176 156.249L682.97 160.992L676.968 165.982L671.182 171.188L665.601 176.61L660.203 182.225L654.988 188.035L649.945 194.028L645.064 200.215L640.334 206.563L635.734 213.095L631.284 219.81L626.941 226.686L622.728 233.746L618.623 240.968L614.615 248.373L610.704 255.961L606.879 263.721L603.14 271.665L599.487 279.792L595.91 288.113L592.408 296.606L588.971 305.294L585.599 314.175L582.291 323.251L579.037 332.52L575.847 341.984L572.723 351.641L569.641 361.504L566.937 370.32L564.243 378.878L561.56 387.189L558.877 395.251L556.216 403.065L553.565 410.632L550.926 417.95L548.307 425L545.7 431.812L543.114 438.354L540.549 444.638L538.017 450.674L535.496 456.44L533.007 461.948L530.561 467.176L528.137 472.155L525.756 476.855L523.428 481.285L521.144 485.434L518.925 489.315L516.77 492.915L514.679 496.234L512.675 499.263L510.768 502.022L508.969 504.502L507.277 506.7L505.725 508.619L504.325 510.268L503.086 511.669L502.019 512.812L501.157 513.728L500.5 514.428L500.058 514.957L499.842 515.323L499.832 515.582L500.026 515.776L500.403 515.916L500.898 516.067L501.491 516.239L502.105 516.455L502.687 516.714L503.172 517.005L503.495 517.306L503.635 517.587L503.538 517.802L503.193 517.921L502.601 517.888L501.75 517.684L500.651 517.263L499.325 516.595L497.795 515.69L496.061 514.493L494.164 513.027L492.106 511.27L489.908 509.223L487.592 506.873L485.167 504.232L482.646 501.3L480.049 498.078L477.366 494.564L474.63 490.759L471.839 486.674L468.984 482.309L466.096 477.663L463.165 472.748L460.202 467.553L457.207 462.088L454.179 456.365L451.13 450.372L448.059 444.11L444.977 437.6L441.864 430.82L438.739 423.792L435.603 416.495L432.457 408.961L429.289 401.168L426.111 393.117L422.932 384.817L419.743 376.281L416.543 367.486L413.084 357.979L409.572 348.699L406.005 339.645L402.396 330.807L398.721 322.184L395.004 313.787L391.222 305.606L387.386 297.641L383.497 289.891L379.542 282.368L375.534 275.06L371.451 267.979L367.313 261.102L363.1 254.452L358.823 248.017L354.47 241.798L350.041 235.805L345.548 230.028L340.958 224.477L336.303 219.152L331.552 214.043L326.714 209.171L321.79 204.537L316.78 200.128L311.662 195.968L306.457 192.055L301.156 188.401L295.758 185.006L290.274 181.87L284.692 179.024L279.025 176.448L273.293 174.174L267.474 172.191L261.602 170.52L255.676 169.151L249.718 168.105L243.727 167.373L237.725 166.952L231.724 166.844L225.733 167.049L216.747 167.868L207.901 169.129L199.216 170.843L190.694 172.999L182.354 175.597L174.197 178.625L166.224 182.074L158.466 185.944L150.913 190.223L143.565 194.901L136.432 199.967L129.504 205.41L122.78 211.219L116.262 217.395L109.937 223.927L103.806 230.815L97.8476 238.047L92.0723 245.624L86.4694 253.546L81.0174 261.803L75.7378 270.415L70.5982 279.372L65.6095 288.673L60.7717 298.32L56.0631 308.312L51.4838 318.659L47.0447 329.362L42.724 340.421L38.5434 351.825L34.4705 363.595L30.527 375.72L26.7019 388.213L22.9847 401.061L19.3967 414.286L15.9164 427.867L12.5439 441.814L9.30072 456.139L6.1545 470.83L3.1268 485.898L0.206843 501.333C-0.350396 504.137 0.22881 507.048 1.81705 509.425C3.40528 511.802 5.87245 513.451 8.67579 514.008C11.4791 514.566 14.389 513.986 16.7653 512.397C19.1416 510.809 20.7896 508.341 21.3469 505.536Z"/>
+<linearGradient id="gloss" x1="540" y1="124" x2="540" y2="420" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="white" stop-opacity="0.45"/>
+<stop offset="0.55" stop-color="white" stop-opacity="0.1"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="depth" x1="540" y1="450" x2="540" y2="614" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#0F4FAE" stop-opacity="0"/>
+<stop offset="1" stop-color="#0F4FAE" stop-opacity="0.25"/>
+</linearGradient>
+</defs>
+<use href="#m" fill="#217AFA"/>
+<use href="#m" fill="url(#depth)"/>
+<use href="#m" fill="url(#gloss)"/>
+</svg></span>
+      <div>
+        <b>المجال التقني</b>
+        <small>تطوير المواقع والمتاجر الإلكترونية · almajaltech.com</small>
+      </div>
+    </div>
+    <div class="r">Q-2026-001 · EMAIL KIT</div>
+  </div>
+
+  <div class="intro">
+    <h1>رسائل إرسال العرض — المدرسة الإسبانية بجدة</h1>
+    <p>
+      ثلاث رسائل جاهزة: رسالة إرسال العرض، ورسالة متابعة بعد أربعة أيام إن لم يصل رد،
+      ورسالة واتساب قصيرة تُرسَل بعد الإيميل مباشرةً. اضغط «نسخ» بجانب أي حقل لنقله كما هو.
+    </p>
+    <div class="fillnote">
+      بيانات التواصل ووثيقة العمل الحر مُعبّأة مسبقاً. لم يتبقَّ إلا الحقلان المظللان بالأزرق في رسالة المتابعة: <strong>تاريخ الإرسال</strong> و<strong>تاريخ انتهاء صلاحية العرض</strong>.
+    </div>
+  </div>
+
+  <!-- 1 -->
+  <div class="msg">
+    <div class="msg-head">
+      <div class="id">
+        <span class="seq">01</span>
+        <h2>رسالة إرسال العرض</h2>
+      </div>
+      <span class="when">تُرسل الآن · مرفق بها ملف PDF</span>
+    </div>
+
+    <div class="field">
+      <div class="field-bar">
+        <span class="k">الموضوع</span>
+        <button class="copy" data-target="s1">نسخ</button>
+      </div>
+      <pre class="txt subject" id="s1">عرض فني ومالي — الموقع التعريفي والمتجر الإلكتروني | المدرسة الإسبانية بجدة</pre>
+    </div>
+
+    <div class="field">
+      <div class="field-bar">
+        <span class="k">نص الرسالة</span>
+        <button class="copy" data-target="b1">نسخ</button>
+      </div>
+      <pre class="txt" id="b1">السلام عليكم ورحمة الله وبركاته،
+
+شكراً لثقتكم وطلبكم عرض السعر. تجدون مرفقاً العرض الفني والمالي كاملاً، مقسّماً كما طلبتم إلى ثلاثة بنود مستقلة:
+
+• الموقع الإلكتروني التعريفي — 26,000 ريال
+• المتجر الإلكتروني شاملاً ربط بوابة الدفع وشركات الشحن — 36,000 ريال
+• ربط Odoo — 18,000 ريال، بند منفصل يمكن تأجيله دون إعادة بناء المتجر
+
+الإجمالي 80,000 ريال، ويصبح 76,000 ريال عند اعتماد المشروعين معاً في عقد واحد. ومدة التنفيذ 13 إلى 16 أسبوعاً.
+
+وأودّ أن ألفت نظركم إلى ثلاث نقاط تحديداً:
+
+أولاً — الملكية الكاملة: الكود المصدري وقاعدة البيانات وحسابات الاستضافة والنطاق ستكون كلها باسم المدرسة، ولن يرتبط المشروع بأي اشتراك أو ترخيص باسمنا. وجميع المكوّنات مفتوحة المصدر بتراخيص MIT و GPL. وقد فصّلنا ذلك في القسم العاشر من العرض.
+
+ثانياً — الأسعار نهائية: نعمل بموجب وثيقة عمل حر، وإيراداتنا السنوية دون حدّ التسجيل الإلزامي في ضريبة القيمة المضافة البالغ 375,000 ريال. لذلك المبالغ الواردة في العرض نهائية ولا يُضاف إليها 15٪، أي بتوفير 12,000 ريال مقارنةً بعرض من مورّد مسجّل في الضريبة.
+
+ثالثاً — ملاحظة فنية مهمة: أوضحنا في القسم الثاني أن منصات الاشتراك مثل سلة وزد لا تسلّم كوداً مصدرياً ولا وصولاً كاملاً لقاعدة البيانات، وبالتالي لا تحقق شرط التملّك الذي اشترطتموه. ولهذا بُني العرض على بديل مفتوح المصدر يحقق الشرط بالكامل.
+
+وفي القسم الرابع عشر من العرض ثماني نقاط نأمل توضيحها لضبط السعر النهائي، أهمها الجهة التي ستُصدر الفاتورة الضريبية للمتجر، وعدد الفروع وطريقة إدارة مخزونها. ويسعدني ترتيب اجتماع قصير لا يتجاوز ثلاثين دقيقة لمناقشتها متى ما ناسبكم.
+
+العرض ساري لمدة 30 يوماً من تاريخه، وأنا في خدمتكم لأي استفسار.
+
+شاكراً لكم حسن تعاونكم.
+
+مع خالص التحية،
+خالد صالح بن سعيد المنهالي
+المجال التقني — تطوير المواقع والمتاجر الإلكترونية
+جوال: +966 55 992 1989
+بريد إلكتروني: info@almajaltech.com
+الموقع: almajaltech.com
+وثيقة عمل حر رقم: FL-763262946</pre>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="msg">
+    <div class="msg-head">
+      <div class="id">
+        <span class="seq">02</span>
+        <h2>رسالة المتابعة</h2>
+      </div>
+      <span class="when">بعد 4 أيام عمل إن لم يصل رد</span>
+    </div>
+
+    <div class="field">
+      <div class="field-bar">
+        <span class="k">الموضوع</span>
+        <button class="copy" data-target="s2">نسخ</button>
+      </div>
+      <pre class="txt subject" id="s2">متابعة — عرض المدرسة الإسبانية بجدة (Q-2026-001)</pre>
+    </div>
+
+    <div class="field">
+      <div class="field-bar">
+        <span class="k">نص الرسالة</span>
+        <button class="copy" data-target="b2">نسخ</button>
+      </div>
+      <pre class="txt" id="b2">السلام عليكم ورحمة الله وبركاته،
+
+أتابع معكم بخصوص العرض الفني والمالي المرسل بتاريخ <mark>أدخل التاريخ</mark>، وأحببت التأكد من وصوله ومن وضوح بنوده.
+
+إن كان هناك أي بند تحتاجون تفصيله أكثر — في التقنيات، أو الجدول الزمني، أو آلية تسليم الكود المصدري، أو التكاليف السنوية — فأنا جاهز لتوضيحه كتابةً أو في مكالمة قصيرة.
+
+وإن كانت الميزانية عاملاً في القرار، فأذكّر بأن العرض يتضمن مساراً اقتصادياً بديلاً في القسم السابع يبدأ من 49,000 ريال ويحقق شرط تملّك الكود المصدري نفسه.
+
+العرض ساري حتى <mark>أدخل تاريخ انتهاء الصلاحية</mark>.
+
+شاكراً لكم، وفي انتظار ملاحظاتكم.
+
+مع خالص التحية،
+خالد صالح بن سعيد المنهالي
+المجال التقني — almajaltech.com
+جوال: +966 55 992 1989</pre>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="msg">
+    <div class="msg-head">
+      <div class="id">
+        <span class="seq">03</span>
+        <h2>رسالة واتساب قصيرة</h2>
+      </div>
+      <span class="when">بعد إرسال الإيميل مباشرةً</span>
+    </div>
+
+    <div class="field">
+      <div class="field-bar">
+        <span class="k">النص</span>
+        <button class="copy" data-target="b3">نسخ</button>
+      </div>
+      <pre class="txt" id="b3">السلام عليكم ورحمة الله وبركاته
+
+معكم خالد من المجال التقني.
+
+أرسلت لكم على البريد الإلكتروني العرض الفني والمالي للموقع التعريفي والمتجر الإلكتروني، وقد راعيت فيه كل البنود التي طلبتم توضيحها، خصوصاً شرط تملّك الكود المصدري بالكامل.
+
+أرجو التكرم بالاطلاع عليه، وأنا جاهز لأي استفسار أو اجتماع قصير.
+
+شاكراً لكم.</pre>
+    </div>
+  </div>
+
+  <div class="check">
+    <h2>قبل الضغط على «إرسال»</h2>
+    <ol>
+      <li>أرفق ملف العرض بصيغة PDF، وسمِّ الملف: <span style="font-family:var(--f-mono)">almajaltech-Q-2026-001-spanish-school-jeddah.pdf</span></li>
+      <li>عوّض الحقلين المظللين بالأزرق في رسالة المتابعة (تاريخ الإرسال وتاريخ انتهاء الصلاحية).</li>
+      <li>تأكد أن تاريخ العرض في ملف PDF هو تاريخ الإرسال الفعلي.</li>
+      <li>أرسل من info@almajaltech.com لا من بريد شخصي — يرفع مصداقية العرض.</li>
+      <li>أرسل صباحاً في يوم عمل، وتجنّب الخميس بعد الظهر.</li>
+      <li>أرسل رسالة الواتساب بعد الإيميل بساعة تقريباً، لا قبله.</li>
+      <li>سجّل تاريخ الإرسال لتذكّر موعد رسالة المتابعة بعد أربعة أيام عمل.</li>
+    </ol>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('button.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var el = document.getElementById(btn.dataset.target);
+      if (!el) return;
+      var text = el.innerText;
+
+      var done = function (ok) {
+        btn.textContent = ok ? 'تم النسخ' : 'حدّد النص وانسخه';
+        btn.dataset.state = ok ? 'ok' : 'fail';
+        setTimeout(function () {
+          btn.textContent = 'نسخ';
+          delete btn.dataset.state;
+        }, 2200);
+      };
+
+      var fallback = function () {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.top = '-1000px';
+          document.body.appendChild(ta);
+          ta.select();
+          var ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          done(ok);
+        } catch (e) {
+          done(false);
+        }
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+      } else {
+        fallback();
+      }
+    });
+  });
+</script>

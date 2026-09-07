@@ -1,65 +1,79 @@
 <title>عرض المدرسة الإسبانية بجدة</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Tajawal:wght@500;700;800;900&display=swap">
 
 <style>
+  /* ============================================================
+     هوية المجال التقني — مطابقة لمتغيّرات العلامة في
+     almajaltech-website/css/style.css
+     primary #1E88FF · accent #00C2FF · deep #0D1A2B
+     الخطوط: Tajawal (عناوين) · IBM Plex Sans Arabic (متن) · Inter (أرقام)
+     ============================================================ */
   :root {
-    --paper:      #FAF7F0;
+    --paper:      #F4F8FC;
     --surface:    #FFFFFF;
-    --surface-2:  #F3EEE4;
-    --ink:        #1B1815;
-    --ink-2:      #4A443C;
-    --muted:      #7C7365;
-    --line:       #E4DCCD;
-    --line-hard:  #CDC2AE;
-    --accent:     #A31621;
-    --accent-ink: #A31621;
-    --accent-soft:#F6E6E3;
-    --gold:       #8F6720;
-    --good:       #2E6B4F;
+    --surface-2:  #EDF3FA;
+    --deep:       #0D1A2B;
+    --deep-2:     #131C30;
+    --ink:        #0D1A2B;
+    --ink-2:      #3D4D63;
+    --muted:      #5A6B80;
+    --line:       #E3E9F1;
+    --line-hard:  #C4D2E3;
+    --brand:       #1E88FF;
+    --brand-lit:   #5FA8FF;
+    --brand-ink:   #0F63C7;
+    --brand-soft:  #E8F2FF;
+    --on-deep:    #E8EEF7;
+    --on-deep-2:  #9AA9BF;
 
-    --f-display: 'Noto Kufi Arabic', 'Segoe UI', Tahoma, sans-serif;
+    --f-display: 'Tajawal', 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
     --f-body: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
-    /* Arabic glyphs deliberately fall through to the body face rather than a
-       monospace generic, so mixed number/Arabic cells stay readable. */
-    --f-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, 'IBM Plex Sans Arabic', sans-serif;
+    /* الأرقام بخط Mono، والحروف العربية تسقط على خط المتن لا على مونوسبيس عام */
+    --f-mono: 'Inter', 'IBM Plex Sans Arabic', 'Segoe UI', sans-serif;
 
     --w: 940px;
   }
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --paper:      #131110;
-      --surface:    #1C1918;
-      --surface-2:  #262220;
-      --ink:        #F2ECE1;
-      --ink-2:      #D2C9BB;
-      --muted:      #968C7D;
-      --line:       #332E2A;
-      --line-hard:  #4A423B;
-      --accent:     #E24C58;
-      --accent-ink: #F08893;
-      --accent-soft:#3A1F20;
-      --gold:       #C9A05A;
-      --good:       #4E9E78;
+      --paper:      #0A0F1A;
+      --surface:    #0F1626;
+      --surface-2:  #131C30;
+      --deep:       #060A12;
+      --deep-2:     #0F1626;
+      --ink:        #E8EEF7;
+      --ink-2:      #C2CCDA;
+      --muted:      #9AA9BF;
+      --line:       #1F2A40;
+      --line-hard:  #2E3D57;
+      --brand:       #1E88FF;
+      --brand-lit:   #5FA8FF;
+      --brand-ink:   #6DB0FF;
+      --brand-soft:  #12233C;
+      --on-deep:    #E8EEF7;
+      --on-deep-2:  #9AA9BF;
     }
   }
 
   :root[data-theme="dark"] {
-    --paper:      #131110;
-    --surface:    #1C1918;
-    --surface-2:  #262220;
-    --ink:        #F2ECE1;
-    --ink-2:      #D2C9BB;
-    --muted:      #968C7D;
-    --line:       #332E2A;
-    --line-hard:  #4A423B;
-    --accent:     #E24C58;
-    --accent-ink: #F08893;
-    --accent-soft:#3A1F20;
-    --gold:       #C9A05A;
-    --good:       #4E9E78;
+    --paper:      #0A0F1A;
+    --surface:    #0F1626;
+    --surface-2:  #131C30;
+    --deep:       #060A12;
+    --deep-2:     #0F1626;
+    --ink:        #E8EEF7;
+    --ink-2:      #C2CCDA;
+    --muted:      #9AA9BF;
+    --line:       #1F2A40;
+    --line-hard:  #2E3D57;
+    --brand:       #1E88FF;
+    --brand-lit:   #5FA8FF;
+    --brand-ink:   #6DB0FF;
+    --brand-soft:  #12233C;
+    --on-deep:    #E8EEF7;
+    --on-deep-2:  #9AA9BF;
   }
 
   html { direction: rtl; }
@@ -73,82 +87,68 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  .doc {
-    max-width: var(--w);
-    margin: 0 auto;
-    padding: 40px 22px 90px;
-  }
+  .doc { max-width: var(--w); margin: 0 auto; padding: 40px 22px 90px; }
 
-  /* ---------- masthead ---------- */
+  /* ---------- letterhead ---------- */
 
-  .masthead {
-    border: 1px solid var(--line-hard);
-    background: var(--surface);
-    padding: 30px 30px 0;
-  }
+  .masthead { border: 1px solid var(--line-hard); background: var(--surface); }
+
   .letterhead {
+    background: var(--deep);
+    padding: 20px 30px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 10px 24px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--line);
+    gap: 14px 24px;
+    border-bottom: 3px solid var(--brand);
   }
-  .mast-top { padding: 24px 0 26px; }
-  .mark {
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 42px; flex: none; line-height: 0; }
+  .logo svg { width: 100%; height: auto; display: block; }
+  .brand b {
+    display: block;
     font-family: var(--f-display);
     font-weight: 800;
-    font-size: 13px;
-    letter-spacing: .04em;
-    color: var(--accent-ink);
-    display: flex;
-    align-items: center;
-    gap: 9px;
+    font-size: 17px;
+    color: var(--on-deep);
+    line-height: 1.35;
   }
-  .mark::before {
-    content: "";
-    width: 26px; height: 3px;
-    background: var(--accent);
-    display: block;
+  .brand small { display: block; font-size: 11.5px; color: var(--on-deep-2); line-height: 1.4; }
+  .lh-meta { text-align: start; }
+  .lh-meta .t {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--brand-lit);
+    letter-spacing: .02em;
   }
-  .kicker {
+  .lh-meta .r {
     font-family: var(--f-mono);
-    font-size: 11px;
-    letter-spacing: .12em;
-    color: var(--muted);
-    text-transform: uppercase;
+    font-size: 11.5px;
+    color: var(--on-deep-2);
+    letter-spacing: .08em;
   }
+
+  .mast-body { padding: 28px 30px 26px; }
   .mast-title {
     font-family: var(--f-display);
     font-weight: 800;
-    font-size: clamp(26px, 4.4vw, 38px);
-    line-height: 1.35;
+    font-size: clamp(25px, 4.2vw, 36px);
+    line-height: 1.4;
     text-wrap: balance;
-    margin-top: 4px;
+    color: var(--ink);
   }
-  .mast-sub {
-    color: var(--ink-2);
-    max-width: 60ch;
-    margin-top: 10px;
-  }
+  .mast-sub { color: var(--ink-2); max-width: 62ch; margin-top: 10px; }
+
   .mast-meta {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     border-top: 1px solid var(--line);
-    margin: 0 -30px;
   }
-  .mast-meta > div {
-    padding: 14px 30px 18px;
-    border-inline-start: 1px solid var(--line);
-  }
+  .mast-meta > div { padding: 14px 30px 18px; border-inline-start: 1px solid var(--line); }
   .mast-meta > div:first-child { border-inline-start: 0; }
-  .mast-meta dt {
-    font-size: 11px;
-    letter-spacing: .06em;
-    color: var(--muted);
-    font-weight: 600;
-  }
+  .mast-meta dt { font-size: 11px; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
   .mast-meta dd {
     font-family: var(--f-mono);
     font-size: 14px;
@@ -168,20 +168,11 @@
     background: var(--line-hard);
     border: 1px solid var(--line-hard);
     border-top: 0;
-    margin-bottom: 44px;
   }
-  .fig {
-    background: var(--surface);
-    padding: 22px 24px 24px;
-  }
-  .fig.lead { background: var(--accent-soft); }
-  .fig .lbl {
-    font-size: 11.5px;
-    font-weight: 600;
-    letter-spacing: .05em;
-    color: var(--muted);
-  }
-  .fig.lead .lbl { color: var(--accent-ink); }
+  .fig { background: var(--surface); padding: 22px 24px 24px; }
+  .fig.lead { background: var(--brand-soft); }
+  .fig .lbl { font-size: 11.5px; font-weight: 600; letter-spacing: .05em; color: var(--muted); }
+  .fig.lead .lbl { color: var(--brand-ink); }
   .fig .val {
     font-family: var(--f-mono);
     font-size: clamp(24px, 4vw, 31px);
@@ -191,7 +182,7 @@
     font-variant-numeric: tabular-nums;
     color: var(--ink);
   }
-  .fig.lead .val { color: var(--accent-ink); }
+  .fig.lead .val { color: var(--brand-ink); }
   .fig .val .unit {
     font-family: var(--f-body);
     font-size: .46em;
@@ -199,8 +190,42 @@
     color: var(--muted);
     margin-inline-start: 4px;
   }
-  .fig.lead .val .unit { color: var(--accent-ink); opacity: .8; }
+  .fig.lead .val .unit { color: var(--brand-ink); opacity: .75; }
   .fig .note { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  /* ---------- VAT banner ---------- */
+
+  .vat {
+    background: var(--deep);
+    color: var(--on-deep);
+    border: 1px solid var(--deep);
+    border-top: 0;
+    padding: 18px 26px 20px;
+    margin-bottom: 44px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 28px;
+    justify-content: space-between;
+  }
+  .vat .txt { max-width: 66ch; }
+  .vat h4 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: 14.5px;
+    color: var(--brand-lit);
+    margin-bottom: 3px;
+  }
+  .vat p { color: var(--on-deep-2); font-size: 13.5px; margin: 0; max-width: none; line-height: 1.75; }
+  .vat .save { flex: none; text-align: center; }
+  .vat .save .v {
+    font-family: var(--f-mono);
+    font-size: 25px;
+    color: var(--brand-lit);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+  .vat .save .k { font-size: 11px; color: var(--on-deep-2); }
 
   /* ---------- sections ---------- */
 
@@ -214,13 +239,7 @@
     padding-bottom: 9px;
     margin-bottom: 20px;
   }
-  .s-num {
-    font-family: var(--f-mono);
-    font-size: 13px;
-    color: var(--accent-ink);
-    font-weight: 500;
-    flex: none;
-  }
+  .s-num { font-family: var(--f-mono); font-size: 13px; color: var(--brand-ink); font-weight: 500; flex: none; }
   .s-head h2 {
     font-family: var(--f-display);
     font-weight: 700;
@@ -229,13 +248,7 @@
     text-wrap: balance;
   }
 
-  h3 {
-    font-family: var(--f-display);
-    font-weight: 700;
-    font-size: 16px;
-    margin: 26px 0 10px;
-    color: var(--ink);
-  }
+  h3 { font-family: var(--f-display); font-weight: 700; font-size: 16px; margin: 26px 0 10px; color: var(--ink); }
   h3:first-child { margin-top: 0; }
 
   p { max-width: 68ch; color: var(--ink-2); }
@@ -267,8 +280,7 @@
     inset-inline-start: 0;
     top: .72em;
     width: 6px; height: 6px;
-    background: var(--accent);
-    opacity: .7;
+    background: var(--brand);
   }
 
   ol.steps { list-style: none; counter-reset: st; display: grid; gap: 10px; }
@@ -285,7 +297,7 @@
     top: .28em;
     font-family: var(--f-mono);
     font-size: 12px;
-    color: var(--accent-ink);
+    color: var(--brand-ink);
     border: 1px solid var(--line-hard);
     width: 20px; height: 20px;
     display: grid; place-items: center;
@@ -299,7 +311,7 @@
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
-    min-width: 520px;
+    min-width: 480px;
     background: var(--surface);
   }
   caption {
@@ -311,12 +323,7 @@
     padding-bottom: 8px;
     color: var(--ink);
   }
-  th, td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--line);
-    text-align: start;
-    vertical-align: top;
-  }
+  th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: start; vertical-align: top; }
   thead th {
     font-size: 11.5px;
     font-weight: 600;
@@ -334,12 +341,12 @@
   }
   tbody tr:last-child td { border-bottom: 1px solid var(--line-hard); }
   tr.total td {
-    background: var(--accent-soft);
+    background: var(--brand-soft);
     font-weight: 700;
     color: var(--ink);
-    border-bottom: 1px solid var(--line-hard);
+    border-bottom: 2px solid var(--brand);
   }
-  tr.total td.n { color: var(--accent-ink); font-weight: 500; font-size: 15px; }
+  tr.total td.n { color: var(--brand-ink); font-weight: 500; font-size: 15px; }
   tr.sub td { background: var(--surface-2); font-weight: 600; }
   td small { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.6; }
 
@@ -347,119 +354,120 @@
 
   /* ---------- callout ---------- */
 
-  .call {
-    border-inline-start: 3px solid var(--accent);
-    background: var(--surface);
-    padding: 16px 20px;
-    margin: 18px 0;
-  }
-  .call h4 {
-    font-family: var(--f-display);
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 5px;
-    color: var(--accent-ink);
-  }
+  .call { border-inline-start: 3px solid var(--brand); background: var(--surface); padding: 16px 20px; margin: 18px 0; }
+  .call h4 { font-family: var(--f-display); font-size: 14px; font-weight: 700; margin-bottom: 5px; color: var(--brand-ink); }
   .call p { margin: 0; font-size: 14px; }
 
   /* ---------- two-track cards ---------- */
 
-  .tracks {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-    margin-top: 14px;
-  }
-  .track {
-    border: 1px solid var(--line-hard);
-    background: var(--surface);
-    padding: 20px 22px 22px;
-  }
-  .track.pick { border-color: var(--accent); }
-  .track .tag {
-    font-family: var(--f-mono);
-    font-size: 10.5px;
-    letter-spacing: .1em;
-    color: var(--muted);
-  }
-  .track.pick .tag { color: var(--accent-ink); }
-  .track h4 {
-    font-family: var(--f-display);
-    font-size: 17px;
-    font-weight: 700;
-    margin: 3px 0 4px;
-  }
-  .track .price {
-    font-family: var(--f-mono);
-    font-size: 22px;
-    font-variant-numeric: tabular-nums;
-    margin: 10px 0 2px;
-  }
-  .track .price span { font-size: 12px; color: var(--muted); }
+  .tracks { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 14px; }
+  .track { border: 1px solid var(--line-hard); background: var(--surface); padding: 20px 22px 22px; }
+  .track.pick { border-color: var(--brand); border-width: 2px; }
+  .track .tag { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; color: var(--muted); }
+  .track.pick .tag { color: var(--brand-ink); }
+  .track h4 { font-family: var(--f-display); font-size: 17px; font-weight: 700; margin: 3px 0 4px; }
+  .track .price { font-family: var(--f-mono); font-size: 22px; font-variant-numeric: tabular-nums; margin: 10px 0 2px; }
+  .track .price span { font-size: 12px; color: var(--muted); font-family: var(--f-body); }
   .track ul { list-style: none; margin-top: 12px; display: grid; gap: 5px; }
-  .track ul li {
-    font-size: 13.5px;
-    color: var(--ink-2);
-    padding-inline-start: 15px;
-    position: relative;
-  }
-  .track ul li::before {
-    content: "—";
-    position: absolute;
-    inset-inline-start: 0;
-    color: var(--muted);
-  }
+  .track ul li { font-size: 13.5px; color: var(--ink-2); padding-inline-start: 15px; position: relative; }
+  .track ul li::before { content: "—"; position: absolute; inset-inline-start: 0; color: var(--muted); }
 
-  /* ---------- misc ---------- */
+  /* ---------- signature ---------- */
 
-  .ph {
-    border-bottom: 1px dashed var(--accent);
-    color: var(--accent-ink);
-    padding: 0 2px;
-  }
+  .ph { border-bottom: 1px dashed var(--brand); color: var(--brand-ink); padding: 0 2px; }
 
   .sig {
-    border-top: 2px solid var(--ink);
+    border: 1px solid var(--line-hard);
+    background: var(--surface);
     margin-top: 54px;
-    padding-top: 20px;
+    padding: 22px 26px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px 34px;
+  }
+  .sig .cell dt { font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: .05em; }
+  .sig .cell dd { font-size: 14px; color: var(--ink); margin-top: 2px; font-weight: 600; }
+  .sig .cell dd.mono { font-family: var(--f-mono); font-weight: 400; font-variant-numeric: tabular-nums; }
+  .sig-foot {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+    font-size: 12.5px;
+    color: var(--muted);
     display: flex;
     flex-wrap: wrap;
-    gap: 20px 40px;
+    gap: 8px 20px;
     justify-content: space-between;
-    align-items: flex-end;
   }
-  .sig .who { font-size: 13.5px; color: var(--ink-2); }
-  .sig .who b { display: block; font-family: var(--f-display); font-size: 15px; color: var(--ink); }
-  .sig .stamp {
-    font-family: var(--f-mono);
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: .06em;
-  }
+  .sig-foot .stamp { font-family: var(--f-mono); letter-spacing: .06em; }
 
-  a { color: var(--accent-ink); }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  a { color: var(--brand-ink); }
+  :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
   @media (max-width: 720px) {
     .mast-meta { grid-template-columns: repeat(2, 1fr); }
     .mast-meta > div:nth-child(3) { border-inline-start: 0; }
     .mast-meta > div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
     .figures { grid-template-columns: 1fr; }
-    .masthead { padding: 24px 20px 0; }
-    .mast-meta { margin: 0 -20px; }
+    .letterhead, .mast-body { padding-inline: 20px; }
     .mast-meta > div { padding-inline: 20px; }
     .doc { padding: 22px 14px 60px; }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    * { animation: none !important; transition: none !important; }
-  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+  /* ---------- print / PDF ---------- */
+
+  @page { size: A4; margin: 13mm 11mm 15mm; }
 
   @media print {
-    body { background: #fff; color: #000; font-size: 11pt; }
+    :root {
+      --paper: #FFFFFF; --surface: #FFFFFF; --surface-2: #EEF4FB;
+      --deep: #0D1A2B; --deep-2: #131C30;
+      --ink: #0D1A2B; --ink-2: #33435A; --muted: #5A6B80;
+      --line: #DCE4EE; --line-hard: #B6C6DA;
+      --brand: #1E88FF; --brand-lit: #5FA8FF; --brand-ink: #0B57B0; --brand-soft: #E8F2FF;
+      --on-deep: #E8EEF7; --on-deep-2: #9AA9BF;
+    }
+    html, body { background: #fff; font-size: 9.7pt; line-height: 1.62; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .doc { max-width: none; padding: 0; }
-    section { break-inside: auto; }
-    .s-head, table, .track, .call { break-inside: avoid; }
+    section { margin-bottom: 20px; }
+    .s-head, table, .track, .call, .vat, .sig, ol.steps li { break-inside: avoid; }
+    thead { display: table-header-group; }
+    tr { break-inside: avoid; }
+    .masthead, .figures, .vat { break-inside: avoid; }
+    .vat { margin-bottom: 24px; }
+    .tw { overflow: visible; }
+    table { min-width: 0; }
+    .mast-title { font-size: 20pt; }
+    .s-head h2 { font-size: 13.5pt; }
+    .fig .val { font-size: 17pt; }
+    ul.feat li, td, th, p { font-size: 9.6pt; }
+    td small { font-size: 8.6pt; }
+    .tnote { font-size: 8.6pt; }
+    /* A4 is ~711 CSS px wide, which would otherwise trip the 720px mobile
+       breakpoint above and collapse the grids. Restore the desktop layout. */
+    .mast-meta { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .mast-meta > div { padding: 9px 14px 11px; border-inline-start: 1px solid var(--line); border-bottom: 0; }
+    .mast-meta > div:first-child { border-inline-start: 0; }
+    .figures { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .fig { padding: 13px 15px 15px; }
+    .fig .lbl, .fig .note { font-size: 8pt; }
+    .letterhead { padding: 12px 18px; }
+    .mast-body { padding: 18px 18px 16px; }
+    .logo { width: 34px; }
+    .vat { padding: 13px 18px 14px; margin-bottom: 18px; }
+    .vat p { font-size: 8.6pt; line-height: 1.6; }
+    .vat .save .v { font-size: 16pt; }
+    .s-head { margin-bottom: 12px; padding-bottom: 6px; }
+    th, td { padding: 6px 10px; }
+    ul.feat { gap: 2px 18px; }
+    ol.steps { gap: 6px; }
+    .call { padding: 11px 15px; margin: 12px 0; }
+    .tracks { gap: 12px; }
+    .track { padding: 14px 16px 16px; }
+    .sig { margin-top: 26px; padding: 16px 18px; }
   }
 </style>
 
@@ -467,16 +475,41 @@
 
   <header class="masthead">
     <div class="letterhead">
-      <div class="mark">اسم مؤسستكم</div>
-      <div class="kicker">Technical &amp; Financial Proposal</div>
+      <div class="brand">
+        <span class="logo" aria-hidden="true"><svg viewBox="0 0 1080 738" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<path id="m" d="M21.3469 505.536L24.6871 490.457L28.1458 475.777L31.723 461.506L35.4187 447.634L39.2222 434.161L43.155 421.098L47.1955 408.433L51.3546 396.178L55.6321 384.343L60.0174 372.907L64.5105 361.892L69.1113 351.286L73.8091 341.1L78.6254 331.324L83.5279 321.979L88.5274 313.044L93.6239 304.539L98.8065 296.456L104.075 288.803L109.43 281.581L114.85 274.78L120.334 268.41L125.883 262.471L131.476 256.963L137.132 251.876L142.821 247.198L148.543 242.951L154.296 239.103L160.072 235.665L165.869 232.615L171.698 229.952L177.538 227.667L183.399 225.749L189.293 224.175L195.219 222.957L201.199 222.084L207.222 221.534L213.31 221.308L219.484 221.416L225.733 221.847L228.912 222.289L232.015 222.871L235.032 223.615L237.984 224.498L240.893 225.533L243.759 226.719L246.593 228.055L249.416 229.554L252.239 231.213L255.062 233.046L257.885 235.061L260.729 237.26L263.585 239.664L266.462 242.261L269.349 245.064L272.258 248.093L275.189 251.337L278.131 254.808L281.094 258.505L284.057 262.439L287.041 266.621L290.015 271.029L293 275.685L295.984 280.579L298.969 285.72L301.943 291.099L304.906 296.725L307.869 302.599L310.81 308.721L313.752 315.091L316.661 321.699L319.57 328.554L322.447 335.657L325.313 342.997L328.158 350.596L330.97 358.421L333.771 366.505L336.54 374.826L339.288 383.384L342.003 392.19L344.945 401.707L347.897 411.009L350.86 420.085L353.823 428.966L356.797 437.621L359.792 446.071L362.798 454.306L365.815 462.336L368.843 470.161L371.903 477.782L374.974 485.197L378.066 492.408L381.18 499.425L384.326 506.248L387.505 512.876L390.716 519.311L393.97 525.563L397.256 531.62L400.607 537.505L404.012 543.196L407.471 548.726L411.015 554.072L414.636 559.245L418.353 564.257L422.178 569.097L426.122 573.764L430.205 578.259L434.451 582.592L438.857 586.73L443.469 590.686L448.285 594.426L453.328 597.94L458.618 601.206L464.167 604.192L469.964 606.854L476.009 609.16L482.29 611.057L488.755 612.523L495.382 613.504L502.105 614L508.861 613.978L515.595 613.461L522.232 612.448L528.751 610.971L535.087 609.074L541.217 606.789L547.144 604.148L552.843 601.195L558.328 597.962L563.607 594.469L568.682 590.751L573.585 586.817L578.326 582.667L582.916 578.334L587.366 573.818L591.708 569.108L595.942 564.214L600.08 559.138L604.131 553.888L608.118 548.445L612.04 542.83L615.897 537.009L619.711 531.017L623.472 524.819L627.189 518.438L630.885 511.863L634.537 505.084L638.158 498.099L641.767 490.921L645.345 483.537L648.9 475.949L652.434 468.157L655.958 460.148L659.459 451.935L662.951 443.506L666.431 434.873L669.889 426.013L673.348 416.948L676.796 407.668L680.233 398.172L683.336 389.722L686.461 381.541L689.607 373.629L692.764 365.977L695.943 358.593L699.143 351.49L702.343 344.646L705.554 338.082L708.765 331.798L711.986 325.794L715.197 320.06L718.397 314.617L721.587 309.454L724.765 304.582L727.911 299.991L731.025 295.69L734.096 291.681L737.124 287.962L740.098 284.524L742.996 281.376L745.83 278.52L748.577 275.944L751.239 273.648L753.782 271.611L756.217 269.854L758.533 268.334L760.71 267.063L762.757 266.017L764.664 265.187L766.42 264.54L768.037 264.066L769.524 263.754L770.881 263.56L772.131 263.484L773.284 263.506L774.361 263.603L775.396 263.764L776.409 263.991L777.421 264.26L778.477 264.594L782.496 265.284L786.246 266.157L789.78 267.192L793.109 268.378L796.277 269.725L799.326 271.212L802.289 272.851L805.199 274.661L808.086 276.655L810.985 278.854L813.926 281.279L816.9 283.974L819.949 286.938L823.063 290.215L826.253 293.826L829.517 297.792L832.847 302.125L836.23 306.846L839.667 311.977L843.147 317.527L846.66 323.499L850.194 329.901L853.75 336.735L857.295 344.01L860.829 351.738L864.352 359.898L867.854 368.51L871.323 377.564L874.75 387.059L878.122 396.997L881.452 407.388L884.727 418.198L887.938 429.462L891.073 441.156L894.155 453.282L897.15 465.839L900.081 478.827L902.926 492.246L905.684 506.086L908.367 520.357C913.05 542.732 926.371 562.355 945.435 574.961C964.499 587.566 987.767 592.136 1010.18 587.678C1032.59 583.219 1052.34 570.092 1065.14 551.149C1077.93 532.206 1082.73 508.978 1078.5 486.512L1074.92 470.269L1071.21 454.371L1067.33 438.818L1063.31 423.609L1059.13 408.746L1054.8 394.227L1050.3 380.043L1045.64 366.192L1040.81 352.676L1035.81 339.505L1030.63 326.657L1025.26 314.132L1019.71 301.942L1013.96 290.085L1008 278.552L1001.83 267.354L995.438 256.478L988.811 245.937L981.937 235.73L974.825 225.857L967.445 216.339L959.784 207.188L951.854 198.393L943.622 189.986L935.099 181.977L926.274 174.379L917.148 167.232L907.72 160.539L897.991 154.341L887.992 148.661L877.723 143.531L867.218 138.95L856.508 134.972L845.604 131.588L834.571 128.829L823.419 126.695L812.202 125.186L800.953 124.291L789.705 124L778.477 124.302L770.353 124.862L762.283 125.832L754.267 127.212L746.358 129.001L738.568 131.189L730.939 133.755L723.472 136.686L716.189 139.974L709.11 143.595L702.246 147.529L695.598 151.755L689.176 156.249L682.97 160.992L676.968 165.982L671.182 171.188L665.601 176.61L660.203 182.225L654.988 188.035L649.945 194.028L645.064 200.215L640.334 206.563L635.734 213.095L631.284 219.81L626.941 226.686L622.728 233.746L618.623 240.968L614.615 248.373L610.704 255.961L606.879 263.721L603.14 271.665L599.487 279.792L595.91 288.113L592.408 296.606L588.971 305.294L585.599 314.175L582.291 323.251L579.037 332.52L575.847 341.984L572.723 351.641L569.641 361.504L566.937 370.32L564.243 378.878L561.56 387.189L558.877 395.251L556.216 403.065L553.565 410.632L550.926 417.95L548.307 425L545.7 431.812L543.114 438.354L540.549 444.638L538.017 450.674L535.496 456.44L533.007 461.948L530.561 467.176L528.137 472.155L525.756 476.855L523.428 481.285L521.144 485.434L518.925 489.315L516.77 492.915L514.679 496.234L512.675 499.263L510.768 502.022L508.969 504.502L507.277 506.7L505.725 508.619L504.325 510.268L503.086 511.669L502.019 512.812L501.157 513.728L500.5 514.428L500.058 514.957L499.842 515.323L499.832 515.582L500.026 515.776L500.403 515.916L500.898 516.067L501.491 516.239L502.105 516.455L502.687 516.714L503.172 517.005L503.495 517.306L503.635 517.587L503.538 517.802L503.193 517.921L502.601 517.888L501.75 517.684L500.651 517.263L499.325 516.595L497.795 515.69L496.061 514.493L494.164 513.027L492.106 511.27L489.908 509.223L487.592 506.873L485.167 504.232L482.646 501.3L480.049 498.078L477.366 494.564L474.63 490.759L471.839 486.674L468.984 482.309L466.096 477.663L463.165 472.748L460.202 467.553L457.207 462.088L454.179 456.365L451.13 450.372L448.059 444.11L444.977 437.6L441.864 430.82L438.739 423.792L435.603 416.495L432.457 408.961L429.289 401.168L426.111 393.117L422.932 384.817L419.743 376.281L416.543 367.486L413.084 357.979L409.572 348.699L406.005 339.645L402.396 330.807L398.721 322.184L395.004 313.787L391.222 305.606L387.386 297.641L383.497 289.891L379.542 282.368L375.534 275.06L371.451 267.979L367.313 261.102L363.1 254.452L358.823 248.017L354.47 241.798L350.041 235.805L345.548 230.028L340.958 224.477L336.303 219.152L331.552 214.043L326.714 209.171L321.79 204.537L316.78 200.128L311.662 195.968L306.457 192.055L301.156 188.401L295.758 185.006L290.274 181.87L284.692 179.024L279.025 176.448L273.293 174.174L267.474 172.191L261.602 170.52L255.676 169.151L249.718 168.105L243.727 167.373L237.725 166.952L231.724 166.844L225.733 167.049L216.747 167.868L207.901 169.129L199.216 170.843L190.694 172.999L182.354 175.597L174.197 178.625L166.224 182.074L158.466 185.944L150.913 190.223L143.565 194.901L136.432 199.967L129.504 205.41L122.78 211.219L116.262 217.395L109.937 223.927L103.806 230.815L97.8476 238.047L92.0723 245.624L86.4694 253.546L81.0174 261.803L75.7378 270.415L70.5982 279.372L65.6095 288.673L60.7717 298.32L56.0631 308.312L51.4838 318.659L47.0447 329.362L42.724 340.421L38.5434 351.825L34.4705 363.595L30.527 375.72L26.7019 388.213L22.9847 401.061L19.3967 414.286L15.9164 427.867L12.5439 441.814L9.30072 456.139L6.1545 470.83L3.1268 485.898L0.206843 501.333C-0.350396 504.137 0.22881 507.048 1.81705 509.425C3.40528 511.802 5.87245 513.451 8.67579 514.008C11.4791 514.566 14.389 513.986 16.7653 512.397C19.1416 510.809 20.7896 508.341 21.3469 505.536Z"/>
+<linearGradient id="gloss" x1="540" y1="124" x2="540" y2="420" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="white" stop-opacity="0.45"/>
+<stop offset="0.55" stop-color="white" stop-opacity="0.1"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="depth" x1="540" y1="450" x2="540" y2="614" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#0F4FAE" stop-opacity="0"/>
+<stop offset="1" stop-color="#0F4FAE" stop-opacity="0.25"/>
+</linearGradient>
+</defs>
+<use href="#m" fill="#217AFA"/>
+<use href="#m" fill="url(#depth)"/>
+<use href="#m" fill="url(#gloss)"/>
+</svg></span>
+        <div>
+          <b>المجال التقني</b>
+          <small>تطوير المواقع والمتاجر الإلكترونية · almajaltech.com</small>
+        </div>
+      </div>
+      <div class="lh-meta">
+        <div class="t">عرض فني ومالي</div>
+        <div class="r">Q-2026-001</div>
+      </div>
     </div>
 
-    <div class="mast-top">
-      <h1 class="mast-title">عرض فني ومالي — الموقع التعريفي والمتجر الإلكتروني</h1>
+    <div class="mast-body">
+      <h1 class="mast-title">الموقع التعريفي والمتجر الإلكتروني — المدرسة الإسبانية بجدة</h1>
       <p class="mast-sub">
-        إعداد عرض متكامل للمدرسة الإسبانية في جدة، يشمل موقعاً تعريفياً ثلاثي اللغات
-        ومتجراً إلكترونياً مستقلاً مملوكاً بالكامل للمدرسة، مع مسار مستقل لربط Odoo.
-        جميع الأسعار الواردة بالريال السعودي، ومبيّنة قبل الضريبة وشاملة ضريبة القيمة المضافة 15٪.
+        عرض متكامل يشمل موقعاً تعريفياً بثلاث لغات، ومتجراً إلكترونياً مستقلاً مملوكاً بالكامل
+        للمدرسة، مع مسار مستقل لربط Odoo. جميع الأسعار بالريال السعودي و<strong>نهائية لا يُضاف
+        إليها أي مبالغ أو ضرائب</strong>.
       </p>
     </div>
 
@@ -490,19 +523,35 @@
 
   <div class="figures">
     <div class="fig lead">
-      <div class="lbl">إجمالي التنفيذ لمرة واحدة — شامل الضريبة</div>
-      <div class="val">92,000<span class="unit">ر.س</span></div>
-      <div class="note">الموقع + المتجر + ربط Odoo · 80,000 قبل الضريبة</div>
+      <div class="lbl">الإجمالي النهائي للتنفيذ</div>
+      <div class="val">80,000<span class="unit">ر.س</span></div>
+      <div class="note">الموقع + المتجر + ربط Odoo · لا ضريبة مضافة</div>
     </div>
     <div class="fig">
       <div class="lbl">التكاليف السنوية المتكررة</div>
-      <div class="val">17,250<span class="unit">ر.س</span></div>
+      <div class="val">15,000<span class="unit">ر.س</span></div>
       <div class="note">استضافة ونطاق ونسخ احتياطي ودعم وصيانة</div>
     </div>
     <div class="fig">
       <div class="lbl">مدة التنفيذ الكاملة</div>
       <div class="val">13 – 16<span class="unit">أسبوعاً</span></div>
       <div class="note">الموقع وحده: 5 – 6 أسابيع</div>
+    </div>
+  </div>
+
+  <div class="vat">
+    <div class="txt">
+      <h4>بخصوص ضريبة القيمة المضافة</h4>
+      <p>
+        المجال التقني يعمل بموجب وثيقة عمل حر صادرة من وزارة الموارد البشرية والتنمية الاجتماعية،
+        وإيراداته السنوية دون حدّ التسجيل الإلزامي في ضريبة القيمة المضافة البالغ 375,000 ريال.
+        وعليه فإن جميع الأسعار في هذا العرض نهائية، ولا تُضاف عليها ضريبة قيمة مضافة، وتُصدر عنها
+        فاتورة نظامية بموجب وثيقة العمل الحر.
+      </p>
+    </div>
+    <div class="save">
+      <div class="v">12,000</div>
+      <div class="k">ريالاً توفير مقابل مورّد مسجّل بالضريبة</div>
     </div>
   </div>
 
@@ -524,20 +573,20 @@
       <table>
         <caption>الإجمالي حسب النطاق — المسار الاحترافي (الموصى به)</caption>
         <thead>
-          <tr><th>النطاق</th><th class="n">قبل الضريبة</th><th class="n">شامل الضريبة 15٪</th></tr>
+          <tr><th>النطاق</th><th class="n">السعر النهائي (ر.س)</th></tr>
         </thead>
         <tbody>
-          <tr><td>الموقع الإلكتروني التعريفي (ثلاث لغات + لوحة تحكم)</td><td class="n">26,000</td><td class="n">29,900</td></tr>
-          <tr><td>المتجر الإلكتروني (شامل ربط بوابة الدفع والشحن)</td><td class="n">36,000</td><td class="n">41,400</td></tr>
-          <tr><td>ربط Odoo — بند منفصل واختياري</td><td class="n">18,000</td><td class="n">20,700</td></tr>
-          <tr class="total"><td>الإجمالي</td><td class="n">80,000</td><td class="n">92,000</td></tr>
+          <tr><td>الموقع الإلكتروني التعريفي — ثلاث لغات ولوحة تحكم</td><td class="n">26,000</td></tr>
+          <tr><td>المتجر الإلكتروني — شاملاً ربط بوابة الدفع وشركات الشحن</td><td class="n">36,000</td></tr>
+          <tr><td>ربط Odoo — بند منفصل واختياري</td><td class="n">18,000</td></tr>
+          <tr class="total"><td>الإجمالي</td><td class="n">80,000</td></tr>
         </tbody>
       </table>
     </div>
     <p class="tnote">
       عند اعتماد المشروعين معاً في عقد واحد نطبّق خصم 5٪ على قيمة التنفيذ، ليصبح الإجمالي
-      <strong><span class="num">87,400</span> ر.س</strong> شاملاً الضريبة.
-      وفي القسم <span class="num">07</span> مسار اقتصادي بديل يبدأ من <span class="num">56,350</span> ر.س شاملاً الضريبة.
+      <strong><span class="num">76,000</span> ر.س</strong>.
+      وفي القسم <span class="num">07</span> مسار اقتصادي بديل يبدأ من <span class="num">49,000</span> ر.س.
     </p>
   </section>
 
@@ -552,10 +601,10 @@
     <div class="call">
       <h4>شرط تملّك الكود يستبعد منصات الاشتراك</h4>
       <p>
-        منصات مثل سلة وزد وشوبيفاي تُقدَّم كاشتراك شهري/سنوي ولا يُسلَّم معها كود مصدري ولا وصول كامل
-        لقاعدة البيانات. لذلك لا تحقق شرطكم الصريح بتملّك المصدر وعدم الارتباط باشتراك، وقد استُبعدت
-        من هذا العرض. البديل الذي نقترحه مبني على مكوّنات مفتوحة المصدر بتراخيص MIT وGPL، تُثبَّت على
-        خادم باسم المدرسة، ولا تُرتّب أي رسوم ترخيص دورية.
+        منصات مثل سلة وزد وشوبيفاي تُقدَّم كاشتراك شهري أو سنوي، ولا يُسلَّم معها كود مصدري ولا وصول
+        كامل لقاعدة البيانات. لذلك لا تحقق شرطكم الصريح بتملّك المصدر وعدم الارتباط باشتراك، وقد
+        استُبعدت من هذا العرض. البديل الذي نقترحه مبني على مكوّنات مفتوحة المصدر بتراخيص MIT وGPL،
+        تُثبَّت على خادم باسم المدرسة، ولا تُرتّب أي رسوم ترخيص دورية.
       </p>
     </div>
 
@@ -564,18 +613,18 @@
       <p>
         تسجيل النطاق تحت ‎.sa‎ أو ‎.edu.sa‎ يمر عبر مركز المعلومات الوطني (SaudiNIC) ويشترط تطابق اسم
         النطاق مع السجل التجاري أو الترخيص أو العلامة التجارية. نتولّى الإجراء نيابةً عنكم، لكن التسجيل
-        يتم <strong>باسم المدرسة كمالك وإداري</strong>، والرسوم تُسدَّد بالتكلفة. ننصح بحجز ‎.com‎ بجانبه
-        كإجراء احترازي.
+        يتم <strong>باسم المدرسة كمالك وإداري</strong>، والرسوم تُسدَّد بالتكلفة. وننصح بحجز ‎.com‎
+        بجانبه كإجراء احترازي.
       </p>
     </div>
 
     <div class="call">
       <h4>الفوترة الإلكترونية (ZATCA) قرار يسبق البرمجة</h4>
       <p>
-        المتجر سيصدر فواتير بيع تخضع لنظام الفوترة الإلكترونية. يجب تحديد الجهة المُصدِرة للفاتورة:
-        المتجر نفسه أم Odoo. إن كان المتجر، فإن التكامل مع منصة «فاتورة» (المرحلة الثانية) خدمة منفصلة
-        سعرها <span class="num">6,900</span> ر.س شاملاً الضريبة. وإن كان Odoo هو المُصدِر فالتكلفة مشمولة
-        ضمن بند الربط.
+        المتجر سيصدر فواتير بيع باسم المدرسة تخضع لنظام الفوترة الإلكترونية. يجب تحديد الجهة
+        المُصدِرة للفاتورة: المتجر نفسه أم Odoo. إن كان المتجر، فإن التكامل مع منصة «فاتورة»
+        (المرحلة الثانية) خدمة منفصلة سعرها <span class="num">6,000</span> ر.س. وإن كان Odoo هو
+        المُصدِر فالتكلفة مشمولة ضمن بند الربط.
       </p>
     </div>
 
@@ -615,22 +664,25 @@
       <table>
         <caption>تفصيل تكلفة الموقع التعريفي</caption>
         <thead>
-          <tr><th>البند</th><th class="n">قبل الضريبة</th><th class="n">شامل الضريبة</th></tr>
+          <tr><th>البند</th><th class="n">السعر (ر.س)</th></tr>
         </thead>
         <tbody>
-          <tr><td>تحليل المتطلبات وهيكلة المحتوى وخريطة الموقع<small>ورشة عمل مع فريقكم، وثيقة متطلبات معتمدة</small></td><td class="n">2,000</td><td class="n">2,300</td></tr>
-          <tr><td>تصميم واجهات UI/UX لثمان صفحات<small>نسخة كمبيوتر وجوال لكل صفحة، تُسلَّم على Figma</small></td><td class="n">6,000</td><td class="n">6,900</td></tr>
-          <tr><td>تطوير الواجهة الأمامية<small>بناء الصفحات، الحركات، التجاوب، تحسين الأداء</small></td><td class="n">7,500</td><td class="n">8,625</td></tr>
-          <tr><td>لوحة تحكم المحتوى وأنواع المحتوى الستة<small>أخبار، فعاليات، أنشطة، فروع، إنجازات، ألبومات</small></td><td class="n">4,500</td><td class="n">5,175</td></tr>
-          <tr><td>دعم ثلاث لغات وإدارة الترجمة من اللوحة<small>لا يشمل صياغة النصوص أو ترجمتها</small></td><td class="n">3,000</td><td class="n">3,450</td></tr>
-          <tr><td>تهيئة SEO الأساسية وربط أدوات التحليل</td><td class="n">1,200</td><td class="n">1,380</td></tr>
-          <tr><td>نموذج التواصل وواتساب والحماية من السبام</td><td class="n">800</td><td class="n">920</td></tr>
-          <tr><td>الاختبار والإطلاق وتدريب الفريق<small>جلسة تدريب ساعتان + دليل استخدام مصوّر</small></td><td class="n">1,000</td><td class="n">1,150</td></tr>
-          <tr class="total"><td>إجمالي الموقع التعريفي</td><td class="n">26,000</td><td class="n">29,900</td></tr>
+          <tr><td>تحليل المتطلبات وهيكلة المحتوى وخريطة الموقع<small>ورشة عمل مع فريقكم، ووثيقة متطلبات معتمدة</small></td><td class="n">2,000</td></tr>
+          <tr><td>تصميم واجهات UI/UX لثمان صفحات<small>نسخة كمبيوتر وجوال لكل صفحة، تُسلَّم على Figma</small></td><td class="n">6,000</td></tr>
+          <tr><td>تطوير الواجهة الأمامية<small>بناء الصفحات، الحركات، التجاوب، تحسين الأداء</small></td><td class="n">7,500</td></tr>
+          <tr><td>لوحة تحكم المحتوى وأنواع المحتوى الستة<small>أخبار، فعاليات، أنشطة، فروع، إنجازات، ألبومات</small></td><td class="n">4,500</td></tr>
+          <tr><td>دعم ثلاث لغات وإدارة الترجمة من اللوحة<small>لا يشمل صياغة النصوص أو ترجمتها</small></td><td class="n">3,000</td></tr>
+          <tr><td>تهيئة SEO الأساسية وربط أدوات التحليل</td><td class="n">1,200</td></tr>
+          <tr><td>نموذج التواصل وواتساب والحماية من السبام</td><td class="n">800</td></tr>
+          <tr><td>الاختبار والإطلاق وتدريب الفريق<small>جلسة تدريب ساعتان + دليل استخدام مصوّر</small></td><td class="n">1,000</td></tr>
+          <tr class="total"><td>إجمالي الموقع التعريفي</td><td class="n">26,000</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="tnote">إدخال محتوى ما يصل إلى 20 صفحة/خبر أولي مشمول. الترجمة الاحترافية للإنجليزية والإسبانية متاحة كخدمة إضافية بـ <span class="num">4,600</span> ر.س شاملاً الضريبة لما يصل إلى 8,000 كلمة.</p>
+    <p class="tnote">
+      إدخال محتوى ما يصل إلى 20 صفحة أو خبر أولي مشمول. والترجمة الاحترافية للإنجليزية والإسبانية
+      متاحة كخدمة إضافية بـ <span class="num">4,000</span> ر.س لما يصل إلى 8,000 كلمة.
+    </p>
   </section>
 
   <!-- 4 -->
@@ -643,17 +695,17 @@
       <li>منتجات وتصنيفات غير محدودة العدد</li>
       <li>خيارات المنتج: المقاسات والألوان والفئة العمرية مع مخزون منفصل لكل خيار</li>
       <li>بحث وفلترة حسب التصنيف والسعر والمقاس والتوفر</li>
-      <li>سلة تشتري وتُكمل عبر جهاز آخر (سلة محفوظة)</li>
+      <li>سلة تُحفظ ويمكن إكمالها من جهاز آخر</li>
       <li>صفحة دفع من خطوة واحدة، مع خيار الشراء كضيف</li>
       <li>حساب العميل: الطلبات، عناوين الشحن، المفضلة، إعادة الطلب</li>
       <li>لوحة إدارة الطلبات: الحالات، الطباعة، المرتجعات، الملاحظات الداخلية</li>
       <li>إدارة المخزون مع تنبيه انخفاض الكمية</li>
       <li>كوبونات خصم: نسبة أو مبلغ، حد أدنى للطلب، تاريخ صلاحية، عدد مرات الاستخدام، تخصيص لتصنيف</li>
-      <li>بوابة دفع سعودية: مدى، فيزا، ماستركارد، Apple Pay، والتقسيط عبر تابي/تمارا اختيارياً</li>
+      <li>بوابة دفع سعودية: مدى، فيزا، ماستركارد، Apple Pay، والتقسيط عبر تابي وتمارا اختيارياً</li>
       <li>ربط شركات الشحن: احتساب التكلفة، إنشاء البوليصة، رقم التتبع، تحديث حالة الشحنة</li>
       <li>إشعارات بريد ورسائل نصية عند تغيّر حالة الطلب</li>
       <li>تقارير المبيعات وأكثر المنتجات مبيعاً والسلات المتروكة</li>
-      <li>واجهة عربية وإنجليزية للمتجر (الإسبانية اختيارية بـ 2,300 ر.س)</li>
+      <li>واجهة عربية وإنجليزية للمتجر (الإسبانية اختيارية بـ 2,000 ر.س)</li>
       <li>بنية جاهزة للربط مع Odoo عبر API دون إعادة بناء</li>
     </ul>
 
@@ -661,25 +713,25 @@
       <table>
         <caption>تفصيل تكلفة المتجر الإلكتروني</caption>
         <thead>
-          <tr><th>البند</th><th class="n">قبل الضريبة</th><th class="n">شامل الضريبة</th></tr>
+          <tr><th>البند</th><th class="n">السعر (ر.س)</th></tr>
         </thead>
         <tbody>
-          <tr><td>تصميم واجهات المتجر UI/UX<small>الرئيسية، التصنيف، المنتج، السلة، الدفع، الحساب</small></td><td class="n">6,000</td><td class="n">6,900</td></tr>
-          <tr><td>تطوير المتجر: المنتجات والتصنيفات والخيارات والبحث والفلترة</td><td class="n">9,000</td><td class="n">10,350</td></tr>
-          <tr><td>السلة وصفحة الدفع وحساب العميل</td><td class="n">6,500</td><td class="n">7,475</td></tr>
-          <tr><td>لوحة إدارة الطلبات والمخزون والكوبونات والتقارير</td><td class="n">6,000</td><td class="n">6,900</td></tr>
-          <tr><td>الاختبار والإطلاق والتدريب<small>اختبار دفع حقيقي، جلسة تدريب 3 ساعات</small></td><td class="n">1,500</td><td class="n">1,725</td></tr>
-          <tr class="sub"><td>إجمالي المتجر الأساسي</td><td class="n">29,000</td><td class="n">33,350</td></tr>
-          <tr><td>ربط بوابة دفع سعودية واحدة<small>ميسر أو تاب أو PayTabs أو HyperPay — بما فيها بيئة الاختبار والتحقق من العمليات</small></td><td class="n">3,000</td><td class="n">3,450</td></tr>
-          <tr><td>ربط شركات الشحن<small>شركة واحدة أو منصة موحّدة تجمع عدة شركات — تسعير، بوليصة، تتبع</small></td><td class="n">4,000</td><td class="n">4,600</td></tr>
-          <tr class="total"><td>إجمالي المتجر شاملاً الربطين</td><td class="n">36,000</td><td class="n">41,400</td></tr>
+          <tr><td>تصميم واجهات المتجر UI/UX<small>الرئيسية، التصنيف، المنتج، السلة، الدفع، الحساب</small></td><td class="n">6,000</td></tr>
+          <tr><td>تطوير المتجر: المنتجات والتصنيفات والخيارات والبحث والفلترة</td><td class="n">9,000</td></tr>
+          <tr><td>السلة وصفحة الدفع وحساب العميل</td><td class="n">6,500</td></tr>
+          <tr><td>لوحة إدارة الطلبات والمخزون والكوبونات والتقارير</td><td class="n">6,000</td></tr>
+          <tr><td>الاختبار والإطلاق والتدريب<small>اختبار دفع حقيقي، جلسة تدريب 3 ساعات</small></td><td class="n">1,500</td></tr>
+          <tr class="sub"><td>إجمالي المتجر الأساسي</td><td class="n">29,000</td></tr>
+          <tr><td>ربط بوابة دفع سعودية واحدة<small>ميسر أو تاب أو PayTabs أو HyperPay — شاملاً بيئة الاختبار والتحقق من العمليات</small></td><td class="n">3,000</td></tr>
+          <tr><td>ربط شركات الشحن<small>شركة واحدة أو منصة موحّدة تجمع عدة شركات — تسعير، بوليصة، تتبع</small></td><td class="n">4,000</td></tr>
+          <tr class="total"><td>إجمالي المتجر شاملاً الربطين</td><td class="n">36,000</td></tr>
         </tbody>
       </table>
     </div>
     <p class="tnote">
-      كل شركة شحن إضافية بعد الأولى: <span class="num">1,725</span> ر.س شاملاً الضريبة.
-      وكل بوابة دفع إضافية: <span class="num">2,300</span> ر.س.
-      إدخال بيانات ما يصل إلى 50 منتجاً مشمول، وما زاد <span class="num">14</span> ر.س للمنتج الواحد.
+      كل شركة شحن إضافية بعد الأولى: <span class="num">1,500</span> ر.س.
+      وكل بوابة دفع إضافية: <span class="num">2,000</span> ر.س.
+      وإدخال بيانات ما يصل إلى 50 منتجاً مشمول، وما زاد <span class="num">12</span> ر.س للمنتج الواحد.
     </p>
   </section>
 
@@ -696,22 +748,22 @@
       <table>
         <caption>نطاق المزامنة وتكلفتها</caption>
         <thead>
-          <tr><th>العنصر</th><th>الاتجاه</th><th class="n">قبل الضريبة</th></tr>
+          <tr><th>العنصر</th><th>الاتجاه</th><th class="n">السعر (ر.س)</th></tr>
         </thead>
         <tbody>
-          <tr><td>المنتجات والتصنيفات والأسعار<small>مطابقة عبر SKU، مع صور ووصف</small></td><td>Odoo ← المتجر</td><td class="n">5,000</td></tr>
+          <tr><td>المنتجات والتصنيفات والأسعار<small>مطابقة عبر SKU، مع الصور والوصف</small></td><td>Odoo ← المتجر</td><td class="n">5,000</td></tr>
           <tr><td>المخزون والكميات<small>تحديث لحظي عند البيع، ومزامنة دورية للتصحيح</small></td><td>اتجاهان</td><td class="n">4,500</td></tr>
           <tr><td>العملاء<small>إنشاء وتحديث بطاقة العميل تلقائياً</small></td><td>المتجر ← Odoo</td><td class="n">2,500</td></tr>
           <tr><td>الطلبات والفواتير<small>إنشاء أمر بيع وفاتورة وتسجيل الدفع</small></td><td>المتجر ← Odoo</td><td class="n">4,500</td></tr>
           <tr><td>لوحة مراقبة المزامنة وسجل الأخطاء والاختبار</td><td>—</td><td class="n">1,500</td></tr>
-          <tr class="total"><td colspan="2">إجمالي ربط Odoo — شامل الضريبة <span class="num">20,700</span> ر.س</td><td class="n">18,000</td></tr>
+          <tr class="total"><td colspan="2">إجمالي ربط Odoo</td><td class="n">18,000</td></tr>
         </tbody>
       </table>
     </div>
     <p class="tnote">
       التسعير مبني على Odoo إصدار 17 أو 18، وعلى وجود نسخة عاملة بصلاحية API وحقول قياسية.
-      أي تخصيص قائم داخل Odoo أو حقول غير قياسية يُقيَّم بعد جلسة فحص، وهي جلسة مجانية.
-      لا يشمل السعر تراخيص Odoo Enterprise إن رغبتم بها.
+      وأي تخصيص قائم داخل Odoo أو حقول غير قياسية يُقيَّم بعد جلسة فحص، وهي جلسة مجانية.
+      ولا يشمل السعر تراخيص Odoo Enterprise إن رغبتم بها.
     </p>
   </section>
 
@@ -719,7 +771,7 @@
   <section>
     <div class="s-head"><span class="s-num">06</span><h2>التكاليف السنوية المتكررة</h2></div>
     <p>
-      هذه بنود سنوية تبدأ من تاريخ الإطلاق، وتُسجَّل جميع الحسابات باسم المدرسة. نستطيع
+      هذه بنود سنوية تبدأ من تاريخ الإطلاق، وتُسجَّل جميع الحسابات باسم المدرسة. ونستطيع
       تسديدها نيابةً عنكم بالتكلفة، أو تسددونها مباشرةً وننفّذ نحن الإعداد.
     </p>
 
@@ -727,23 +779,23 @@
       <table>
         <caption>البنود السنوية — المسار الاحترافي</caption>
         <thead>
-          <tr><th>البند</th><th class="n">قبل الضريبة</th><th class="n">شامل الضريبة</th></tr>
+          <tr><th>البند</th><th class="n">السعر السنوي (ر.س)</th></tr>
         </thead>
         <tbody>
-          <tr><td>نطاق ‎.sa‎ — سنوياً<small>يُسجَّل باسم المدرسة، ويُسدَّد بالتكلفة عبر مسجّل معتمد</small></td><td class="n">400</td><td class="n">460</td></tr>
-          <tr><td>استضافة سحابية — خادم واحد للموقع والمتجر<small>4 أنوية، 8 جيجا ذاكرة، 160 جيجا SSD، حماية DDoS</small></td><td class="n">3,600</td><td class="n">4,140</td></tr>
-          <tr><td>قاعدة البيانات PostgreSQL<small>مثبَّتة على الخادم نفسه — لا تكلفة إضافية</small></td><td class="n">0</td><td class="n">0</td></tr>
-          <tr><td>النسخ الاحتياطي<small>يومي تلقائي، نسخة خارجية، احتفاظ 30 يوماً، اختبار استرجاع ربع سنوي</small></td><td class="n">1,000</td><td class="n">1,150</td></tr>
-          <tr><td>شهادة SSL<small>Let’s Encrypt بتجديد تلقائي — مجانية</small></td><td class="n">0</td><td class="n">0</td></tr>
-          <tr><td>الدعم والصيانة السنوية للموقع والمتجر<small>تحديثات أمنية، مراقبة توفر، إصلاح أعطال، 8 ساعات تعديلات شهرياً، استجابة خلال يوم عمل</small></td><td class="n">10,000</td><td class="n">11,500</td></tr>
-          <tr class="total"><td>الإجمالي السنوي</td><td class="n">15,000</td><td class="n">17,250</td></tr>
+          <tr><td>نطاق ‎.sa‎<small>يُسجَّل باسم المدرسة، ويُسدَّد بالتكلفة عبر مسجّل معتمد</small></td><td class="n">400</td></tr>
+          <tr><td>استضافة سحابية — خادم واحد للموقع والمتجر<small>4 أنوية، 8 جيجا ذاكرة، 160 جيجا SSD، حماية DDoS</small></td><td class="n">3,600</td></tr>
+          <tr><td>قاعدة البيانات PostgreSQL<small>مثبَّتة على الخادم نفسه — لا تكلفة إضافية</small></td><td class="n">0</td></tr>
+          <tr><td>النسخ الاحتياطي<small>يومي تلقائي، نسخة خارجية، احتفاظ 30 يوماً، اختبار استرجاع ربع سنوي</small></td><td class="n">1,000</td></tr>
+          <tr><td>شهادة SSL<small>Let’s Encrypt بتجديد تلقائي — مجانية</small></td><td class="n">0</td></tr>
+          <tr><td>الدعم والصيانة للموقع والمتجر<small>تحديثات أمنية، مراقبة توفر، إصلاح أعطال، 8 ساعات تعديلات شهرياً، استجابة خلال يوم عمل</small></td><td class="n">10,000</td></tr>
+          <tr class="total"><td>الإجمالي السنوي</td><td class="n">15,000</td></tr>
         </tbody>
       </table>
     </div>
     <p class="tnote">
       عقد الصيانة يبدأ بعد انتهاء فترة الضمان المجانية (90 يوماً) وهو اختياري وغير ملزم للتجديد.
-      إذا اقتصرتم على الموقع التعريفي وحده فالإجمالي السنوي <span class="num">9,200</span> ر.س شاملاً الضريبة.
-      وإذا اشترطتم استضافة داخل السعودية لسيادة البيانات، تُضاف <span class="num">1,600</span> ر.س سنوياً تقريباً.
+      وإذا اقتصرتم على الموقع التعريفي وحده فالإجمالي السنوي <span class="num">8,000</span> ر.س.
+      وإذا اشترطتم استضافة داخل السعودية لسيادة البيانات، تُضاف <span class="num">1,400</span> ر.س سنوياً تقريباً.
     </p>
   </section>
 
@@ -759,7 +811,7 @@
       <div class="track pick">
         <div class="tag">RECOMMENDED</div>
         <h4>المسار الاحترافي</h4>
-        <div class="price">92,000 <span>ر.س شامل الضريبة</span></div>
+        <div class="price">80,000 <span>ر.س — سعر نهائي</span></div>
         <ul>
           <li>Next.js وMedusa وPayload — كلها مفتوحة المصدر</li>
           <li>أداء وسرعة تحميل أعلى، وأثر إيجابي مباشر على SEO</li>
@@ -771,11 +823,11 @@
       <div class="track">
         <div class="tag">ALTERNATIVE</div>
         <h4>المسار الاقتصادي</h4>
-        <div class="price">56,350 <span>ر.س شامل الضريبة</span></div>
+        <div class="price">49,000 <span>ر.س — سعر نهائي</span></div>
         <ul>
           <li>WordPress وWooCommerce بتراخيص GPL مفتوحة</li>
-          <li>الموقع 17,250 · المتجر 25,300 · Odoo 13,800</li>
-          <li>التكلفة السنوية أقل: 11,500 ر.س</li>
+          <li>الموقع 15,000 · المتجر 22,000 · ربط Odoo 12,000</li>
+          <li>التكلفة السنوية أقل: 10,000 ر.س</li>
           <li>مدة تنفيذ أقصر: 9 – 11 أسبوعاً</li>
           <li>سهل على فريق غير تقني، لكنه أثقل أداءً ويعتمد على إضافات خارجية</li>
         </ul>
@@ -783,7 +835,7 @@
     </div>
     <p class="tnote">
       في المسار الاقتصادي قد تحتاج بعض الإضافات إلى تراخيص سنوية مدفوعة (WPML للغات مثلاً).
-      تُشترى جميعها باسم المدرسة وبعلمكم المسبق، وتُدرج قيمتها في العرض النهائي.
+      وتُشترى جميعها باسم المدرسة وبعلمكم المسبق، وتُدرج قيمتها في العرض النهائي.
     </p>
   </section>
 
@@ -811,8 +863,8 @@
     </div>
     <p class="tnote">
       المدد محسوبة بأسابيع عمل وتبدأ من تاريخ استلام الدفعة الأولى ومواد المحتوى.
-      اعتماد أي مرحلة يتجاوز 5 أيام عمل من طرفكم يؤجّل الجدول بالمدة نفسها.
-      اعتماد بوابة الدفع لدى المزوّد يستغرق عادة 5 – 15 يوم عمل وهو خارج سيطرتنا، لذا نبدأ إجراءه مبكراً في المرحلة الأولى.
+      واعتماد أي مرحلة يتجاوز 5 أيام عمل من طرفكم يؤجّل الجدول بالمدة نفسها.
+      واعتماد بوابة الدفع لدى المزوّد يستغرق عادة 5 – 15 يوم عمل وهو خارج سيطرتنا، لذا نبدأ إجراءه مبكراً في المرحلة الأولى.
     </p>
   </section>
 
@@ -844,17 +896,15 @@
   <!-- 10 -->
   <section>
     <div class="s-head"><span class="s-num">10</span><h2>الملكية والتسليم</h2></div>
-    <p>
-      هذا القسم يستجيب مباشرةً لشرطكم، ونلتزم به تعاقدياً:
-    </p>
+    <p>هذا القسم يستجيب مباشرةً لشرطكم، ونلتزم به تعاقدياً:</p>
     <ol class="steps">
       <li><strong>الكود المصدري كاملاً ملك للمدرسة</strong> بعد سداد الدفعة الأخيرة، بلا أي قيد أو رخصة استخدام محدودة، ويحق لكم تعديله أو نقله لأي مطوّر آخر.</li>
-      <li><strong>التسليم عبر مستودع GitHub خاص</strong> مسجّل باسم المدرسة ومملوك لها منذ اليوم الأول من المشروع، لا بعد التسليم — بالإضافة إلى نسخة مضغوطة كاملة.</li>
+      <li><strong>التسليم عبر مستودع GitHub خاص</strong> مسجّل باسم المدرسة ومملوك لها منذ اليوم الأول من المشروع لا بعد التسليم — إضافةً إلى نسخة مضغوطة كاملة.</li>
       <li><strong>قاعدة البيانات كاملة</strong> تُسلَّم كنسخة ‎dump‎ مع ملفات الوسائط ومفاتيح الإعدادات.</li>
       <li><strong>حسابات الاستضافة والنطاق باسم المدرسة</strong> منذ الإنشاء، وبيانات الدخول لديكم، ولنا صلاحية فنية تسحبونها متى شئتم.</li>
       <li><strong>لا اشتراك ولا ترخيص باسم المطوّر.</strong> جميع المكوّنات مفتوحة المصدر. وإن استدعت الحاجة أي أداة مدفوعة، تُشترى باسم المدرسة وبموافقتكم الخطية المسبقة وتُدرج في العرض قبل الشراء.</li>
       <li><strong>توثيق فني</strong> يشمل بنية المشروع وخطوات النشر ومتغيّرات البيئة، مع فيديو تدريبي وجلسة تسليم مسجّلة.</li>
-      <li><strong>لا أي باب خلفي أو قفل تقني.</strong> نلتزم بأن المشروع يعمل بالكامل بعد سحب صلاحياتنا.</li>
+      <li><strong>لا أي باب خلفي أو قفل تقني.</strong> ونلتزم بأن المشروع يعمل بالكامل بعد سحب صلاحياتنا.</li>
     </ol>
   </section>
 
@@ -868,29 +918,28 @@
           <tr><th>ما طلبتم توضيحه</th><th>الإجابة</th></tr>
         </thead>
         <tbody>
-          <tr><td>تكلفة التصميم والتطوير</td><td class="num">الموقع 29,900 · المتجر 41,400 · شاملة الضريبة</td></tr>
-          <tr><td>تكلفة الدومين ‎.sa‎</td><td class="num">460 ر.س سنوياً — بالتكلفة وباسم المدرسة</td></tr>
-          <tr><td>تكلفة الاستضافة السنوية</td><td class="num">4,140 ر.س لخادم يستوعب الموقع والمتجر معاً</td></tr>
+          <tr><td>تكلفة التصميم والتطوير</td><td>الموقع <span class="num">26,000</span> ر.س · المتجر <span class="num">36,000</span> ر.س</td></tr>
+          <tr><td>تكلفة الدومين ‎.sa‎</td><td><span class="num">400</span> ر.س سنوياً — بالتكلفة وباسم المدرسة</td></tr>
+          <tr><td>تكلفة الاستضافة السنوية</td><td><span class="num">3,600</span> ر.س لخادم يستوعب الموقع والمتجر معاً</td></tr>
           <tr><td>تكلفة قاعدة البيانات</td><td>لا توجد — PostgreSQL مفتوحة المصدر ومثبّتة على الخادم نفسه</td></tr>
-          <tr><td>تكلفة النسخ الاحتياطي</td><td class="num">1,150 ر.س سنوياً — نسخ يومية خارجية واحتفاظ 30 يوماً</td></tr>
-          <tr><td>تكلفة الدعم والصيانة السنوية</td><td class="num">11,500 ر.س للموقع والمتجر — اختيارية وغير ملزمة</td></tr>
-          <tr><td>تكلفة ربط بوابة الدفع</td><td class="num">3,450 ر.س لمرة واحدة — لا تشمل رسوم البوابة على كل عملية</td></tr>
-          <tr><td>تكلفة ربط شركات الشحن</td><td class="num">4,600 ر.س لمرة واحدة لشركة أو منصة موحّدة</td></tr>
-          <tr><td>تكلفة ربط Odoo منفصلة</td><td class="num">20,700 ر.س — بند مستقل يمكن تأجيله</td></tr>
+          <tr><td>تكلفة النسخ الاحتياطي</td><td><span class="num">1,000</span> ر.س سنوياً — نسخ يومية خارجية واحتفاظ 30 يوماً</td></tr>
+          <tr><td>تكلفة الدعم والصيانة السنوية</td><td><span class="num">10,000</span> ر.س للموقع والمتجر — اختيارية وغير ملزمة</td></tr>
+          <tr><td>تكلفة ربط بوابة الدفع</td><td><span class="num">3,000</span> ر.س لمرة واحدة — لا تشمل رسوم البوابة على كل عملية</td></tr>
+          <tr><td>تكلفة ربط شركات الشحن</td><td><span class="num">4,000</span> ر.س لمرة واحدة لشركة أو منصة موحّدة</td></tr>
+          <tr><td>تكلفة ربط Odoo منفصلة</td><td><span class="num">18,000</span> ر.س — بند مستقل يمكن تأجيله</td></tr>
           <tr><td>مدة التنفيذ</td><td>الموقع 5 – 6 أسابيع · المشروعان معاً 13 – 16 أسبوعاً · Odoo 3 – 4 أسابيع إضافية</td></tr>
           <tr><td>مدة الضمان بعد التسليم</td><td><strong>90 يوماً</strong> إصلاح مجاني لأي خلل برمجي، وستة أشهر للثغرات الأمنية الحرجة</td></tr>
           <tr><td>عدد جولات التعديل المشمولة</td><td><strong>جولتان</strong> على التصميم لكل صفحة، و<strong>جولة واحدة</strong> بعد التطوير ضمن اختبار القبول</td></tr>
           <tr><td>التقنيات المستخدمة</td><td>مفصّلة في القسم <span class="num">09</span> — جميعها مفتوحة المصدر بتراخيص MIT وGPL</td></tr>
           <tr><td>ملكية الكود المصدري</td><td><strong>نعم، ملك للمدرسة بالكامل</strong> بعد سداد الدفعة الأخيرة، بلا قيود — التفاصيل في القسم <span class="num">10</span></td></tr>
-          <tr class="total"><td>هل الأسعار شاملة ضريبة القيمة المضافة؟</td><td>نعم — كل رقم في عمود «شامل الضريبة» نهائي ولا يُضاف إليه شيء</td></tr>
+          <tr class="total"><td>هل الأسعار شاملة ضريبة القيمة المضافة؟</td><td>المجال التقني غير مسجّل في ضريبة القيمة المضافة، فالأسعار <strong>نهائية ولا يُضاف إليها 15٪</strong></td></tr>
         </tbody>
       </table>
     </div>
     <p class="tnote">
       الضمان يغطي الأخطاء البرمجية في ما سُلّم واعتُمد. ولا يغطي طلبات إضافة مزايا جديدة، أو تغيير
       المحتوى، أو أعطالاً ناتجة عن تعديل طرف آخر على الكود، أو انقطاع خدمة لدى مزوّد خارجي.
-      الجولة الإضافية بعد الجولات المشمولة: <span class="num">1,725</span> ر.س شاملاً الضريبة،
-      أو <span class="num">345</span> ر.س للساعة.
+      والجولة الإضافية بعد الجولات المشمولة: <span class="num">1,500</span> ر.س، أو <span class="num">300</span> ر.س للساعة.
     </p>
   </section>
 
@@ -901,11 +950,11 @@
       <li>رسوم بوابة الدفع على كل عملية بيع — تُدفع للمزوّد مباشرةً وتقارب 2.2٪ + 1 ر.س</li>
       <li>رسوم الشحن الفعلية وعقود شركات الشحن</li>
       <li>إنتاج المحتوى: كتابة النصوص، التصوير الفوتوغرافي، مونتاج الفيديو</li>
-      <li>الترجمة الاحترافية للإنجليزية والإسبانية — متاحة كخدمة إضافية</li>
+      <li>الترجمة الاحترافية للإنجليزية والإسبانية — متاحة كخدمة إضافية بـ 4,000 ر.س</li>
       <li>تصميم الهوية البصرية والشعار إن لم يكن جاهزاً</li>
       <li>الحملات الإعلانية وإدارة حسابات التواصل الاجتماعي</li>
       <li>تراخيص Odoo Enterprise أو استضافة Odoo.sh</li>
-      <li>تكامل ZATCA المرحلة الثانية من المتجر — 6,900 ر.س كخدمة منفصلة</li>
+      <li>تكامل ZATCA المرحلة الثانية من المتجر — 6,000 ر.س كخدمة منفصلة</li>
       <li>تطبيق جوال أصلي — يمكن تسعيره لاحقاً على البنية نفسها</li>
       <li>بوابة أولياء أمور أو نظام تسجيل في الأنشطة والاشتراكات</li>
     </ul>
@@ -918,7 +967,7 @@
       <li>المحتوى النصي للصفحات بالعربية، وترجماته الإنجليزية والإسبانية أو تكليفنا بها.</li>
       <li>الهوية البصرية: الشعار بصيغة متجهة ‎SVG/AI‎، الألوان المعتمدة، الخطوط، وأي دليل هوية قائم.</li>
       <li>الصور والفيديوهات بجودة عالية لكل فرع ونشاط وبطولة.</li>
-      <li>السجل التجاري وشهادة التسجيل في ضريبة القيمة المضافة — لازمة للنطاق ‎.sa‎ ولاعتماد بوابة الدفع.</li>
+      <li>السجل التجاري أو الترخيص — لازم لتسجيل النطاق ‎.sa‎ ولاعتماد بوابة الدفع.</li>
       <li>فتح حساب تاجر لدى بوابة الدفع، والحساب البنكي باسم المدرسة.</li>
       <li>عقود أو حسابات شركات الشحن المطلوب ربطها.</li>
       <li>بيانات المنتجات: الاسم، الوصف، السعر، المقاسات، رقم ‎SKU‎، الصور.</li>
@@ -935,12 +984,12 @@
       يُحدّث السعر صعوداً أو نزولاً قبل التوقيع:
     </p>
     <ol class="steps">
-      <li>لغات المتجر: افترضنا العربية والإنجليزية. إضافة الإسبانية للمتجر تكلف 2,300 ر.س.</li>
-      <li>طبيعة المنتجات: افترضنا الزي المدرسي والرياضي والمستلزمات، بمقاسات وفئات عمرية. هل هناك منتجات رقمية أو اشتراكات؟</li>
+      <li>لغات المتجر: افترضنا العربية والإنجليزية. وإضافة الإسبانية للمتجر تكلف 2,000 ر.س.</li>
+      <li>طبيعة المنتجات: افترضنا الزي المدرسي والرياضي والمستلزمات، بمقاسات وفئات عمرية. فهل هناك منتجات رقمية أو اشتراكات؟</li>
       <li>مُصدِر الفاتورة الضريبية: المتجر أم Odoo؟ الإجابة تحدّد ما إذا كان بند ZATCA مطلوباً.</li>
-      <li>الاستلام من الفروع كبديل للشحن — هل مطلوب؟ يضيف 2,875 ر.س.</li>
+      <li>الاستلام من الفروع كبديل للشحن — هل هو مطلوب؟ يضيف 2,500 ر.س.</li>
       <li>عدد الفروع، وهل لكل فرع مخزون منفصل في المتجر أم مخزون موحّد؟</li>
-      <li>هل يُربط الطلب باسم الطالب وصفّه (مفيد لطلبات الزي)؟ يضيف 2,300 ر.س.</li>
+      <li>هل يُربط الطلب باسم الطالب وصفّه (مفيد لطلبات الزي)؟ يضيف 2,000 ر.س.</li>
       <li>هل تشترطون استضافة داخل المملكة لأسباب تتعلق بسيادة البيانات؟</li>
       <li>تاريخ الإطلاق المستهدف — إن كان مرتبطاً ببداية العام الدراسي فنرتّب الأولويات لإطلاق الموقع أولاً ثم المتجر.</li>
     </ol>
@@ -953,22 +1002,23 @@
     <div class="tw">
       <table>
         <thead>
-          <tr><th class="n">الدفعة</th><th>الاستحقاق</th><th class="n">النسبة</th><th class="n">المبلغ شامل الضريبة</th></tr>
+          <tr><th class="n">الدفعة</th><th>الاستحقاق</th><th class="n">النسبة</th><th class="n">المبلغ (ر.س)</th></tr>
         </thead>
         <tbody>
-          <tr><td class="n">1</td><td>عند توقيع العقد وبدء مرحلة التحليل</td><td class="n">40٪</td><td class="n">36,800</td></tr>
-          <tr><td class="n">2</td><td>عند اعتماد التصاميم النهائية</td><td class="n">25٪</td><td class="n">23,000</td></tr>
-          <tr><td class="n">3</td><td>عند تسليم النسخة التجريبية للاختبار</td><td class="n">25٪</td><td class="n">23,000</td></tr>
-          <tr><td class="n">4</td><td>عند الإطلاق وتسليم الكود والحسابات</td><td class="n">10٪</td><td class="n">9,200</td></tr>
-          <tr class="total"><td colspan="3">الإجمالي</td><td class="n">92,000</td></tr>
+          <tr><td class="n">1</td><td>عند توقيع العقد وبدء مرحلة التحليل</td><td class="n">40٪</td><td class="n">32,000</td></tr>
+          <tr><td class="n">2</td><td>عند اعتماد التصاميم النهائية</td><td class="n">25٪</td><td class="n">20,000</td></tr>
+          <tr><td class="n">3</td><td>عند تسليم النسخة التجريبية للاختبار</td><td class="n">25٪</td><td class="n">20,000</td></tr>
+          <tr><td class="n">4</td><td>عند الإطلاق وتسليم الكود والحسابات</td><td class="n">10٪</td><td class="n">8,000</td></tr>
+          <tr class="total"><td colspan="3">الإجمالي</td><td class="n">80,000</td></tr>
         </tbody>
       </table>
     </div>
 
     <ul class="feat" style="margin-top:18px">
       <li>الأسعار بالريال السعودي وسارية 30 يوماً من تاريخ العرض</li>
-      <li>جميع المبالغ في عمود «شامل الضريبة» نهائية ولا يُضاف إليها أي رسوم</li>
-      <li>تُصدر فاتورة ضريبية نظامية عن كل دفعة</li>
+      <li>جميع المبالغ نهائية ولا يُضاف إليها ضريبة قيمة مضافة أو أي رسوم أخرى</li>
+      <li>تُصدر فاتورة نظامية عن كل دفعة بموجب وثيقة العمل الحر</li>
+      <li>السداد بتحويل بنكي إلى الحساب المذكور في الفاتورة</li>
       <li>أي طلب خارج النطاق المتفق عليه يُسعَّر كتابةً ويُعتمد قبل التنفيذ</li>
       <li>يبدأ احتساب مدة التنفيذ من تاريخ استلام الدفعة الأولى ومواد المحتوى</li>
       <li>حقوق الملكية الفكرية للكود تنتقل للمدرسة بعد سداد الدفعة الأخيرة</li>
@@ -976,13 +1026,17 @@
     </ul>
   </section>
 
-  <div class="sig">
-    <div class="who">
-      مقدَّم من
-      <b class="ph">اسم مؤسستكم</b>
-      <span class="ph">الجوال · البريد الإلكتروني · الرقم الضريبي · السجل التجاري</span>
+  <dl class="sig">
+    <div class="cell"><dt>مقدَّم من</dt><dd>المجال التقني — almajaltech.com</dd></div>
+    <div class="cell"><dt>صاحب وثيقة العمل الحر</dt><dd>خالد صالح بن سعيد المنهالي</dd></div>
+    <div class="cell"><dt>رقم وثيقة العمل الحر</dt><dd class="mono">FL-763262946</dd></div>
+    <div class="cell"><dt>الجوال</dt><dd class="mono">966559921989+</dd></div>
+    <div class="cell"><dt>البريد الإلكتروني</dt><dd class="mono">info@almajaltech.com</dd></div>
+    <div class="cell"><dt>الموقع الإلكتروني</dt><dd class="mono">almajaltech.com</dd></div>
+    <div class="sig-foot">
+      <span>وثيقة عمل حر صادرة من وزارة الموارد البشرية والتنمية الاجتماعية · غير مسجّل في ضريبة القيمة المضافة</span>
+      <span class="stamp">Q-2026-001 · SAR · VAT EXEMPT</span>
     </div>
-    <div class="stamp">Q-2026-001 · SAR · VAT INCLUSIVE</div>
-  </div>
+  </dl>
 
 </div>
