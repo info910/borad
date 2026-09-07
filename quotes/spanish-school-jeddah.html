@@ -39,6 +39,7 @@
     --brand-soft:  #E8F2FF;
     --on-deep:    #E8EEF7;
     --on-deep-2:  #9AA9BF;
+    --vat-bg:     #0D1A2B;
 
     --f-display: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
     --f-body: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
@@ -66,6 +67,7 @@
       --brand-soft:  #12233C;
       --on-deep:    #E8EEF7;
       --on-deep-2:  #9AA9BF;
+      --vat-bg:     #16243C;
     }
   }
 
@@ -86,6 +88,7 @@
     --brand-soft:  #12233C;
     --on-deep:    #E8EEF7;
     --on-deep-2:  #9AA9BF;
+    --vat-bg:     #16243C;
   }
 
   html { direction: rtl; }
@@ -207,9 +210,9 @@
   /* ---------- VAT banner ---------- */
 
   .vat {
-    background: var(--deep);
+    background: var(--vat-bg);
     color: var(--on-deep);
-    border: 1px solid var(--deep);
+    border: 1px solid var(--vat-bg);
     border-top: 0;
     padding: 18px 26px 20px;
     margin-bottom: 44px;
@@ -456,15 +459,15 @@
   @page { size: A4; margin: 13mm 11mm 15mm; }
 
   @media print {
-    :root {
+    :root:not([data-theme="dark"]) {
       --paper: #FFFFFF; --surface: #FFFFFF; --surface-2: #EEF4FB;
       --deep: #0D1A2B; --deep-2: #131C30;
       --ink: #0D1A2B; --ink-2: #33435A; --muted: #5A6B80;
       --line: #DCE4EE; --line-hard: #B6C6DA;
       --brand: #1E88FF; --brand-lit: #5FA8FF; --brand-ink: #0B57B0; --brand-soft: #E8F2FF;
-      --on-deep: #E8EEF7; --on-deep-2: #9AA9BF;
+      --on-deep: #E8EEF7; --on-deep-2: #9AA9BF; --vat-bg: #0D1A2B;
     }
-    html, body { background: #fff; font-size: 9.7pt; line-height: 1.62; }
+    html, body { background: var(--paper); font-size: 9.7pt; line-height: 1.62; }
     body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .doc { max-width: none; padding: 0; }
     section { margin-bottom: 20px; }
