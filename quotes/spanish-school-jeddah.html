@@ -241,6 +241,75 @@
   }
   .vat .save .k { font-size: 11px; color: var(--on-deep-2); }
 
+  /* ---------- National Day offer ---------- */
+  /* The one place the palette leaves the brand blue: the flag green marks this
+     as the seasonal price, not the standard one. */
+  .offer {
+    --nd: #006C35;
+    --nd-lit: #37A96B;
+    background: var(--surface);
+    border: 1px solid var(--line-hard);
+    border-top: 3px solid var(--nd);
+    padding: 20px 26px 22px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px 30px;
+    margin-bottom: 44px;
+  }
+  .offer .txt { max-width: 62ch; }
+  .offer .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--nd);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .offer .eyebrow::before {
+    content: "";
+    width: 16px; height: 3px;
+    background: var(--nd);
+  }
+  .offer h4 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: 17px;
+    margin: 5px 0 5px;
+    color: var(--ink);
+  }
+  .offer p { margin: 0; font-size: 13.5px; line-height: 1.75; }
+  .offer .amounts { flex: none; text-align: center; }
+  .offer .was {
+    font-family: var(--f-mono);
+    font-size: 15px;
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+  }
+  .offer .now {
+    font-family: var(--f-mono);
+    font-size: 32px;
+    line-height: 1.15;
+    color: var(--nd);
+    font-variant-numeric: tabular-nums;
+  }
+  .offer .now .u { font-family: var(--f-body); font-size: .42em; color: var(--muted); margin-inline-start: 4px; }
+  .offer .until { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+  :root[data-theme="dark"] .offer { --nd: #37A96B; --nd-lit: #5FC98C; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .offer { --nd: #37A96B; --nd-lit: #5FC98C; }
+  }
+  tr.cut td { color: var(--muted); }
+  tr.cut td.n { color: #006C35; }
+  :root[data-theme="dark"] tr.cut td.n { color: #47B87A; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) tr.cut td.n { color: #47B87A; }
+  }
+  td.was { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px; }
+
   /* ---------- sections ---------- */
 
   section { margin-bottom: 46px; }
@@ -542,7 +611,7 @@
     <div class="mast-body">
       <h1 class="mast-title">الموقع التعريفي والمتجر الإلكتروني — المدرسة الإسبانية بجدة</h1>
       <p class="mast-sub">
-        عرض متكامل يشمل موقعاً تعريفياً بثلاث لغات، ومتجراً إلكترونياً مستقلاً مملوكاً بالكامل
+        عرض خاص بمناسبة اليوم الوطني يشمل موقعاً تعريفياً بثلاث لغات، ومتجراً إلكترونياً مستقلاً مملوكاً بالكامل
         للمدرسة، مع مسار مستقل لربط Odoo. جميع الأسعار بالريال السعودي و<strong>نهائية لا يُضاف
         إليها أي مبالغ أو ضرائب</strong>.
       </p>
@@ -558,9 +627,9 @@
 
   <div class="figures">
     <div class="fig lead">
-      <div class="lbl">الإجمالي النهائي للتنفيذ</div>
-      <div class="val">80,000<span class="unit">ر.س</span></div>
-      <div class="note">الموقع + المتجر + ربط Odoo · لا ضريبة مضافة</div>
+      <div class="lbl">الإجمالي بعد خصم اليوم الوطني</div>
+      <div class="val">48,000<span class="unit">ر.س</span></div>
+      <div class="note">بدلاً من 80,000 · الموقع + المتجر + ربط Odoo · لا ضريبة مضافة</div>
     </div>
     <div class="fig">
       <div class="lbl">التكاليف السنوية المتكررة</div>
@@ -585,8 +654,26 @@
       </p>
     </div>
     <div class="save">
-      <div class="v">12,000</div>
+      <div class="v">7,200</div>
       <div class="k">ريالاً توفير مقابل مورّد مسجّل بالضريبة</div>
+    </div>
+  </div>
+
+  <div class="offer">
+    <div class="txt">
+      <div class="eyebrow">عرض اليوم الوطني السعودي</div>
+      <h4>خصم 40٪ على تكاليف التنفيذ — خاص بالمدرسة الإسبانية بجدة</h4>
+      <p>
+        بمناسبة اليوم الوطني نقدّم للمدرسة خصماً قدره 40٪ على تكاليف تنفيذ المشروعين وربط Odoo،
+        بقيمة <strong>32,000 ريال</strong>. ويسري الخصم على بنود التنفيذ لمرة واحدة فقط، ولا يشمل
+        التكاليف السنوية المتكررة (استضافة، نطاق، نسخ احتياطي، صيانة) لأنها تُسدَّد بالتكلفة لمزوّدين
+        خارجيين، ولا يشمل الخدمات الإضافية خارج النطاق.
+      </p>
+    </div>
+    <div class="amounts">
+      <div class="was">80,000</div>
+      <div class="now">48,000<span class="u">ر.س</span></div>
+      <div class="until">ساري حتى 23 / 09 / 2026</div>
     </div>
   </div>
 
@@ -608,20 +695,22 @@
       <table>
         <caption>الإجمالي حسب النطاق — المسار الاحترافي (الموصى به)</caption>
         <thead>
-          <tr><th>النطاق</th><th class="n">السعر النهائي (ر.س)</th></tr>
+          <tr><th>النطاق</th><th class="n">قبل الخصم (ر.س)</th><th class="n">بعد الخصم (ر.س)</th></tr>
         </thead>
         <tbody>
-          <tr><td>الموقع الإلكتروني التعريفي — ثلاث لغات ولوحة تحكم</td><td class="n">26,000</td></tr>
-          <tr><td>المتجر الإلكتروني — شاملاً ربط بوابة الدفع وشركات الشحن</td><td class="n">36,000</td></tr>
-          <tr><td>ربط Odoo — بند منفصل واختياري</td><td class="n">18,000</td></tr>
-          <tr class="total"><td>الإجمالي</td><td class="n">80,000</td></tr>
+          <tr><td>الموقع الإلكتروني التعريفي — ثلاث لغات ولوحة تحكم</td><td class="n">26,000</td><td class="n">15,600</td></tr>
+          <tr><td>المتجر الإلكتروني — شاملاً ربط بوابة الدفع وشركات الشحن</td><td class="n">36,000</td><td class="n">21,600</td></tr>
+          <tr><td>ربط Odoo — بند منفصل واختياري</td><td class="n">18,000</td><td class="n">10,800</td></tr>
+          <tr class="cut"><td>خصم اليوم الوطني 40٪</td><td class="n">—</td><td class="n"><span dir="ltr">−32,000</span></td></tr>
+          <tr class="total"><td>الإجمالي المستحق</td><td class="n was">80,000</td><td class="n">48,000</td></tr>
         </tbody>
       </table>
     </div>
     <p class="tnote">
-      عند اعتماد المشروعين معاً في عقد واحد نطبّق خصم 5٪ على قيمة التنفيذ، ليصبح الإجمالي
-      <strong><span class="num">76,000</span> ر.س</strong>.
-      وفي القسم <span class="num">07</span> مسار اقتصادي بديل يبدأ من <span class="num">49,000</span> ر.س.
+      خصم اليوم الوطني يحلّ محل أي خصم آخر ولا يُجمع معه. وهو مرتبط بالمناسبة، فيسري على الاعتماد
+      الموقّع قبل <strong>23 / 09 / 2026</strong>؛ وبعد هذا التاريخ يظل العرض قائماً بأسعاره الأصلية
+      حتى نهاية صلاحيته. وفي القسم <span class="num">07</span> مسار اقتصادي بديل بعد الخصم
+      <span class="num">29,400</span> ر.س.
     </p>
   </section>
 
@@ -710,7 +799,9 @@
           <tr><td>تهيئة SEO الأساسية وربط أدوات التحليل</td><td class="n">1,200</td></tr>
           <tr><td>نموذج التواصل وواتساب والحماية من السبام</td><td class="n">800</td></tr>
           <tr><td>الاختبار والإطلاق وتدريب الفريق<small>جلسة تدريب ساعتان + دليل استخدام مصوّر</small></td><td class="n">1,000</td></tr>
-          <tr class="total"><td>إجمالي الموقع التعريفي</td><td class="n">26,000</td></tr>
+          <tr class="sub"><td>إجمالي الموقع التعريفي</td><td class="n">26,000</td></tr>
+          <tr class="cut"><td>خصم اليوم الوطني 40٪</td><td class="n"><span dir="ltr">−10,400</span></td></tr>
+          <tr class="total"><td>المستحق بعد الخصم</td><td class="n">15,600</td></tr>
         </tbody>
       </table>
     </div>
@@ -759,7 +850,9 @@
           <tr class="sub"><td>إجمالي المتجر الأساسي</td><td class="n">29,000</td></tr>
           <tr><td>ربط بوابة دفع سعودية واحدة<small>ميسر أو تاب أو PayTabs أو HyperPay — شاملاً بيئة الاختبار والتحقق من العمليات</small></td><td class="n">3,000</td></tr>
           <tr><td>ربط شركات الشحن<small>شركة واحدة أو منصة موحّدة تجمع عدة شركات — تسعير، بوليصة، تتبع</small></td><td class="n">4,000</td></tr>
-          <tr class="total"><td>إجمالي المتجر شاملاً الربطين</td><td class="n">36,000</td></tr>
+          <tr class="sub"><td>إجمالي المتجر شاملاً الربطين</td><td class="n">36,000</td></tr>
+          <tr class="cut"><td>خصم اليوم الوطني 40٪</td><td class="n"><span dir="ltr">−14,400</span></td></tr>
+          <tr class="total"><td>المستحق بعد الخصم</td><td class="n">21,600</td></tr>
         </tbody>
       </table>
     </div>
@@ -791,7 +884,9 @@
           <tr><td>العملاء<small>إنشاء وتحديث بطاقة العميل تلقائياً</small></td><td>المتجر ← Odoo</td><td class="n">2,500</td></tr>
           <tr><td>الطلبات والفواتير<small>إنشاء أمر بيع وفاتورة وتسجيل الدفع</small></td><td>المتجر ← Odoo</td><td class="n">4,500</td></tr>
           <tr><td>لوحة مراقبة المزامنة وسجل الأخطاء والاختبار</td><td>—</td><td class="n">1,500</td></tr>
-          <tr class="total"><td colspan="2">إجمالي ربط Odoo</td><td class="n">18,000</td></tr>
+          <tr class="sub"><td colspan="2">إجمالي ربط Odoo</td><td class="n">18,000</td></tr>
+          <tr class="cut"><td colspan="2">خصم اليوم الوطني 40٪</td><td class="n"><span dir="ltr">−7,200</span></td></tr>
+          <tr class="total"><td colspan="2">المستحق بعد الخصم</td><td class="n">10,800</td></tr>
         </tbody>
       </table>
     </div>
@@ -828,7 +923,7 @@
       </table>
     </div>
     <p class="tnote">
-      عقد الصيانة يبدأ بعد انتهاء فترة الضمان المجانية (90 يوماً) وهو اختياري وغير ملزم للتجديد.
+      <strong>خصم اليوم الوطني لا يشمل هذه البنود</strong>، لأن معظمها يُسدَّد بالتكلفة لمزوّدين خارجيين. وعقد الصيانة يبدأ بعد انتهاء فترة الضمان المجانية (90 يوماً) وهو اختياري وغير ملزم للتجديد.
       وإذا اقتصرتم على الموقع التعريفي وحده فالإجمالي السنوي <span class="num">8,000</span> ر.س.
       وإذا اشترطتم استضافة داخل السعودية لسيادة البيانات، تُضاف <span class="num">1,400</span> ر.س سنوياً تقريباً.
     </p>
@@ -846,7 +941,7 @@
       <div class="track pick">
         <div class="tag">RECOMMENDED</div>
         <h4>المسار الاحترافي</h4>
-        <div class="price">80,000 <span>ر.س — سعر نهائي</span></div>
+        <div class="price">48,000 <span>ر.س بعد الخصم — بدلاً من 80,000</span></div>
         <ul>
           <li>Next.js وMedusa وPayload — كلها مفتوحة المصدر</li>
           <li>أداء وسرعة تحميل أعلى، وأثر إيجابي مباشر على SEO</li>
@@ -858,10 +953,10 @@
       <div class="track">
         <div class="tag">ALTERNATIVE</div>
         <h4>المسار الاقتصادي</h4>
-        <div class="price">49,000 <span>ر.س — سعر نهائي</span></div>
+        <div class="price">29,400 <span>ر.س بعد الخصم — بدلاً من 49,000</span></div>
         <ul>
           <li>WordPress وWooCommerce بتراخيص GPL مفتوحة</li>
-          <li>الموقع 15,000 · المتجر 22,000 · ربط Odoo 12,000</li>
+          <li>الموقع 9,000 · المتجر 13,200 · ربط Odoo 7,200</li>
           <li>التكلفة السنوية أقل: 10,000 ر.س</li>
           <li>مدة تنفيذ أقصر: 9 – 11 أسبوعاً</li>
           <li>سهل على فريق غير تقني، لكنه أثقل أداءً ويعتمد على إضافات خارجية</li>
@@ -953,7 +1048,7 @@
           <tr><th>ما طلبتم توضيحه</th><th>الإجابة</th></tr>
         </thead>
         <tbody>
-          <tr><td>تكلفة التصميم والتطوير</td><td>الموقع <span class="num">26,000</span> ر.س · المتجر <span class="num">36,000</span> ر.س</td></tr>
+          <tr><td>تكلفة التصميم والتطوير</td><td>بعد الخصم: الموقع <span class="num">15,600</span> ر.س · المتجر <span class="num">21,600</span> ر.س</td></tr>
           <tr><td>تكلفة الدومين ‎.sa‎</td><td><span class="num">400</span> ر.س سنوياً — بالتكلفة وباسم المدرسة</td></tr>
           <tr><td>تكلفة الاستضافة السنوية</td><td><span class="num">3,600</span> ر.س لخادم يستوعب الموقع والمتجر معاً</td></tr>
           <tr><td>تكلفة قاعدة البيانات</td><td>لا توجد — PostgreSQL مفتوحة المصدر ومثبّتة على الخادم نفسه</td></tr>
@@ -961,7 +1056,7 @@
           <tr><td>تكلفة الدعم والصيانة السنوية</td><td><span class="num">10,000</span> ر.س للموقع والمتجر — اختيارية وغير ملزمة</td></tr>
           <tr><td>تكلفة ربط بوابة الدفع</td><td><span class="num">3,000</span> ر.س لمرة واحدة — لا تشمل رسوم البوابة على كل عملية</td></tr>
           <tr><td>تكلفة ربط شركات الشحن</td><td><span class="num">4,000</span> ر.س لمرة واحدة لشركة أو منصة موحّدة</td></tr>
-          <tr><td>تكلفة ربط Odoo منفصلة</td><td><span class="num">18,000</span> ر.س — بند مستقل يمكن تأجيله</td></tr>
+          <tr><td>تكلفة ربط Odoo منفصلة</td><td>بعد الخصم <span class="num">10,800</span> ر.س — بند مستقل يمكن تأجيله</td></tr>
           <tr><td>مدة التنفيذ</td><td>الموقع 5 – 6 أسابيع · المشروعان معاً 13 – 16 أسبوعاً · Odoo 3 – 4 أسابيع إضافية</td></tr>
           <tr><td>مدة الضمان بعد التسليم</td><td><strong>90 يوماً</strong> إصلاح مجاني لأي خلل برمجي، وستة أشهر للثغرات الأمنية الحرجة</td></tr>
           <tr><td>عدد جولات التعديل المشمولة</td><td><strong>جولتان</strong> على التصميم لكل صفحة، و<strong>جولة واحدة</strong> بعد التطوير ضمن اختبار القبول</td></tr>
@@ -1040,17 +1135,19 @@
           <tr><th class="n">الدفعة</th><th>الاستحقاق</th><th class="n">النسبة</th><th class="n">المبلغ (ر.س)</th></tr>
         </thead>
         <tbody>
-          <tr><td class="n">1</td><td>عند توقيع العقد وبدء مرحلة التحليل</td><td class="n">40٪</td><td class="n">32,000</td></tr>
-          <tr><td class="n">2</td><td>عند اعتماد التصاميم النهائية</td><td class="n">25٪</td><td class="n">20,000</td></tr>
-          <tr><td class="n">3</td><td>عند تسليم النسخة التجريبية للاختبار</td><td class="n">25٪</td><td class="n">20,000</td></tr>
-          <tr><td class="n">4</td><td>عند الإطلاق وتسليم الكود والحسابات</td><td class="n">10٪</td><td class="n">8,000</td></tr>
-          <tr class="total"><td colspan="3">الإجمالي</td><td class="n">80,000</td></tr>
+          <tr><td class="n">1</td><td>عند توقيع العقد وبدء مرحلة التحليل</td><td class="n">40٪</td><td class="n">19,200</td></tr>
+          <tr><td class="n">2</td><td>عند اعتماد التصاميم النهائية</td><td class="n">25٪</td><td class="n">12,000</td></tr>
+          <tr><td class="n">3</td><td>عند تسليم النسخة التجريبية للاختبار</td><td class="n">25٪</td><td class="n">12,000</td></tr>
+          <tr><td class="n">4</td><td>عند الإطلاق وتسليم الكود والحسابات</td><td class="n">10٪</td><td class="n">4,800</td></tr>
+          <tr class="total"><td colspan="3">الإجمالي بعد الخصم</td><td class="n">48,000</td></tr>
         </tbody>
       </table>
     </div>
 
     <ul class="feat" style="margin-top:18px">
       <li>الأسعار بالريال السعودي وسارية 30 يوماً من تاريخ العرض</li>
+      <li>خصم اليوم الوطني 40٪ يسري على الاعتماد الموقّع قبل 23 / 09 / 2026، ويقتصر على بنود التنفيذ لمرة واحدة</li>
+      <li>الخصم لا يُجمع مع أي خصم أو عرض آخر، ولا يشمل التكاليف السنوية ولا الخدمات الإضافية</li>
       <li>جميع المبالغ نهائية ولا يُضاف إليها ضريبة قيمة مضافة أو أي رسوم أخرى</li>
       <li>تُصدر فاتورة نظامية عن كل دفعة بموجب وثيقة العمل الحر</li>
       <li>السداد بتحويل بنكي إلى الحساب المذكور في الفاتورة</li>
